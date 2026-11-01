@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikols plugg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F2F0EC;--paper:#FFFFFF;--ink:#1F2A33;--soft:#5A6670;--line:#DCD8D0;--geo:#2F6FB3;--es:#B5452B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#171B1F;--paper:#22282E;--ink:#EEF1F3;--soft:#AEB8C0;--line:#39424A;--geo:#6FA7E6;--es:#F08A6C}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#171B1F;--paper:#22282E;--ink:#EEF1F3;--soft:#AEB8C0;--line:#39424A;--geo:#6FA7E6;--es:#F08A6C}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.15rem;line-height:1.6}
+main{max-width:40rem;margin:0 auto;padding:2rem 1.2rem 3rem}
+h1{font-size:2.2rem;margin:.5rem 0 .3rem}
+p{color:var(--soft);margin:.2rem 0 1.5rem}
+.card{display:flex;align-items:center;gap:1rem;text-decoration:none;color:var(--ink);background:var(--paper);border-radius:18px;padding:1.2rem 1.3rem;margin:0 0 1rem;border:3px solid var(--line);border-left:12px solid var(--c);min-height:110px}
+.card:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.card .ic{font-size:2.8rem;flex:none}
+.card b{display:block;font-size:1.4rem}
+.card span.s{color:var(--soft);font-size:1rem}
+.card .pc{margin-left:auto;font-weight:700;color:var(--c);font-size:1.3rem;flex:none}
+.tip{font-size:.95rem;background:var(--paper);border-radius:12px;padding:.8rem 1rem;border:2px dashed var(--line)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Hej Nikol! 👋</h1>
+  <p>Välj vad du vill plugga idag. Ett kort pass räcker.</p>
+  <a class="card" href="geografi.html" style="--c:var(--geo)"><span class="ic">🌍</span><span><b>Geografi</b><span class="s">Vatten och liv – kartor, vatten, hållbar utveckling</span></span><span class="pc" id="pcGeo"></span></a>
+  <a class="card" href="spanska.html" style="--c:var(--es)"><span class="ic">🇪🇸</span><span><b>Spanska</b><span class="s">Steg 6 – ¡Vamos!</span></span><span class="pc" id="pcEs"></span></a>
+  <div class="tip">Tips: tryck på dela-knappen i Safari och välj <b>Lägg till på hemskärmen</b>, så får du en egen ikon.</div>
+</main>
+<script>
+(function(){
+  const show=(key,id,total)=>{try{const s=JSON.parse(localStorage.getItem(key)||'null');if(!s||!s.done)return;
+    const n=Object.values(s.done).filter(Boolean).length;document.getElementById(id).textContent=Math.min(100,Math.round(100*n/total))+' %';}catch(e){}};
+  show('geoprov-nikol-v1','pcGeo',56);show('spanska-nikol-v1','pcEs',34);
+})();
+</script>
+</body>
+</html>

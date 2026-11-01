@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikols geografiprov – Vatten och liv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EAF1F4; --paper:#FFFFFF; --ink:#17324A; --soft:#4D6275; --line:#CFDCE3;
+  --start:#4D6275; --kart:#2F6FB3; --vatten:#0F8A8A; --hall:#3B8F57; --glob:#C77421; --mal:#7650B0; --skriv:#C23F57; --begr:#5A6B7D; --prov:#9A6B12;
+  --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+    --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+    --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+  --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+  --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.125rem;line-height:1.75;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:48rem;margin:0 auto;padding:0 1rem 5rem}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .3rem}
+h2{font-size:1.5rem;line-height:1.3;margin:0 0 .5rem;color:var(--c)}
+h3{font-size:1.15rem;line-height:1.35;margin:1.1rem 0 .3rem}
+p{margin:.35rem 0 .85rem}
+ul.plain{margin:.3rem 0 .9rem;padding-left:1.2rem}
+ul.plain li{margin:.2rem 0}
+
+/* ---------- Header: gradnät behind the overall progress ---------- */
+.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
+.hero svg.grid{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero .wrap{position:relative;display:flex;align-items:center;gap:1.2rem;padding-top:1.4rem;padding-bottom:1.2rem}
+.ring{flex:none;width:6.5rem;height:6.5rem;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero p{margin:0;color:var(--soft)}
+
+/* ---------- Tab bar ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+.tabs .wrap{display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.tab{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.35rem .7rem;cursor:pointer;min-height:44px;line-height:1.2;text-align:left}
+.tab .t{font-weight:500;font-size:.98rem;white-space:nowrap}
+.tab .bar{width:100%;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--c);width:0}
+.tab .pc{font-size:.8rem;color:var(--soft)}
+.tab[aria-selected="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--paper))}
+.tab.done .t::after{content:" ✓";color:var(--ok)}
+
+/* ---------- Panels and tasks ---------- */
+.panel{padding-top:1.2rem}
+.panel[hidden]{display:none}
+.intro{background:var(--paper);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;border-top:8px solid var(--c)}
+.task{background:var(--paper);border-radius:14px;padding:1rem 1.2rem 1.1rem;margin:0 0 1rem;border-left:8px solid var(--c);transition:background .3s}
+.task.is-done{border-left-color:var(--ok)}
+.task>header{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.4rem}
+.task>header h3{margin:0;flex:1;font-size:1.2rem}
+.tick{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.2rem .8rem;cursor:pointer;font-size:.92rem;min-height:40px;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kind{display:inline-block;font-size:.85rem;color:var(--soft);margin-bottom:.2rem}
+.listen{border:2px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:.15rem .8rem;cursor:pointer;font-size:.92rem;min-height:36px}
+.listen[aria-pressed="true"]{background:var(--c);color:#fff}
+.trick{background:color-mix(in srgb,var(--c) 11%,transparent);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.fact{border:2px dashed var(--c);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 1rem}
+.chain span{background:color-mix(in srgb,var(--c) 14%,transparent);border:2px solid var(--c);border-radius:8px;padding:.1rem .55rem;font-weight:500}
+.chain i{font-style:normal;color:var(--c);font-weight:700}
+.tabdone{display:flex;justify-content:center;margin:1.5rem 0}
+.bigbtn{border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.6rem 1.4rem;cursor:pointer;font-weight:500;min-height:48px}
+.bigbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,250%);visibility:hidden;background:var(--ink);color:var(--paper);padding:.7rem 1.2rem;border-radius:999px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center;font-weight:500}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* ---------- Generic exercise bits ---------- */
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.4rem .9rem;cursor:pointer;min-height:44px;font-size:1rem}
+.btn.primary{border-color:var(--c);background:var(--c);color:#fff}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.count{color:var(--soft);font-size:.95rem;margin-left:auto}
+.msg{font-weight:500;min-height:1.6rem;margin:.5rem 0 0}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{border:2px solid var(--c);background:var(--paper);border-radius:10px;padding:.4rem .8rem;cursor:grab;min-height:44px;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;line-height:1.35;font-size:1rem}
+.chip.sel{background:var(--c);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-60%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wrong{border-color:var(--bad)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.answer{display:flex;flex-wrap:wrap;gap:.4rem;min-height:3rem;padding:.5rem;border-radius:10px;border:2px dashed var(--line);margin:.6rem 0}
+.answer span{background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .7rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin:.8rem 0 .3rem}
+.bucket{border:2px dashed var(--c);border-radius:12px;padding:.5rem;min-height:6rem;cursor:pointer;background:color-mix(in srgb,var(--c) 6%,var(--paper))}
+.bucket h4{margin:0 0 .3rem;font-size:1.02rem;color:var(--c);text-align:center}
+.bucket .in{font-size:.9rem;background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .5rem;margin:.25rem 0;line-height:1.35}
+.picking .bucket{border-style:solid}
+.match{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:.6rem}
+.match>div{display:flex;flex-direction:column;gap:.5rem}
+.match button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.5rem .7rem;cursor:pointer;line-height:1.4;font-size:1rem}
+.match button.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,var(--paper))}
+.match button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--paper));cursor:default}
+.mcq .q{font-weight:500;font-size:1.15rem;margin:.3rem 0 .6rem}
+.mcq .opts{display:grid;gap:.5rem}
+.mcq .opts button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;line-height:1.4}
+.mcq .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.mcq .why{background:color-mix(in srgb,var(--ok) 10%,var(--paper));border-radius:10px;padding:.5rem .8rem;margin-top:.6rem}
+.score{font-size:1.4rem;font-weight:700;color:var(--c)}
+.qa{border-bottom:2px solid var(--line)}
+.qa:last-child{border-bottom:0}
+.qa>button{text-align:left;width:100%;background:none;border:0;padding:.65rem 0;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.qa>button::before{content:"＋";color:var(--soft);font-weight:700}
+.qa>button[aria-expanded="true"]::before{content:"－"}
+.qa .a{background:color-mix(in srgb,var(--c) 9%,var(--paper));border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem}
+.qa .a p{margin:.2rem 0 .5rem}
+.say1{border:2px solid var(--line);background:transparent;border-radius:999px;padding:.05rem .7rem;cursor:pointer;font-size:.9rem}
+.wk{margin:1.4rem 0 .1rem;color:var(--soft);font-size:1.02rem}
+
+/* label exercise */
+.figscroll{overflow-x:auto;border-radius:10px;background:#fff;border:2px solid var(--line)}
+.fig{position:relative;container-type:inline-size;width:100%;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone{position:absolute;border:2px dashed var(--c);border-radius:6px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.3cqw,16px);line-height:1.1;color:#17324A;cursor:pointer;padding:0 3px;text-align:center;font-weight:500}
+.zone.ok{border:2px solid #2E8B57;background:#E3F4EA;color:#1D5E3A}
+.zone.shown{border:2px solid #7D8B99;background:#EEF1F4;color:#4A5A6B}
+.picking .zone:not(.ok):not(.shown){border-style:solid;background:#E8F0FC}
+
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:.5rem;margin:.7rem 0}
+.card{min-height:5.2rem;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:.4rem;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.card.open{background:var(--paper);color:var(--ink)}
+.card.got{background:color-mix(in srgb,var(--ok) 15%,var(--paper));border-color:var(--ok);color:var(--ink);cursor:default}
+.card .num{font-size:1.6rem;font-weight:700}
+
+/* globala mål chips */
+.goal{display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;color:#fff;padding:.1rem .5rem;font-weight:500;font-size:.92rem;margin:.15rem .1rem}
+
+/* checklist */
+.check{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.check label{flex:1;cursor:pointer}
+.check a{color:var(--c);font-size:.92rem}
+.tabsum{display:grid;gap:.5rem;margin:.6rem 0}
+.tabsum button{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.5rem .8rem;cursor:pointer}
+.tabsum .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.tabsum .bar i{display:block;height:100%;background:var(--c)}
+
+/* writing workshop */
+.ladder{counter-reset:st;display:grid;gap:.4rem;margin:.6rem 0 1rem}
+.ladder div{counter-increment:st;display:flex;gap:.6rem;align-items:flex-start;background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.45rem .7rem}
+.ladder div::before{content:counter(st);flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;margin-top:.15rem}
+.choose{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .8rem}
+.choose button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.3rem .9rem;cursor:pointer;min-height:42px}
+.choose button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.wstep{border:2px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.7rem 0;background:var(--paper)}
+.wstep.filled{border-color:var(--ok)}
+.wstep h4{margin:0;font-size:1.05rem;display:flex;gap:.5rem;align-items:center}
+.wstep h4 .st{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.wstep.filled h4 .st{background:var(--ok)}
+.wstep .help{color:var(--soft);font-size:.98rem;margin:.2rem 0 .4rem}
+.wstep textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;line-height:1.6;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.5rem .7rem;resize:vertical}
+.wstep textarea:focus{border-color:var(--c);outline:none}
+.mini{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 0}
+.mini button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.1rem .7rem;cursor:pointer;font-size:.88rem;min-height:34px}
+.hintbox{background:var(--hl);border-radius:10px;padding:.5rem .8rem;margin:.5rem 0 0;font-size:.98rem}
+.wordbank{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:10;background:var(--paper);border:2px solid var(--c);border-radius:12px;padding:.5rem .7rem;margin:.8rem 0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wordbank summary{cursor:pointer;font-weight:500;color:var(--c)}
+.wordbank .mini button{border-color:var(--c)}
+.checker{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .8rem}
+.checker span{border:2px solid var(--line);border-radius:999px;padding:.05rem .65rem;font-size:.9rem;color:var(--soft)}
+.checker span.got{border-color:var(--ok);background:var(--ok);color:#fff}
+.factbank{border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--paper));border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:.6rem 0}
+.factbank ul{margin:.2rem 0;padding-left:1.1rem}
+.full{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line)}
+.wprog{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:.3rem 0 .2rem}
+.wprog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cheer{color:var(--ok);font-weight:500;min-height:1.5rem}
+.fyr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0 1rem}
+.fyr label{display:block;font-size:.9rem;color:var(--soft)}
+.fyr textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+@media (max-width:520px){.fyr{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+
+/* small visual widgets */
+.water{display:grid;gap:.6rem;margin:.6rem 0}
+.wbar{display:flex;height:3rem;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+.wbar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-size:.9rem;font-weight:500;transition:flex-grow .6s;white-space:nowrap;overflow:hidden}
+.earths{font-size:2.4rem;line-height:1.2;letter-spacing:.1rem;margin:.2rem 0}
+.term{border-left:6px solid var(--c);padding:.45rem .9rem;margin:.6rem 0;background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:0 10px 10px 0}
+.term h4{margin:0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:1.1rem}
+.term p{margin:.15rem 0}
+.badge{font-size:.78rem;font-weight:500;border-radius:999px;padding:0 .5rem;background:var(--c);color:#fff}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.6rem;margin:.5rem 0}
+.calc label{font-size:.92rem;color:var(--soft)}
+.calc select,.calc input{display:block;width:100%;font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.steps{background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.6rem .9rem;line-height:1.9}
+.toggle{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.toggle label{display:flex;gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:999px;padding:.2rem .8rem;cursor:pointer;min-height:40px;font-size:.95rem}
+.toggle input{accent-color:var(--c);width:1.1rem;height:1.1rem}
+.svgbox{border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#F4F8F1}
+.svgbox svg{display:block;width:100%;height:auto}
+
+.passcard{background:var(--paper);border-radius:16px;margin:0 0 1rem;overflow:hidden;border:3px solid var(--start)}
+.passcard .ph{background:var(--start);color:#fff;padding:.9rem 1.2rem}
+.passcard .ph h2{color:#fff;margin:0;font-size:1.35rem}
+.passcard .ph p{margin:.2rem 0 0;opacity:.9}
+.passcard .pb{padding:.6rem 1.2rem 1rem}
+.pstep{border-bottom:2px solid var(--line);padding:.7rem 0}
+.pstep:last-child{border-bottom:0}
+.pstep h3{margin:0 0 .3rem;font-size:1.08rem;display:flex;gap:.5rem;align-items:center}
+.pstep h3 .n{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--start);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.pstep textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1.02rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+.book{display:inline-block;background:var(--hl);border-radius:8px;padding:.1rem .6rem;font-weight:700}
+.guide{margin:.3rem 0 .4rem;padding-left:1.2rem}
+.plrow{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.plrow:last-child{border-bottom:0}
+.plrow input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.plrow .t{flex:1}
+.plrow .m{display:block;font-size:.88rem;color:var(--soft)}
+.plrow.cur{background:color-mix(in srgb,var(--start) 8%,transparent);border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" style="position:relative;z-index:2;display:inline-block;margin:.6rem 0 0 1rem;color:var(--ink);font-weight:500;text-decoration:none">← Alla ämnen</a>
+  <svg class="grid" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--line)" stroke-width="1.5">
+      <path d="M0 40 Q400 10 800 40M0 100 Q400 80 800 100M0 160 Q400 150 800 160"/>
+      <path d="M100 0 Q70 100 100 200M250 0 Q235 100 250 200M400 0 V200M550 0 Q565 100 550 200M700 0 Q730 100 700 200"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="ring" aria-label="Hur mycket som är klart">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--line)" stroke-width="3.2"/><circle id="ringArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 100"/></svg>
+      <b id="ringPc">0 %</b>
+    </div>
+    <div>
+      <h1>Geografi: Vatten och liv</h1>
+      <p>Nikols plugg inför provet. Bocka av varje uppgift när du är klar.</p>
+    </div>
+  </div>
+</div>
+<nav class="tabs" aria-label="Flikar"><div class="wrap" id="tabbar" role="tablist"></div></nav>
+<main class="wrap">
+
+<!-- ======================= START ======================= -->
+<section class="panel" id="p-start" data-color="start" data-title="Start">
+  <div class="passcard" id="passCard"></div>
+  <div class="intro">
+    <h2>Så här använder du sidan</h2>
+    <p>Varje flik är ett område. I varje flik finns uppgifter: läs eller lyssna, öva och skriv. Tryck på <b>Klar</b> när du har gjort en uppgift. Övningar bockas av automatiskt när du har klarat dem.</p>
+    <p>Procenten visar hur mycket du har gjort. Allt sparas på den här datorn eller surfplattan, så plugga på samma enhet varje gång.</p>
+  </div>
+
+  <section class="task" data-task="s-plan">
+    <header><h3>Studieplan – ett kort pass i taget</h3></header>
+    <p>Varje pass tar ungefär 20 minuter och följer samma steg: minnesstart, läs i boken, hjärnsläpp och en övning. Ett eller två pass om dagen räcker. Tryck på <b>Starta</b> så visas passet högst upp på sidan.</p>
+    <div id="planList"></div>
+  </section>
+
+  <section class="task" data-task="s-check">
+    <header><h3>Det här ska du kunna – lärarens checklista</h3></header>
+    <p>Bocka i när du känner att du kan förklara det för en kompis.</p>
+    <div id="checkList"></div>
+  </section>
+
+  <section class="task" data-task="s-prov">
+    <header><h3>Viktigt att veta om provet</h3></header>
+    <div class="say">
+    <p>Provet är en <b>skrivuppgift</b>. Du kommer att behöva förklara och resonera, inte bara kunna fakta.</p>
+    <p>Två uppgifter vet vi redan om. Den första är <b>vattenuppgiften</b> från gruppuppgiften: ett vattenproblem, orsaker, konsekvenser, åtgärder och hållbar utveckling. Den andra är <b>examinationsuppgiften</b>: hur mobiltelefoner, elbilar eller kläder påverkar den hållbara utvecklingen, och vilka lösningar som finns med hjälp av de globala målen.</p>
+    <p>Båda kan du förbereda i fliken <b>Skrivverkstad</b>. Där bygger du svaret steg för steg.</p>
+    </div>
+  </section>
+
+  <details class="intro" id="moveBox" style="--c:var(--start)">
+    <summary><b>Flytta dina framsteg till en annan enhet</b></summary>
+    <p>Har du pluggat på en annan dator eller iPad? Spara framstegen som en fil där, skicka filen hit och hämta in den.</p>
+    <h3>1. Spara framstegen på den enhet du har pluggat på</h3>
+    <div class="row"><button class="btn primary" id="mvDown">Ladda ner framstegsfil</button><button class="btn" id="mvCopy">Kopiera som text</button></div>
+    <h3>2. Hämta in dem på den nya enheten</h3>
+    <div class="row"><label class="btn" style="display:inline-flex;align-items:center">Välj framstegsfil<input type="file" id="mvFile" accept=".json,application/json,text/plain" hidden></label></div>
+    <p class="count">Eller klistra in texten här:</p>
+    <textarea id="mvText" style="width:100%;min-height:4rem;font:inherit;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem"></textarea>
+    <div class="row"><button class="btn" id="mvPaste">Hämta in texten</button></div>
+    <p class="msg" id="mvMsg" aria-live="polite"></p>
+  </details>
+
+  <div class="intro" style="--c:var(--start)">
+    <h2>Hur långt har du kommit?</h2>
+    <div class="tabsum" id="tabSummary"></div>
+  </div>
+</section>
+
+<!-- ======================= KARTOR ======================= -->
+<section class="panel" id="p-kart" data-color="kart" data-title="Kartor och GIS" hidden>
+  <div class="intro">
+    <h2>Kartor, kartografi och GIS</h2>
+    <p>Här lär du dig hur kartor är byggda, varför de alltid ”ljuger” lite, hur du hittar platser med koordinater och hur GIS fungerar.</p>
+  </div>
+
+  <section class="task" data-task="k-las1">
+    <header><h3>Läs: Vad är en karta?</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>En karta är en <b>förenklad och förminskad bild</b> av verkligheten, oftast sedd ovanifrån. Den visar aldrig allt. Kartritaren väljer ut det som behövs för just den kartan.</p>
+    <h3>Kartans historia</h3>
+    <p>De äldsta kartorna kommer från <b>Mesopotamien</b>, från 2300–2100 före Kristus. De ritades på lerskärvor. Greken <b>Ptolemaios</b> beskrev på 100-talet hur man gör kartor. Under medeltiden var kartorna ofta religiösa, med Jerusalem i mitten. Olaus Magnus karta Carta marina från 1539 visar Norden.</p>
+    <p><b>Lantmäteriet</b> bildades 1628. Det är den myndighet som kartlägger Sverige och registrerar gränser och vem som äger mark och byggnader.</p>
+    <h3>Så ritar man kartor</h3>
+    <p>Man kan rita med papper och penna, till exempel en <b>mental karta</b>, alltså den bild av ett område du har i huvudet. Idag används <b>flygfotografering</b>, <b>laserskanning</b> från flygplan med GPS, <b>satellitbilder</b> och ibland <b>fältarbete</b>, där kartritaren går ut i terrängen och kontrollerar.</p>
+    <p><b>Topografi</b> är en beskrivning av hur terrängen ser ut: berg, skog, vatten, vägar och hus.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-las2">
+    <header><h3>Läs: Varför kartor alltid ”ljuger”</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>Jorden är rund, men papperet är platt. Det går inte att platta till ett klot utan att något blir fel. Tänk dig att du skalar en apelsin och försöker lägga skalet platt – det spricker eller töjs ut.</p>
+    <p>Hur man gör om jordklotet till en platt karta kallas en <b>kartprojektion</b>. En platt karta kan ha tre egenskaper:</p>
+    <ul class="plain">
+      <li><b>Ytriktig</b> – ytorna har rätt storlek. Bra för att jämföra länders storlek.</li>
+      <li><b>Vinkelriktig</b> – riktningarna stämmer. Bra för att navigera.</li>
+      <li><b>Längdriktig</b> (avståndsriktig) – avstånden stämmer. Bra för att mäta.</li>
+    </ul>
+    <div class="trick"><b>Kom ihåg:</b> en platt karta kan ha högst två av de tre egenskaperna. Bara en jordglob har alla tre rätt.</div>
+    <h3>Några kartprojektioner</h3>
+    <p><b>Mercator</b> (1569) är vinkelriktig men inte ytriktig. Länder nära polerna blir för stora. Grönland ser nästan lika stort ut som Afrika, men Afrika är i verkligheten ungefär <b>14 gånger större</b>.</p>
+    <p><b>Mollweide</b> visar ytorna mer korrekt. <b>Robinson</b> är en kompromiss där inget är helt rätt, men kartan ser minst förvrängd ut. <b>Gauss-Krüger</b> används av Lantmäteriet för kartor över mindre områden. En <b>azimutal</b> projektion visar jorden från en punkt, till exempel Nordpolen.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-merc">
+    <header><h3>Öva: Hur stort är Grönland egentligen?</h3></header>
+    <span class="kind">Utforska</span>
+    <p>Växla mellan Mercatorkartan och verkligheten. Cirklarna visar ländernas yta.</p>
+    <div data-widget="mercator" data-task="k-merc"></div>
+  </section>
+
+  <section class="task" data-task="k-proj">
+    <header><h3>Öva: Para ihop kartprojektionerna</h3></header>
+    <span class="kind">Para ihop</span>
+    <div data-widget="match" data-set="projektioner" data-task="k-proj"></div>
+  </section>
+
+  <section class="task" data-task="k-las3">
+    <header><h3>Läs: Karttyper, skala, karttecken och väderstreck</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <h3>Olika typer av kartor</h3>
+    <p>En <b>topografisk karta</b> visar hur det ser ut i ett område: höjdskillnader, vägar, skog, hus och vatten. Fjällkartan är ett exempel. Höjdskillnader visas med <b>höjdkurvor</b>.</p>
+    <p>En <b>politisk karta</b> visar gränser mellan länder, världsdelar eller regioner.</p>
+    <p>En <b>tematisk karta</b> visar ett visst tema, till exempel väder, klimat, befolkningstäthet eller religion.</p>
+    <p>En <b>ekonomisk karta</b> visar hur marken används och var markgränser går.</p>
+    <h3>Skala</h3>
+    <p>Skalan visar hur mycket kartan är förminskad. <b>1:10 000</b> betyder att 1 cm på kartan är 10 000 cm i verkligheten, alltså 100 meter.</p>
+    <p>En <b>storskalig</b> karta visar ett litet område med många detaljer, till exempel en orienteringskarta. En <b>småskalig</b> karta visar ett stort område med få detaljer, till exempel hela Sverige. Ett <b>skalstreck</b> visar hur lång en sträcka på kartan är i verkligheten.</p>
+    <h3>Karttecken</h3>
+    <p>Karttecken är symboler, till exempel för järnväg, kärr eller kyrka. De förklaras i <b>teckenförklaringen</b>, som också kallas <b>legend</b>. Karttecken ser olika ut på olika kartor, så läs alltid legenden.</p>
+    <h3>Väderstreck och kompass</h3>
+    <p>De fyra väderstrecken är norr, söder, öster och väster. På de flesta kartor är norr uppåt. Solen går upp i öster och ner i väster. Kompassnålens röda ände pekar mot den magnetiska nordpolen.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-typ">
+    <header><h3>Öva: Vilken sorts karta?</h3></header>
+    <span class="kind">Sortera</span>
+    <div data-widget="sort" data-set="karttyper" data-task="k-typ"></div>
+  </section>
+
+  <section class="task" data-task="k-skala">
+    <header><h3>Öva: Räkna med skala</h3></header>
+    <span class="kind">Räkna</span>
+    <p>Prova räknaren först. Den visar hur man räknar, steg för steg.</p>
+    <div data-widget="scalecalc"></div>
+    <h3>Testa dig själv</h3>
+    <div data-widget="mcq" data-set="skala" data-task="k-skala"></div>
+  </section>
+
+  <section class="task" data-task="k-komp">
+    <header><h3>Öva: Sätt ut väderstrecken</h3></header>
+    <span class="kind">Dra till rätt ruta</span>
+    <div data-widget="label" data-set="kompass" data-task="k-komp"></div>
+  </section>
+
+  <section class="task" data-task="k-las4">
+    <header><h3>Läs: Gradnät, koordinater och tidszoner</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>Jorden har ett rutnät av linjer som kallas <b>gradnät</b>. Med det kan man ange var en plats ligger.</p>
+    <p><b>Breddgrader</b> kallas också latitud eller paralleller. De går runt jorden från väster till öster. <b>Ekvatorn</b> är breddgrad 0. Där är jorden som tjockast, och den delar jorden i norra och södra halvklotet. Breddgraderna går upp till 90 grader norr och 90 grader söder.</p>
+    <p><b>Längdgrader</b> kallas också longitud eller meridianer. De går från Nordpolen till Sydpolen. <b>Nollmeridianen</b> går genom Greenwich i London. Längdgraderna går upp till 180 grader öster och 180 grader väster.</p>
+    <div class="trick"><b>Minnesknep:</b> <b>Bredd</b>graderna ligger ner, som när du <b>bred</b>er ut dig i sängen. <b>Längd</b>graderna står upp, som när du mäter hur <b>lång</b> du är.</div>
+    <p><b>Koordinater</b> är två tal: först latitud, sedan longitud. Stockholm ligger på 59° 17' N och 18° 04' Ö. Det är Stockholms <b>absoluta läge</b>, det ändras aldrig.</p>
+    <p>Ett <b>relativt läge</b> beskriver var en plats ligger i förhållande till något annat, till exempel ”två timmar med tåg från Göteborg”. Det kan ändras. Förr tog tåget mellan Stockholm och Malmö mer än tio timmar, idag drygt fyra.</p>
+    <h3>Tidszoner</h3>
+    <p>Jorden snurrar ett varv, 360 grader, på 24 timmar. Det betyder att <b>15 grader = 1 timme</b> och 1 grad = 4 minuter. Därför finns 24 tidszoner. Sverige ligger ungefär 15 grader öster om nollmeridianen och har en timme mer än Storbritannien.</p>
+    <p><b>Datumgränsen</b> ligger på 180 grader, mitt emot nollmeridianen. Där börjar det nya dygnet. Först får till exempel Kiribati, Samoa, Tonga och Nya Zeeland nytt dygn. Sist kommer Amerikanska Samoa och Niue.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-glob">
+    <header><h3>Öva: Sätt namn på gradnätet</h3></header>
+    <span class="kind">Dra till rätt ruta</span>
+    <div data-widget="label" data-set="glob" data-task="k-glob"></div>
+  </section>
+
+  <section class="task" data-task="k-koord">
+    <header><h3>Öva: Koordinater och tidszoner</h3></header>
+    <span class="kind">Quiz</span>
+    <div data-widget="mcq" data-set="koord" data-task="k-koord"></div>
+  </section>
+
+  <section class="task" data-task="k-atlas">
+    <header><h3>Atlasuppdrag – med er atlas hemma</h3></header>
+    <span class="kind">Praktiskt</span>
+    <p>Ta fram atlasen. Leta upp orten i <b>registret</b> längst bak. Där står sidan och ofta en ruta eller koordinater. Skriv ner koordinaterna innan du tittar på svaret.</p>
+    <div data-widget="qa" data-set="atlas"></div>
+    <div class="fact"><b>Extra:</b> Leta upp kartan över tidszoner i atlasen. Vilka länder får nytt dygn först, och vilka får det sist? Leta vid 180-gradersmeridianen i Stilla havet.</div>
+  </section>
+
+  <section class="task" data-task="k-las5">
+    <header><h3>Läs: GIS, GPS och fjärranalys</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p><b>GIS</b> betyder geografiskt informationssystem. Det är information som är kopplad till en plats och som lagras i datorer. Informationen ligger i <b>lager</b> ovanpå en karta, till exempel ett lager med vägar, ett med skolor och ett med risk för översvämning. När man lägger lagren på varandra kan man jämföra och dra slutsatser.</p>
+    <p>I GIS gör man fyra saker med informationen: samlar in, lagrar, bearbetar och presenterar den.</p>
+    <p>GIS används till exempel för att hitta kortaste vägen, bestämma var en ny skola eller väg ska byggas, hitta bästa platsen för en butik, se vad som händer om havet stiger, eller hitta närmaste skyddsrum på MSB:s karta. Google Maps och Pokémon Go bygger på samma idé.</p>
+    <div class="fact"><b>Ett tidigt exempel:</b> 1854 markerade läkaren John Snow på en karta var människor i London blev sjuka i kolera. Kartan visade att alla hade hämtat vatten från samma brunn. När brunnen stängdes upphörde smittan.</div>
+    <p><b>GPS</b> betyder Global Positioning System. Satelliter i rymden skickar radiosignaler med exakt tid från atomur. En GPS-mottagare, som din mobil, räknar ut var du är. Den behöver signaler från minst fyra satelliter. GPS kan också visa hastighet.</p>
+    <p><b>Fjärranalys</b> betyder att man samlar in information om en plats utan att vara där, med kameror på satelliter eller flygplan. Satellitbilder visar till exempel hur Aralsjön krympt mellan 2000 och 2014, hur glaciärer smälter eller hur moln rör sig.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-gis">
+    <header><h3>Öva: Var ska den nya skolan byggas?</h3></header>
+    <span class="kind">Använd GIS</span>
+    <p>Kommunen i den påhittade staden Åby ska bygga en ny skola. Tänd och släck lagren och välj den bästa platsen: A, B eller C.</p>
+    <div data-widget="gis" data-task="k-gis"></div>
+  </section>
+
+  <section class="task" data-task="k-las6">
+    <header><h3>Läs: Plats, gränser och varför städer ligger där de ligger</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p><b>Gränser</b> markerar var ett område slutar. En <b>naturlig gräns</b> finns i naturen, till exempel en flod, ett hav eller en bergskedja. En <b>artificiell gräns</b> är bestämd av människor, till exempel en rak linje på kartan, en kommungräns eller en zon i kollektivtrafiken.</p>
+    <p><b>Lokaliseringsfaktorer</b> förklarar varför något ligger just där det ligger. De kan vara naturliga, som skog, vatten eller bördig jord, eller skapade av människan, som en järnväg eller en hamn.</p>
+    <h3>Vad har världens största städer gemensamt?</h3>
+    <p>Nästan alla storstäder ligger vid <b>vatten</b>: vid en kust, en flod eller en stor sjö. Exempel är Tokyo, Shanghai, New York, Kairo och London.</p>
+    <p>Det beror på att vatten ger <b>transporter och handel</b> med båt, <b>dricksvatten</b>, <b>fiske</b> och <b>bördig jord</b> för odling längs floderna. Många storstäder ligger också där klimatet är milt och marken är platt, så att det är lätt att bygga. När en stad väl har vuxit lockar den fler människor med jobb och skolor, och då fortsätter den att växa.</p>
+    <p>Ett <b>kulturlandskap</b> är skapat eller påverkat av människan, till exempel en stad eller en åker. Ett <b>naturlandskap</b> är inte påverkat av människan.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="k-grans">
+    <header><h3>Öva: Gränser och läge</h3></header>
+    <span class="kind">Sortera</span>
+    <div data-widget="sort" data-set="grans" data-task="k-grans"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="kart">Jag är klar med Kartor och GIS</button></div>
+</section>
+
+<!-- ======================= VATTEN ======================= -->
+<section class="panel" id="p-vatten" data-color="vatten" data-title="Vatten" hidden>
+  <div class="intro">
+    <h2>Vatten som naturresurs</h2>
+    <p>Vatten är en av våra viktigaste naturresurser. Här lär du dig hur lite drickbart vatten som finns, vad som hotar det och vad vi kan göra.</p>
+  </div>
+
+  <section class="task" data-task="v-las1">
+    <header><h3>Läs: Hur mycket vatten finns det?</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>En <b>naturresurs</b> är något i naturen som vi människor använder, till exempel vatten, skog, mark och mineraler. Naturresurserna är ojämnt fördelade över jorden.</p>
+    <p><b>Haven täcker 70 procent</b> av jordens yta. Även vi själva består av vatten: ungefär 60 procent av din kroppsvikt är vatten. Men nästan allt är <b>saltvatten</b> i haven, ungefär 97 procent. Bara <b>3 procent</b> är <b>sötvatten</b>. Det mesta av sötvattnet är fruset i glaciärer och isar, eller ligger som <b>grundvatten</b> under marken. Bara en pytteliten del finns i sjöar och floder.</p>
+    <p>Haven hänger ihop, men man brukar dela in dem i tre: <b>Stilla havet, Atlanten och Indiska oceanen</b>. Rinnande vatten delas in efter storlek, från minst till störst: <b>bäck, å och flod eller älv</b>.</p>
+    <p>Vi använder vatten till att dricka, laga mat, tvätta oss, odla, i industrier, för transporter, till vattenkraft som ger el och till fiske. <b>Jordbruket</b> använder mest sötvatten av allt.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="v-100">
+    <header><h3>Utforska: Om allt vatten vore 100 liter</h3></header>
+    <span class="kind">Utforska</span>
+    <div data-widget="water" data-task="v-100"></div>
+  </section>
+
+  <section class="task" data-task="v-las0">
+    <header><h3>Läs: Vattnets kretslopp och rent vatten</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>Nästan allt vatten på jorden ingår i ett stort <b>kretslopp</b>. Det är <b>solen</b> som driver det.</p>
+    <div class="chain"><span>Solen värmer</span><i>→</i><span>Vattnet avdunstar</span><i>→</i><span>Ångan kondenseras till moln</span><i>→</i><span>Regn och snö</span><i>→</i><span>Sjöar, hav och grundvatten</span></div>
+    <p>Solen värmer upp hav, sjöar och mark. Vattnet <b>avdunstar</b> och blir vattenånga som stiger uppåt. Högt upp är det kallt, och ångan <b>kondenseras</b>, alltså blir vätska igen. Det bildas moln. Vattnet faller som regn eller snö. Det rinner till sjöar, floder och hav, eller sipprar ner i marken och blir grundvatten.</p>
+    <p><b>Grundvatten</b> är vatten under marken. Det är sötvatten och oftast rent, så det används gärna till dricksvatten. För att få upp det borrar eller gräver man en brunn.</p>
+    <h3>Människans eget vattenkretslopp</h3>
+    <p>I ett <b>vattenverk</b> renar man grundvatten eller vatten från sjöar och floder, så att vi kan dricka det. I ett <b>reningsverk</b> renar man smutsigt avloppsvatten från toaletter, duschar och disk, innan det släpps ut i naturen igen.</p>
+    <div class="trick"><b>Minnesknep:</b> Vatten<b>verket</b> gör vatten <b>till</b> oss. Renings<b>verket</b> renar vattnet <b>från</b> oss.</div>
+    </div>
+  </section>
+
+  <section class="task" data-task="v-kret">
+    <header><h3>Öva: Vattnets kretslopp – tryck i rätt ordning</h3></header>
+    <span class="kind">Ordning</span>
+    <div data-widget="order" data-set="kretslopp" data-task="v-kret"></div>
+  </section>
+
+  <section class="task" data-task="v-las2">
+    <header><h3>Läs: Rent vatten, sanitet och hygien</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>Enligt UNICEF saknar <b>var fjärde människa</b> i världen säker tillgång till rent dricksvatten. Över 100 miljoner hämtar vatten direkt ur sjöar, floder och dammar.</p>
+    <p><b>Sanitet</b> betyder säkra toaletter och att avlopp och avfall tas om hand. 3,4 miljarder människor saknar säkra toaletter. Då kan avföring hamna i vattnet och sprida sjukdomar som <b>diarré och kolera</b>. Barn drabbas hårdast.</p>
+    <p>Ungefär 4 miljarder människor har vattenbrist minst en månad per år. Ofta är det kvinnor och flickor som hämtar vatten, långa sträckor. Då får de mindre tid till skola och arbete. Flickor stannar ibland hemma från skolan under mens om det saknas toaletter.</p>
+    <p><b>Hygien</b>, som att tvätta händerna med tvål, är ett av de bästa sätten att förebygga sjukdomar.</p>
+    <p><b>Lösningar:</b> brunnar och vattenpumpar, reningsverk, regnvattensamling, enkla toaletter och undervisning om hygien. UNICEF arbetar med allt detta.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="v-las3">
+    <header><h3>Läs: Hoten mot vattnet</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p><b>Överfiske</b> betyder att vi fiskar mer än fiskarna hinner föröka sig. Fiskbestånden kan kollapsa, som torsken i Östersjön, och det påverkar hela ekosystemet.</p>
+    <p><b>Plast i haven</b> bryts ner till <b>mikroplaster</b> som djur och människor får i sig. Stora djur äter plast och kvävs. Fisket och turismen förlorar pengar.</p>
+    <p><b>Föroreningar</b> kommer från industrier, avlopp och åkrar:</p>
+    <ul class="plain">
+      <li><b>Oljeutsläpp</b> från fartyg skadar livet i havet.</li>
+      <li><b>Tungmetaller och miljögifter</b> gör fisken oätlig. Gifterna samlas uppåt i näringskedjan.</li>
+      <li><b>Övergödning</b>: för mycket näringsämnen från gödsel och avlopp gör att alger växer explosivt. När algerna dör tar syret slut, och djuren dör av syrebrist.</li>
+      <li><b>Försurning</b>: sura ämnen följer med regn och snö ner i sjöarna.</li>
+      <li><b>Bakterier</b> sprider sjukdomar, och <b>varmt vatten</b> från industrier gör att fiskar försvinner.</li>
+    </ul>
+    <p><b>Konstbevattning</b> betyder att man leder vatten till åkrar. <b>Aralsjön</b> var världens fjärde största sjö, men nästan hela sjön har torkat ut eftersom vattnet användes till bomullsfält för klädindustrin. Människorna runt sjön förlorade jobben inom fisket och blev sjuka av salt och gifter i dammet.</p>
+    <p><b>Virtuellt vatten</b> är allt vatten som går åt att tillverka en vara. Ett par nya jeans kräver ungefär <b>11 000 liter</b> vatten. Ditt <b>hydrologiska fotavtryck</b> är allt vatten som går åt till det du konsumerar.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="v-overg">
+    <header><h3>Öva: Så går övergödning till – tryck i rätt ordning</h3></header>
+    <span class="kind">Ordning</span>
+    <div data-widget="order" data-set="overgodning" data-task="v-overg"></div>
+  </section>
+
+  <section class="task" data-task="v-par">
+    <header><h3>Öva: Para ihop vattenproblemen</h3></header>
+    <span class="kind">Para ihop</span>
+    <div data-widget="match" data-set="vattenproblem" data-task="v-par"></div>
+  </section>
+
+  <section class="task" data-task="v-las4">
+    <header><h3>Läs: Vattenkonflikter och smarta lösningar</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>En <b>vattenkonflikt</b> uppstår när människor inte är överens om hur vattnet ska användas. Det kallas en <b>intressekonflikt</b>: olika grupper vill använda samma resurs på olika sätt. 45 procent av jordens befolkning bor vid floder som delas av flera länder.</p>
+    <p><b>Nilen</b> är världens längsta flod och rinner genom 11 länder. Egypten har länge haft mest rätt till vattnet. Nu har Etiopien byggt en stor damm som kan minska flödet till Egypten.</p>
+    <p><b>Rio Grande</b> rinner mellan USA och Mexiko. Länderna har ett avtal, men Mexiko drabbas mest när vattnet minskar.</p>
+    <p>I <b>Indien</b> blir många rikare, och en växande medelklass i städerna använder mer vatten. Samtidigt behöver bönderna på landsbygden vatten till odling.</p>
+    <p><b>Israel</b> har gått från vattenbrist till överskott. De <b>avsaltar havsvatten</b> och <b>renar och återanvänder avloppsvatten</b>. Men avsaltning kräver mycket energi.</p>
+    <p><b>Golfströmmen</b> är en havsström som för varmt vatten till Norden. Om den skulle stanna på grund av klimatförändringarna kan det bli 5–10 grader kallare hos oss.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="v-konf">
+    <header><h3>Öva: Var ligger konflikten?</h3></header>
+    <span class="kind">Para ihop</span>
+    <div data-widget="match" data-set="konflikter" data-task="v-konf"></div>
+  </section>
+
+  <section class="task" data-task="v-sort">
+    <header><h3>Öva: Orsak, konsekvens eller åtgärd?</h3></header>
+    <span class="kind">Sortera</span>
+    <p>Det här tränar exakt det du ska göra i vattenuppgiften på provet.</p>
+    <div data-widget="sort" data-set="okA" data-task="v-sort"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="vatten">Jag är klar med Vatten</button></div>
+</section>
+
+<!-- ======================= HÅLLBAR UTVECKLING ======================= -->
+<section class="panel" id="p-hall" data-color="hall" data-title="Hållbar utveckling" hidden>
+  <div class="intro">
+    <h2>Hållbar utveckling och ekologiskt fotavtryck</h2>
+    <p>Hur kan vi leva så att jorden räcker även för dem som kommer efter oss?</p>
+  </div>
+
+  <section class="task" data-task="h-las1">
+    <header><h3>Läs: Vad är hållbar utveckling?</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>1987 kom FN-rapporten <b>”Vår gemensamma framtid”</b>, som också kallas Brundtlandrapporten. Där står den mest kända förklaringen: hållbar utveckling är en utveckling som tillfredsställer dagens behov utan att äventyra kommande generationers möjligheter att tillfredsställa sina behov.</p>
+    <div class="trick"><b>Med enkla ord:</b> vi får inte använda mer av jordens resurser än att det finns kvar till våra barn och barnbarn.</div>
+    <p>Hållbar utveckling har <b>tre perspektiv</b>, och alla tre behövs:</p>
+    <p><b>Ekologisk hållbarhet</b> handlar om naturen. Ekosystemen ska fungera på lång sikt: ren luft, rent vatten, ett stabilt klimat och <b>biologisk mångfald</b>, alltså att växter och djur inte dör ut.</p>
+    <p><b>Social hållbarhet</b> handlar om människor. Alla ska kunna leva i trygghet, med mat, skola, vård, demokrati, jämställdhet och mänskliga rättigheter.</p>
+    <p><b>Ekonomisk hållbarhet</b> handlar om pengar och resurser. Fattigdom ska motverkas så att alla har råd med det de behöver, och resurser ska användas klokt på lång sikt. Priset på en vara ska täcka alla kostnader, även löner och skador på miljön.</p>
+    <div class="trick"><b>Minnesknep:</b> Ekologisk = <b>naturen</b>. Social = <b>människorna</b>. Ekonomisk = <b>pengarna</b>.</div>
+    <p>Sedan industriella revolutionen har utsläppen av växthusgaser, främst koldioxid från <b>fossila bränslen</b> som olja, kol och gas, ökat kraftigt. Det ger en <b>förstärkt växthuseffekt</b> och klimatförändringar. Kina, USA och Indien släpper ut mest koldioxid. I Sverige skyddar <b>miljöbalken</b> miljön, och Sverige har skärpt sina miljölagar och minskat utsläppen.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="h-sort">
+    <header><h3>Öva: Ekologisk, social eller ekonomisk?</h3></header>
+    <span class="kind">Sortera</span>
+    <div data-widget="sort" data-set="tre" data-task="h-sort"></div>
+  </section>
+
+  <section class="task" data-task="h-las2">
+    <header><h3>Läs: Ekologiskt fotavtryck och hållbar livsstil</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p><b>Ekologiskt fotavtryck</b> är ett mått som Världsnaturfonden WWF har tagit fram. Det visar hur mycket av jordens resurser vi använder för allt vi äter, köper, reser och bor.</p>
+    <p>Om man räknar på alla människor behövs <b>1,6 jordklot</b> för att räcka till det vi använder idag. Vi lever alltså över våra tillgångar. Om alla levde som vi i Sverige skulle det behövas <b>4 jordklot</b>.</p>
+    <p>Det vi <b>producerar</b> (tillverkar) och <b>konsumerar</b> (köper) sätter spår i miljön: bilar, mobiler, kläder, mat och flygresor.</p>
+    <h3>Vad kan du göra som konsument?</h3>
+    <p>Köpa mindre och använda saker länge. Laga kläder och köpa second hand. Äta mindre kött och mer lokalt odlad mat. Välja rättvisemärkt, till exempel Fairtrade. Åka tåg, cykla eller gå i stället för att flyga eller åka bil. Sortera avfall och återvinna.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="h-fot">
+    <header><h3>Öva: Större eller mindre fotavtryck?</h3></header>
+    <span class="kind">Utforska och sortera</span>
+    <div data-widget="earths"></div>
+    <div data-widget="sort" data-set="fotavtryck" data-task="h-fot"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="hall">Jag är klar med Hållbar utveckling</button></div>
+</section>
+
+<!-- ======================= GLOBALISERING ======================= -->
+<section class="panel" id="p-glob" data-color="glob" data-title="Globalisering" hidden>
+  <div class="intro">
+    <h2>Globalisering, handel och produktion</h2>
+    <p>Varför är din mobil gjord i flera länder samtidigt? Och vem betalar det verkliga priset?</p>
+  </div>
+
+  <section class="task" data-task="g-las1">
+    <header><h3>Läs: Globalisering och global marknad</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p><b>Globalisering</b> betyder att länder, företag och människor i världen blir alltmer beroende av varandra. Internet och snabba transporter gör att ”världen blir mindre”. Varor, tjänster, pengar och människor flyttar lättare över gränserna.</p>
+    <p>Vi handlar med varandra eftersom länder har olika <b>naturresurser</b> och kunskaper. Ett land som gör något bra kan <b>specialisera</b> sig och sälja det till andra. Sverige är till exempel bra på skogsindustri. Men ju mer specialiserade vi blir, desto mer beroende blir vi av varandra.</p>
+    <p><b>Export</b> betyder att ett land säljer varor till andra länder. <b>Import</b> betyder att ett land köper varor från andra länder. En <b>råvara</b> är något från naturen som kan förädlas till en <b>vara</b>, till exempel bomull till en tröja. En <b>tjänst</b> är något man gör för någon, till exempel en klippning.</p>
+    <p>En <b>tull</b> är en avgift på importerade varor. Den gör varan dyrare. <b>Frihandel</b> betyder handel utan tullar, som mellan EU-länderna. <b>WTO</b>, Världshandelsorganisationen, arbetar för rättvisare handel. Nästan alla länder är med.</p>
+    <h3>Multinationella företag</h3>
+    <p>Ett <b>multinationellt företag</b> har verksamhet i flera länder. Ofta ligger fabrikerna i <b>låginkomstländer</b> där lönerna är låga, medan huvudkontoret ligger i <b>höginkomstländer</b> där många är högutbildade.</p>
+    <p>Var ett företag placerar sin produktion beror på arbetskraft, löner, arbetsvillkor, råvaror, kapital, utbildningsnivå och teknik. Företaget vill tjäna pengar.</p>
+    <h3>Fördelar och nackdelar</h3>
+    <p>Globaliseringen har gjort att många miljoner människor fått det bättre. Barnadödligheten har minskat och människor lever längre. Men kritiker menar att den mest gynnar de redan rika. Många i fattiga länder utnyttjas som billig arbetskraft, och transporter och odling skadar miljön.</p>
+    <p><b>Markrofferi</b> betyder att företag eller korrupta ledare tar mark från familjer som bott och odlat där i generationer. Det kallas ibland nykolonialism.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="g-par">
+    <header><h3>Öva: Para ihop handelsbegreppen</h3></header>
+    <span class="kind">Para ihop</span>
+    <div data-widget="match" data-set="handel" data-task="g-par"></div>
+  </section>
+
+  <section class="task" data-task="g-for">
+    <header><h3>Öva: Fördel eller nackdel med globaliseringen?</h3></header>
+    <span class="kind">Sortera</span>
+    <div data-widget="sort" data-set="fornack" data-task="g-for"></div>
+  </section>
+
+  <section class="task" data-task="g-las2">
+    <header><h3>Läs: Mobilens verkliga pris och kobolt i Kongo</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>En mobil innehåller över 40 olika metaller, till exempel kobolt, koppar, guld och litium. <b>Kobolt</b> behövs i batterier till mobiler, datorer, elcyklar och elbilar. Därför kallas den ibland ”den nya oljan”.</p>
+    <p><b>Kongo-Kinshasa</b> är mycket rikt på naturresurser och står för mer än hälften av all kobolt i världen. Gruvorna står för 70 procent av landets export. Ändå är många i Kongo mycket fattiga.</p>
+    <p>I många koboltgruvor bryts de mänskliga rättigheterna. Ungefär 40 000 barn arbetade i gruvorna 2014, en del bara sju år gamla. Många arbetar utan skyddsutrustning och får skador på lungorna. Ungefär en femtedel av kobolten grävs fram för hand.</p>
+    <p>Kongo var en belgisk koloni där befolkningen utnyttjades brutalt för landets naturresurser. Senare kom diktatur och krig. Idag är landet en demokrati men har stora problem med korruption, och det pågår fortfarande strider i östra Kongo.</p>
+    <h3>Mobilens resa</h3>
+    <p>Råvarorna bryts i gruvor, till exempel i Kongo. De förädlas och görs om till delar, ofta i Kina, Sydkorea eller Taiwan. Mobilen sätts ihop i en fabrik, ofta i Kina eller Indien, och designas av ett företag med huvudkontor i till exempel USA. Sedan <b>exporteras</b> den och <b>importeras</b> till Sverige där vi köper den. När vi slutar använda den blir den elavfall. En del elavfall skeppas till länder som Ghana, där människor plockar isär det under farliga förhållanden.</p>
+    <div class="trick">Mobilen visar hur det vi köper i en del av världen påverkar människor och miljö i en helt annan del.</div>
+    <h3>Kläder och elbilar</h3>
+    <p>De flesta kläder i Sverige tillverkas i <b>Kina, Indien och Bangladesh</b>. Bomullen odlas ofta i andra länder och kräver massor av vatten, och färgning av tyger kan förgifta floder. Arbetarna har ofta låga löner och osäkra fabriker. 2013 rasade fabriken Rana Plaza i Bangladesh och över 1 100 människor dog.</p>
+    <p><b>Elbilar</b> släpper inte ut avgaser när de körs, vilket är bra för klimatet. Men batterierna behöver kobolt och litium, och gruvorna kan skada både människor och natur.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="g-resa">
+    <header><h3>Öva: Mobilens resa – tryck i rätt ordning</h3></header>
+    <span class="kind">Ordning</span>
+    <div data-widget="order" data-set="mobilresa" data-task="g-resa"></div>
+  </section>
+
+  <section class="task" data-task="g-var">
+    <header><h3>Öva: Var hamnar det oftast?</h3></header>
+    <span class="kind">Sortera</span>
+    <p>Multinationella företag sprider ut sin verksamhet. Var brukar de olika delarna ligga?</p>
+    <div data-widget="sort" data-set="laghog" data-task="g-var"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="glob">Jag är klar med Globalisering</button></div>
+</section>
+
+<!-- ======================= GLOBALA MÅLEN ======================= -->
+<section class="panel" id="p-mal" data-color="mal" data-title="Globala målen" hidden>
+  <div class="intro">
+    <h2>De globala målen – Agenda 2030</h2>
+    <p>FN:s plan för en hållbar värld till år 2030.</p>
+  </div>
+
+  <section class="task" data-task="m-las1">
+    <header><h3>Läs: Vad är de globala målen?</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div class="say">
+    <p>År 2000 enades världens ledare om åtta <b>millenniemål</b> som skulle nås till 2015. Mycket blev bättre, men inte allt. Därför antog FN:s 193 medlemsländer år 2015 en ny plan, <b>Agenda 2030</b>, med <b>17 globala mål</b> för hållbar utveckling som ska vara uppnådda år 2030.</p>
+    <p>Målen gäller <b>alla länder</b>, både rika och fattiga. De har tre stora syften: att <b>utrota extrem fattigdom</b>, <b>minska ojämlikheter och orättvisor</b> och <b>lösa klimatkrisen</b>.</p>
+    <p>Målen kan ritas som en <b>tårta i tre lager</b>. Längst ner ligger de ekologiska målen om vatten, klimat, hav och natur. I mitten ligger de sociala målen om fattigdom, hunger, hälsa, skola och jämställdhet. Överst ligger de ekonomiska målen om arbete, industri och konsumtion. Utan en fungerande natur fungerar inte resten.</p>
+    <h3>Hur arbetar vi för att nå målen?</h3>
+    <p>Länder gör planer och stiftar lagar, till exempel miljölagar. Företag kan ge schyssta löner och minska utsläpp. Organisationer som UNICEF borrar brunnar och bygger toaletter. Och vi som privatpersoner kan konsumera smartare, till exempel välja Fairtrade och second hand, vilket hör till <b>mål 12, hållbar konsumtion och produktion</b>.</p>
+    </div>
+    <div id="goalList"></div>
+  </section>
+
+  <section class="task" data-task="m-mem">
+    <header><h3>Öva: Memory med målen</h3></header>
+    <span class="kind">Memory</span>
+    <p>Vänd två kort. Hitta målets nummer och dess namn. Varje omgång har sex mål.</p>
+    <div data-widget="memory" data-set="goals" data-task="m-mem"></div>
+  </section>
+
+  <section class="task" data-task="m-vilket">
+    <header><h3>Öva: Vilket mål handlar det om?</h3></header>
+    <span class="kind">Quiz</span>
+    <div data-widget="mcq" data-set="vilketmal" data-task="m-vilket"></div>
+  </section>
+
+  <section class="task" data-task="m-tarta">
+    <header><h3>Öva: Bygg tårtan</h3></header>
+    <span class="kind">Sortera</span>
+    <div data-widget="sort" data-set="tarta" data-task="m-tarta"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="mal">Jag är klar med Globala målen</button></div>
+</section>
+
+<!-- ======================= SKRIVVERKSTAD ======================= -->
+<section class="panel" id="p-skriv" data-color="skriv" data-title="Skrivverkstad" hidden>
+  <div class="intro">
+    <h2>Skrivverkstad</h2>
+    <p>Här bygger du dina provsvar i små steg. Du behöver inte skriva hela texten på en gång. Ett steg i taget, och sidan sätter ihop allt till slut.</p>
+  </div>
+
+  <section class="task" data-task="w-hur">
+    <header><h3>Så bygger du ett bra svar</h3></header>
+    <div class="say">
+    <p>Ett bra geografisvar är som en trappa. Varje steg gör svaret lite bättre:</p>
+    <div class="ladder">
+      <div><span><b>Svara på frågan.</b> Säg vad det handlar om, med en enkel mening.</span></div>
+      <div><span><b>Förklara varför.</b> Använd ord som <i>eftersom</i> och <i>det beror på</i>.</span></div>
+      <div><span><b>Ge ett exempel.</b> Använd <i>till exempel</i>, och nämn gärna en plats eller ett land.</span></div>
+      <div><span><b>Visa vad det leder till.</b> Använd <i>vilket leder till</i> och <i>det gör att</i>.</span></div>
+      <div><span><b>Se det från flera håll.</b> Socialt, ekonomiskt och ekologiskt perspektiv, eller för individen, samhället och miljön.</span></div>
+    </div>
+    </div>
+    <h3>Om det känns tungt att börja</h3>
+    <p>Det är helt normalt att fastna. Här är saker som hjälper:</p>
+    <ul class="plain">
+      <li><b>Börja inte med början.</b> Skriv det steg du vet mest om först.</li>
+      <li><b>Prata först.</b> Säg svaret högt eller till någon hemma. Skriv sedan ner det du sa.</li>
+      <li><b>Diktera.</b> Tryck på mikrofonen på tangentbordet i mobilen eller surfplattan och prata in texten.</li>
+      <li><b>Skriv fult först.</b> Ingen ser utkastet. Du kan alltid fixa till det sen.</li>
+      <li><b>Använd startmeningarna.</b> Tryck på ”Använd startmeningen” så står början redan där.</li>
+      <li><b>Fem minuter.</b> Sätt en timer och skriv utan att stanna. Det spelar ingen roll om det blir rätt.</li>
+    </ul>
+    <div class="row"><button class="btn" id="timerBtn">Starta fem minuters skrivning</button><span id="timerOut" class="count"></span></div>
+  </section>
+
+  <section class="task" data-task="w-vatten">
+    <header><h3>Provfråga 1: Vattenuppgiften</h3></header>
+    <span class="kind">Skriv</span>
+    <div data-widget="write" data-set="vatten" data-task="w-vatten"></div>
+  </section>
+
+  <section class="task" data-task="w-exam">
+    <header><h3>Provfråga 2: Examinationsuppgiften</h3></header>
+    <span class="kind">Skriv</span>
+    <div data-widget="write" data-set="exam" data-task="w-exam"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="skriv">Jag är klar med Skrivverkstaden</button></div>
+</section>
+
+<!-- ======================= BEGREPP ======================= -->
+<section class="panel" id="p-begr" data-color="begr" data-title="Begrepp" hidden>
+  <div class="intro">
+    <h2>Begrepp</h2>
+    <p>Lärarens två begreppslistor, plus några viktiga ord från föreläsningarna. Begrepp från lärarens listor är märkta.</p>
+  </div>
+
+  <section class="task" data-task="b-lista">
+    <header><h3>Läs och lyssna på begreppen</h3></header>
+    <span class="kind">Läs eller lyssna</span>
+    <div id="termList"></div>
+  </section>
+
+  <section class="task" data-task="b-mem">
+    <header><h3>Öva: Memory med begreppen</h3></header>
+    <span class="kind">Memory</span>
+    <p>Samma spel som ni spelar i klassen. Hitta begreppet och dess förklaring.</p>
+    <div data-widget="memory" data-set="terms" data-task="b-mem"></div>
+  </section>
+
+  <section class="task" data-task="b-gissa">
+    <header><h3>Öva: Gissa begreppet</h3></header>
+    <span class="kind">Quiz</span>
+    <div data-widget="guess" data-task="b-gissa"></div>
+  </section>
+
+  <section class="task" data-task="b-fyr">
+    <header><h3>Fyrfältare: fyra begrepp med egna ord</h3></header>
+    <span class="kind">Skriv</span>
+    <p>Välj fyra begrepp. För varje begrepp fyller du i fyra rutor. Det är ett av lärarens förslag på hur man tränar begrepp.</p>
+    <div data-widget="fyr" data-task="b-fyr"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="begr">Jag är klar med Begrepp</button></div>
+</section>
+
+<!-- ======================= PROVTRÄNING ======================= -->
+<section class="panel" id="p-prov" data-color="prov" data-title="Provträning" hidden>
+  <div class="intro">
+    <h2>Provträning</h2>
+    <p>Instuderingsfrågor från alla pass, lärarens utvecklingsfrågor och ett övningsprov.</p>
+  </div>
+
+  <section class="task" data-task="p-kart">
+    <header><h3>Instuderingsfrågor: Kartor och GIS</h3></header>
+    <p>Svara högt först. Tryck sedan på frågan för att se svaret.</p>
+    <div data-widget="qa" data-set="q_kart"></div>
+  </section>
+
+  <section class="task" data-task="p-hall">
+    <header><h3>Instuderingsfrågor: Vatten och hållbar utveckling</h3></header>
+    <div data-widget="qa" data-set="q_hall"></div>
+  </section>
+
+  <section class="task" data-task="p-glob">
+    <header><h3>Instuderingsfrågor: Global marknad och mobilens verkliga pris</h3></header>
+    <div data-widget="qa" data-set="q_glob"></div>
+  </section>
+
+  <section class="task" data-task="p-utv">
+    <header><h3>Lärarens utvecklingsfrågor</h3></header>
+    <p>Sådana här frågor kan komma på provet. Försök svara själv, gärna högt eller i rutan. Titta sedan på exempelsvaret.</p>
+    <div data-widget="dev" data-task="p-utv"></div>
+  </section>
+
+  <section class="task" data-task="p-ovn">
+    <header><h3>Övningsprov – blandade frågor</h3></header>
+    <span class="kind">Quiz</span>
+    <p>22 frågor från alla områden. Du får procent i slutet.</p>
+    <div data-widget="mcq" data-set="ovningsprov" data-task="p-ovn"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="prov">Jag är klar med Provträning</button></div>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+
+const PLAN=[["g01", "Vad är en karta? Kartans historia", "kart", "k-las1", [], "s. 25–30", ["Vad är en karta, och varför visar den aldrig allt?", "Var är de äldsta kartorna ifrån?", "Vad gör Lantmäteriet?"]], ["g02", "Att rita kartor och kartprojektioner", "kart", "k-las2", ["k-merc"], "s. 31–36", ["Vilka metoder används idag för att rita kartor?", "Varför blir det fel när den runda jorden ritas på papper?", "Vad är bra och dåligt med Mercators karta?"]], ["g03", "Övningspass: kartprojektioner", "kart", "k-las2", ["k-proj"], "", []], ["g04", "Karttyper, skala och symboler", "kart", "k-las3", ["k-typ"], "s. 37–42", ["Vad betyder skalan 1:10 000?", "Vad är skillnaden mellan en storskalig och en småskalig karta?", "Vilka olika sorters kartor finns det?"]], ["g05", "Övningspass: räkna med skala", "kart", "k-las3", ["k-skala"], "", []], ["g06", "Väderstreck, kompass, gradnät och tidszoner", "kart", "k-las4", ["k-komp"], "s. 43–48", ["Vart pekar kompassnålen?", "Vad är skillnaden mellan latitud och longitud?", "Varför är det en timme skillnad mellan Sverige och Storbritannien?"]], ["g07", "Övningspass: gradnät och koordinater", "kart", "k-las4", ["k-glob", "k-koord"], "", []], ["g08", "Atlasuppdraget med er egen atlas", "kart", "k-las4", ["k-atlas"], "", []], ["g09", "GIS, GPS och fjärranalys", "kart", "k-las5", ["k-gis"], "s. 49–54", ["Vad är GIS, och vad betyder det att information ligger i lager?", "Hur vet GPS:en var du är?", "Vad kan man se med fjärranalys?"]], ["g10", "Geografiska begrepp: skala, plats och rum", "kart", "k-las6", [], "s. 13–17", ["Vad är skillnaden mellan lokalt, regionalt, nationellt och globalt?", "Vad menar en geograf med en plats?", "Vad är ett geografiskt rum?"]], ["g11", "Geografiska begrepp: gränser och landskap", "kart", "k-las6", ["k-grans"], "s. 18–22", ["Vad är skillnaden mellan en naturlig och en artificiell gräns?", "Vad är en lokaliseringsfaktor?", "Vad är skillnaden mellan kulturlandskap och naturlandskap?"]], ["g12", "Vad är en naturresurs?", "vatten", "v-las1", ["v-100"], "s. 221–224", ["Vad är en naturresurs?", "Ge exempel på naturresurser.", "Varför är naturresurserna ojämnt fördelade?"]], ["g13", "Vattnet som naturresurs och vattnets kretslopp", "vatten", "v-las0", ["v-kret"], "kap. 7, s. 225–240 (slå upp ”vatten” i registret och läs bara den delen)", ["Hur mycket av jordens vatten är sötvatten?", "Var finns sötvattnet?", "Hur går vattnets kretslopp till?"]], ["g14", "Rent vatten, sanitet och hygien", "vatten", "v-las2", [], "", []], ["g15", "Hoten mot vattnet", "vatten", "v-las3", ["v-overg", "v-par"], "", []], ["g16", "Naturresurser och intressekonflikter, del 1", "vatten", "v-las4", ["v-konf"], "s. 253–256", ["Vad är en intressekonflikt?", "Varför blir det konflikter om vatten?", "Vilket exempel tar boken upp?"]], ["g17", "Naturresurser och intressekonflikter, del 2", "vatten", "v-las4", ["v-sort"], "s. 257–260", ["Vilka grupper vill använda samma resurs?", "Vad blir konsekvenserna?", "Vilka lösningar finns?"]], ["g18", "Planeten jorden: hur vi påverkar naturen", "hall", "h-las2", ["h-fot"], "s. 263–268", ["Hur påverkar människan jorden?", "Vad menas med att vi lever över våra tillgångar?", "Vad är ett ekologiskt fotavtryck?"]], ["g19", "Vår gemensamma framtid: hållbar utveckling", "hall", "h-las1", ["h-sort"], "s. 269–274", ["Vad är hållbar utveckling enligt Brundtlandrapporten?", "Vilka är de tre perspektiven?", "Vad är de fyra hållbarhetsprinciperna?"]], ["g20", "Handel: frihandel och tullar", "glob", "g-las1", ["g-par"], "s. 195–200", ["Varför handlar länder med varandra?", "Vad är en tull och vad är frihandel?", "Vad gör WTO?"]], ["g21", "Globalisering", "glob", "g-las1", ["g-for"], "s. 213–218", ["Vad betyder globalisering?", "Varför flyttar företag sin produktion till andra länder?", "Vilka för- och nackdelar har globaliseringen?"]], ["g22", "Mobilens verkliga pris och kobolt", "glob", "g-las2", ["g-resa", "g-var"], "", []], ["g23", "De globala målen", "mal", "m-las1", ["m-mem"], "s. 269–274 (delen om FN:s globala mål)", ["När och av vem antogs de globala målen?", "Vilka är målens tre stora syften?", "Vad visar ”tårtan”?"]], ["g24", "Övningspass: globala målen", "mal", "m-las1", ["m-vilket", "m-tarta"], "", []], ["g25", "Begreppen: lyssna och memory", "begr", "b-lista", ["b-mem"], "", []], ["g26", "Begreppen: gissa och fyrfältare", "begr", "b-lista", ["b-gissa", "b-fyr"], "", []], ["g27", "Skrivverkstad: vattenuppgiften steg 1–4", "skriv", "w-hur", ["w-vatten"], "", []], ["g28", "Skrivverkstad: vattenuppgiften steg 5–8", "skriv", "w-hur", ["w-vatten"], "", []], ["g29", "Skrivverkstad: examinationsuppgiften steg 1–3", "skriv", "w-hur", ["w-exam"], "", []], ["g30", "Skrivverkstad: examinationsuppgiften steg 4–7", "skriv", "w-hur", ["w-exam"], "", []], ["g31", "Instuderingsfrågor: kartor och GIS", "prov", "p-kart", ["p-kart"], "", []], ["g32", "Instuderingsfrågor: vatten, hållbarhet och global marknad", "prov", "p-hall", ["p-hall", "p-glob"], "", []], ["g33", "Lärarens utvecklingsfrågor", "prov", "p-utv", ["p-utv"], "", []], ["g34", "Övningsprovet", "prov", "p-ovn", ["p-ovn"], "", []]];
+const CHECK=[
+ ['c1','Vad GIS är och hur man kan använda sig av det','kart'],
+ ['c2','Vad kartprojektioner är och exempel på olika kartprojektioner','kart'],
+ ['c3','Kunna förklara varför kartor ”alltid ljuger”','kart'],
+ ['c4','Hur vi människor påverkar vår natur','hall'],
+ ['c5','Tillgången till vatten i världen och varför den är livsviktig','vatten'],
+ ['c6','Vad de globala målen är och hur vi arbetar för att uppnå dem','mal'],
+ ['c7','Vad ett ekologiskt fotavtryck är och hur vi människor påverkar vår natur','hall']
+];
+
+const MATCH={
+ projektioner:[
+  ['Mercator','Vinkelriktig. Bra för navigation, men Grönland blir alldeles för stort.'],
+  ['Mollweide','Visar ytorna mer korrekt, så man kan jämföra länders storlek.'],
+  ['Robinson','En kompromiss. Inget är helt rätt, men kartan ser minst förvrängd ut.'],
+  ['Gauss-Krüger','Används av Lantmäteriet för kartor över mindre områden i Sverige.'],
+  ['Azimutal','Visar jorden från en punkt, till exempel från Nordpolen.'],
+  ['Ytriktig','Ytorna har rätt storlek överallt på kartan.'],
+  ['Vinkelriktig','Riktningarna stämmer, så man kan navigera efter kartan.'],
+  ['Längdriktig','Avstånden stämmer, så man kan mäta sträckor.']
+ ],
+ vattenproblem:[
+  ['Övergödning','För mycket näringsämnen gör att alger växer, och sedan tar syret slut.'],
+  ['Överfiske','Vi fiskar mer än fiskarna hinner föröka sig.'],
+  ['Mikroplast','Pyttesmå plastbitar som djur och människor får i sig.'],
+  ['Försurning','Sura ämnen kommer ner i sjöar med regn och snö.'],
+  ['Tungmetaller','Gifter som gör fisken oätlig och samlas i näringskedjan.'],
+  ['Oljeutsläpp','Olja från fartyg som skadar livet i havet.'],
+  ['Konstbevattning','Vatten leds från floder och sjöar till åkrar.'],
+  ['Virtuellt vatten','Allt vatten som går åt för att tillverka en vara.'],
+  ['Sanitet','Säkra toaletter och att avlopp och avfall tas om hand.']
+ ],
+ konflikter:[
+  ['Nilen','Etiopien har byggt en damm som kan minska vattnet till Egypten.'],
+  ['Rio Grande','Floden mellan USA och Mexiko, där Mexiko drabbas mest av vattenbrist.'],
+  ['Indien','Städernas rikare medelklass och böndernas odlingar behöver samma vatten.'],
+  ['Aralsjön','Nästan uttorkad eftersom vattnet gick till bomullsfält.'],
+  ['Israel','Avsaltar havsvatten och återanvänder avloppsvatten.'],
+  ['Östersjön','Torsken har nästan försvunnit på grund av överfiske.']
+ ],
+ handel:[
+  ['Export','Ett land säljer varor till andra länder.'],
+  ['Import','Ett land köper varor från andra länder.'],
+  ['Råvara','Något från naturen som kan förädlas, till exempel bomull eller kobolt.'],
+  ['Tjänst','Något man gör åt någon, till exempel en klippning.'],
+  ['Tull','En avgift på importerade varor som gör dem dyrare.'],
+  ['Frihandel','Handel mellan länder utan tullar.'],
+  ['Multinationellt företag','Ett företag med verksamhet i flera länder.'],
+  ['Specialisering','Ett land blir riktigt bra på en sak och säljer den till andra.'],
+  ['Markrofferi','Mark tas från familjer som bott och odlat där länge.'],
+  ['WTO','Världshandelsorganisationen, som arbetar för rättvisare handel.']
+ ]
+};
+
+const SORT={
+ karttyper:{buckets:['Topografisk','Politisk','Tematisk'],items:[
+  ['Visar höjdkurvor',0],['Fjällkartan',0],['Vägar, skog och hus',0],['Sjökort',0],
+  ['Gränser mellan länder',1],['Världsdelar och länder i olika färger',1],['Regioner och län',1],
+  ['Befolkningstäthet',2],['Väderkartan på tv',2],['Religion i världen',2],['Klimattyper',2],['Plast i haven',2]]},
+ grans:{buckets:['Naturlig gräns','Artificiell gräns','Absolut läge','Relativt läge'],items:[
+  ['En flod',0],['En bergskedja',0],['Ett hav',0],
+  ['En rak linje dragen på kartan',1],['En kommungräns',1],['Zongränsen i kollektivtrafiken',1],
+  ['59° N, 18° Ö',2],['Koordinater från GPS',2],
+  ['Två timmar med tåg från Göteborg',3],['Nära en stor hamn',3],['Det kan ändras när det byggs en ny väg',3]]},
+ okA:{buckets:['Orsak','Konsekvens','Åtgärd'],items:[
+  ['Gödsel och avlopp rinner ut i havet',0],['Vi fiskar mer än fisken hinner föröka sig',0],['Skräp och plast slängs i naturen',0],['Fabriker släpper ut gifter i floder',0],['Vatten leds till stora bomullsfält',0],
+  ['Fiskar dör av syrebrist',1],['Barn blir sjuka av smutsigt vatten',1],['Fiskare förlorar sina jobb',1],['Djur äter plast och kvävs',1],['Aralsjön torkar ut',1],
+  ['Bygga reningsverk',2],['Fiskekvoter och fiskeförbud',2],['Minska engångsplast och panta',2],['Borra brunnar och bygga toaletter',2],['Strängare miljölagar',2]]},
+ tre:{buckets:['Ekologisk','Social','Ekonomisk'],items:[
+  ['Rent vatten i sjöarna',0],['Djur och växter dör inte ut',0],['Mindre utsläpp av koldioxid',0],['Ingen överfiskning',0],
+  ['Alla barn kan gå i skolan',1],['Jämställdhet mellan kvinnor och män',1],['Människor lever i trygghet utan krig',1],['Alla har rätt till vård',1],
+  ['Arbetare får en lön de kan leva på',2],['Fattigdomen minskar',2],['Priset täcker alla kostnader',2],['Resurser används klokt på lång sikt',2]]},
+ fotavtryck:{buckets:['Större fotavtryck','Mindre fotavtryck'],items:[
+  ['Flyga till Thailand på semester',0],['Köpa en ny mobil varje år',0],['Äta kött varje dag',0],['Köpa nya kläder ofta',0],['Slänga mat',0],['Åka bil korta sträckor',0],
+  ['Cykla till skolan',1],['Köpa second hand',1],['Laga trasiga kläder',1],['Äta lokalt odlad mat',1],['Åka tåg',1],['Sortera och återvinna',1]]},
+ fornack:{buckets:['Fördel','Nackdel'],items:[
+  ['Många miljoner har fått det bättre',0],['Barnadödligheten har minskat',0],['Vi kan köpa varor från hela världen',0],['Länder kan samarbeta och dela kunskap',0],['Nya jobb i låginkomstländer',0],
+  ['Arbetare i fattiga länder utnyttjas',1],['Långa transporter skadar miljön',1],['Gynnar mest de som redan är rika',1],['Barnarbete i gruvor och fabriker',1],['Länder blir beroende av varandra',1]]},
+ laghog:{buckets:['Ofta i låginkomstland','Ofta i höginkomstland'],items:[
+  ['Gruvan där råvaran bryts',0],['Fabriken med billig arbetskraft',0],['Bomullsodlingen',0],['Elavfall som plockas isär för hand',0],
+  ['Huvudkontoret',1],['Forskning och design',1],['Butikerna där mobilen säljs dyrt',1],['Reklam och marknadsföring',1]]},
+ tarta:{buckets:['Ekologisk (botten)','Social (mitten)','Ekonomisk (toppen)'],items:[
+  ['6 Rent vatten och sanitet',0],['13 Bekämpa klimatförändringarna',0],['14 Hav och marina resurser',0],['15 Ekosystem och biologisk mångfald',0],
+  ['1 Ingen fattigdom',1],['2 Ingen hunger',1],['3 Hälsa och välbefinnande',1],['4 God utbildning',1],['5 Jämställdhet',1],
+  ['8 Anständiga arbetsvillkor',2],['9 Hållbar industri',2],['10 Minskad ojämlikhet',2],['12 Hållbar konsumtion och produktion',2]]}
+};
+
+const ORDER={
+ kretslopp:['Solen värmer upp hav, sjöar och mark','Vattnet avdunstar och blir vattenånga','Vattenångan stiger och kyls av högt upp','Ångan kondenseras och bildar moln','Vattnet faller som regn eller snö','Vattnet rinner till sjöar och hav eller blir grundvatten'],
+ overgodning:['Gödsel och avlopp med näringsämnen rinner ut i sjöar och hav','Algerna får massor av näring','Algerna växer explosivt – algblomning','Algerna dör och sjunker till botten','När algerna bryts ner går syret åt','Fiskar och djur dör av syrebrist'],
+ mobilresa:['Metaller som kobolt bryts i en gruva i Kongo','Metallerna förädlas till delar, ofta i Kina','Mobilen sätts ihop i en fabrik','Mobilen exporteras med fartyg eller flyg','Sverige importerar mobilen och den säljs i en butik','Du använder mobilen i några år','Mobilen blir elavfall – återvinns eller skeppas iväg']
+};
+
+const MCQ={
+ skala:[
+  ['Skalan är 1:10 000. Hur långt är 1 cm på kartan i verkligheten?',['10 meter','100 meter','1 kilometer','10 kilometer'],1,'1 cm × 10 000 = 10 000 cm = 100 meter.'],
+  ['Skalan är 1:50 000. Du mäter 4 cm. Hur långt är det i verkligheten?',['200 meter','500 meter','2 kilometer','20 kilometer'],2,'4 × 50 000 = 200 000 cm = 2 000 m = 2 km.'],
+  ['Skalan är 1:100 000. Hur långt är 1 cm i verkligheten?',['100 meter','1 kilometer','10 kilometer','100 kilometer'],1,'100 000 cm = 1 000 m = 1 km.'],
+  ['Skalan är 1:25 000. Du mäter 6 cm. Hur långt är det?',['150 meter','1,5 kilometer','15 kilometer','2,5 kilometer'],1,'6 × 25 000 = 150 000 cm = 1 500 m = 1,5 km.'],
+  ['Vilken karta är mest storskalig och visar flest detaljer?',['1:1 000 000','1:250 000','1:50 000','1:10 000'],3,'Ju mindre tal efter kolon, desto mer förstorad och detaljerad karta. 1:10 000 är storskalig.'],
+  ['Du ska visa hela Sverige på en karta. Vilken skala passar bäst?',['1:5 000','1:10 000','1:50 000','1:2 000 000'],3,'Ett stort område kräver en småskalig karta med ett stort tal efter kolon.']
+ ],
+ koord:[
+  ['Vilken stad ligger på ungefär 59° N och 18° Ö?',['Stockholm','London','Kairo','Sydney'],0,'Stockholm ligger drygt 59 grader norr om ekvatorn och drygt 18 grader öster om nollmeridianen.'],
+  ['Vilken stad ligger på ungefär 51° N och 0°?',['Paris','London','Oslo','Madrid'],1,'Nollmeridianen går genom Greenwich i London.'],
+  ['Vilken stad ligger på ungefär 34° S och 151° Ö?',['Kapstaden','Buenos Aires','Sydney','Tokyo'],2,'S betyder söder om ekvatorn. Sydney ligger på södra halvklotet, långt österut.'],
+  ['Vilken stad ligger på ungefär 41° N och 74° V?',['New York','Rio de Janeiro','Mexico City','Moskva'],0,'V betyder väster om nollmeridianen. New York ligger i Nordamerika.'],
+  ['Vilket tal skriver man först i en koordinat?',['Longituden','Latituden','Det spelar ingen roll','Höjden över havet'],1,'Först latitud (nord–syd), sedan longitud (öst–väst).'],
+  ['Hur många grader motsvarar en timme?',['1 grad','10 grader','15 grader','24 grader'],2,'360 grader delat på 24 timmar = 15 grader per timme.'],
+  ['Klockan är 12 i Sverige. Vad är den i Storbritannien?',['11','12','13','14'],0,'Storbritannien ligger 15 grader väster om oss, alltså en timme tidigare.'],
+  ['Klockan är 12 i Sverige. Vad är den i Finland?',['11','12','13','14'],2,'Finland ligger längre österut. Där har solen gått upp tidigare, så klockan är en timme mer.'],
+  ['Klockan är 8 i Sverige. Vad är den i östra Australien, enligt NE:s karta?',['Klockan 12','Klockan 17','Klockan 22','Klockan 3'],1,'Östra Australien ligger 9 timmar före Sverige: 8 + 9 = 17.'],
+  ['Var börjar det nya dygnet?',['Vid nollmeridianen','Vid ekvatorn','Vid datumgränsen','Vid Nordpolen'],2,'Datumgränsen ligger på 180 grader, mitt emot nollmeridianen.']
+ ],
+ vilketmal:[
+  ['Barn arbetar i koboltgruvor utan skyddsutrustning.',['Mål 8 Anständiga arbetsvillkor','Mål 14 Hav och marina resurser','Mål 7 Hållbar energi','Mål 11 Hållbara städer'],0,'Mål 8 handlar om schyssta jobb och att avskaffa barnarbete.'],
+  ['Plast och oljeutsläpp skadar livet i havet.',['Mål 3 Hälsa','Mål 14 Hav och marina resurser','Mål 9 Industri','Mål 16 Fred'],1,'Mål 14 handlar om att skydda haven.'],
+  ['En fjärdedel av världens befolkning saknar säkert dricksvatten.',['Mål 2 Ingen hunger','Mål 6 Rent vatten och sanitet','Mål 12 Konsumtion','Mål 17 Partnerskap'],1,'Mål 6 handlar om rent vatten och toaletter för alla.'],
+  ['Flickor stannar hemma från skolan när det saknas toaletter.',['Mål 4 God utbildning','Mål 13 Klimatet','Mål 10 Minskad ojämlikhet','Mål 9 Industri'],0,'Mål 4 handlar om skola för alla. Det hänger också ihop med mål 5 Jämställdhet och mål 6 Rent vatten.'],
+  ['Vi köper nya kläder hela tiden och slänger de gamla.',['Mål 1 Ingen fattigdom','Mål 12 Hållbar konsumtion och produktion','Mål 15 Ekosystem','Mål 16 Fred'],1,'Mål 12 handlar om att producera och konsumera på ett hållbart sätt.'],
+  ['Utsläpp av koldioxid ger en förstärkt växthuseffekt.',['Mål 13 Bekämpa klimatförändringarna','Mål 5 Jämställdhet','Mål 4 Utbildning','Mål 8 Arbete'],0,'Mål 13 handlar om klimatet.'],
+  ['Regnskog huggs ner och djurarter försvinner.',['Mål 11 Städer','Mål 15 Ekosystem och biologisk mångfald','Mål 2 Hunger','Mål 7 Energi'],1,'Mål 15 handlar om livet på land.'],
+  ['Länder, företag och organisationer samarbetar för att nå målen.',['Mål 17 Genomförande och globalt partnerskap','Mål 1 Ingen fattigdom','Mål 3 Hälsa','Mål 14 Hav'],0,'Mål 17 handlar om att samarbeta över gränserna.']
+ ],
+ ovningsprov:[
+  ['Vad är en kartprojektion?',['En karta som visar väder','Ett sätt att visa jordklotets runda yta på ett platt papper','Ett program i mobilen','En sorts kompass'],1,'Kartprojektionen är hur man gör om den runda jorden till en platt karta.'],
+  ['Varför ”ljuger” alla platta kartor lite?',['Kartritarna slarvar','Jorden ändrar form','Det går inte att platta till ett klot utan att något blir fel','Satelliterna mäter fel'],2,'En platt karta kan ha högst två av egenskaperna ytriktig, vinkelriktig och längdriktig.'],
+  ['Hur många gånger större är Afrika än Grönland?',['Ungefär lika stora','2 gånger','14 gånger','100 gånger'],2,'På Mercatorkartan ser de ungefär lika stora ut, men Afrika är 14 gånger större.'],
+  ['Vad betyder GIS?',['Global internetsökning','Geografiskt informationssystem','Gradnät i satellit','Geografisk isolering'],1,'GIS är information kopplad till platser, i lager på en karta.'],
+  ['Hur många satelliter behöver en GPS-mottagare minst?',['En','Två','Fyra','Tio'],2,'Minst fyra satelliter behövs för att räkna ut positionen.'],
+  ['Vad är fjärranalys?',['Att analysera saker på långt avstånd, till exempel med satellitbilder','Att mäta avstånd med linjal','Att ringa till en annan stad','En sorts karttecken'],0,'Man samlar in information utan att vara på platsen.'],
+  ['Vad kallas linjerna som går från Nordpolen till Sydpolen?',['Breddgrader','Längdgrader','Ekvatorer','Höjdkurvor'],1,'Längdgrader kallas också longitud eller meridianer.'],
+  ['Var är jordens äldsta kartor ifrån?',['Kina','Mesopotamien','Sverige','Grekland'],1,'De ritades på lerskärvor för över 4 000 år sedan.'],
+  ['Vilken myndighet kartlägger Sverige?',['Lantmäteriet','SMHI','Skatteverket','Polisen'],0,'Lantmäteriet bildades 1628.'],
+  ['Ungefär hur stor del av jordens vatten är sötvatten?',['3 procent','25 procent','50 procent','70 procent'],0,'Haven täcker 70 procent av jordens yta, men bara 3 procent av allt vatten är sött.'],
+  ['Vad driver vattnets kretslopp?',['Månen','Solen','Vinden','Jordens rotation'],1,'Solen värmer upp vattnet så att det avdunstar.'],
+  ['Var renas avloppsvattnet?',['I ett vattenverk','I ett reningsverk','I en brunn','I en glaciär'],1,'I reningsverket renas smutsigt vatten innan det släpps ut i naturen. I vattenverket görs dricksvatten.'],
+  ['Var finns det mesta av sötvattnet?',['I sjöar','I floder','I glaciärer och isar','I moln'],2,'Det mesta är fruset.'],
+  ['Hur stor del av världens befolkning saknar säkert dricksvatten enligt UNICEF?',['Var hundrade','Var tionde','Var fjärde','Hälften'],2,'Var fjärde människa saknar säker tillgång till rent vatten.'],
+  ['Varför har Aralsjön nästan försvunnit?',['Vattnet användes till bomullsfält','En jordbävning','Den frös','Den grävdes ut'],0,'Konstbevattning för klädindustrins bomull torkade ut sjön.'],
+  ['Vad betyder hållbar utveckling?',['Att tjäna så mycket pengar som möjligt','Att tillfredsställa dagens behov utan att förstöra för kommande generationer','Att bygga hus som håller länge','Att bara åka elbil'],1,'Definitionen kommer från Brundtlandrapporten 1987.'],
+  ['Hur många jordklot skulle behövas om alla levde som vi i Sverige?',['1','1,6','4','10'],2,'För hela världen behövs 1,6 jordklot, men för svenskars levnadssätt 4.'],
+  ['Vad betyder globalisering?',['Att länder stänger sina gränser','Att länder, företag och människor blir alltmer beroende av varandra','Att jorden blir varmare','Att alla talar samma språk'],1,'Internet och snabba transporter knyter ihop världen.'],
+  ['Vad är frihandel?',['Handel utan tullar','Gratis varor','Handel bara inom ett land','Att byta varor mot varor'],0,'Inom EU är det frihandel.'],
+  ['Varför har många multinationella företag sina fabriker i låginkomstländer?',['Det är varmare där','Arbetskraften är billigare','Det finns fler kunder där','Det är en lag'],1,'Låga löner gör produktionen billigare.'],
+  ['Vilket land står för mer än hälften av all kobolt i världen?',['Kina','Sverige','Kongo-Kinshasa','Brasilien'],2,'Kobolten behövs till batterier i mobiler och elbilar.'],
+  ['När ska de 17 globala målen vara uppnådda?',['2015','2025','2030','2050'],2,'Därför kallas planen Agenda 2030.']
+ ]
+};
+
+const QA={
+ atlas:[
+  ['Kiruna',['Ungefär 68° N och 20° Ö. Sveriges nordligaste stad.']],
+  ['Mumbai',['Ungefär 19° N och 73° Ö. En av Indiens största städer, vid kusten.']],
+  ['Lima',['Ungefär 12° S och 77° V. Huvudstad i Peru, vid Stilla havet.']],
+  ['Kapstaden',['Ungefär 34° S och 18° Ö. I Sydafrika, nästan samma längdgrad som Stockholm!']],
+  ['Reykjavik',['Ungefär 64° N och 22° V. Huvudstad på Island.']],
+  ['Din egen ort',['Leta upp orten där du bor i registret och skriv dess koordinater. Det är ortens absoluta läge.']]
+ ],
+ q_kart:[
+  ['Ge exempel på olika metoder som används när man ska rita en karta.',['Papper och penna, till exempel en mental karta. Flygfotografering, laserskanning från flygplan med GPS, satellitbilder och fältarbete där kartritaren kontrollerar i terrängen.']],
+  ['Vad är en kartprojektion?',['Ett sätt att visa jordklotets runda yta på ett platt papper. Det blir alltid lite fel, därför finns olika projektioner för olika syften.']],
+  ['Beskriv vad GIS är.',['Geografiskt informationssystem. Information som är kopplad till platser lagras i datorer och visas i lager på en karta, så att man kan jämföra och analysera.']],
+  ['Ge exempel på när GIS kan användas.',['Hitta kortaste vägen, bestämma var en ny skola eller väg ska byggas, hitta bästa läget för en butik, se vad som händer om havet stiger, hitta närmaste skyddsrum, Google Maps och Pokémon Go.']],
+  ['Vad används GPS till?',['Till att bestämma var man är, på land, till sjöss och i luften, och hur fort man åker. Satelliter skickar signaler till en mottagare, till exempel mobilen.']],
+  ['Vad är fjärranalys?',['Att samla in information om en plats utan att vara där, med kameror på satelliter eller flygplan. Till exempel bilder som visar hur Aralsjön krympt.']],
+  ['Var kommer de äldsta kartorna ifrån?',['Från Mesopotamien, 2300–2100 före Kristus. De ritades på lerskärvor.']],
+  ['Vad är topografi?',['En beskrivning av hur terrängen ser ut, till exempel berg, skog, vatten, vägar och hus.']],
+  ['Vad är Lantmäteriet och vad ansvarar de för?',['En statlig myndighet som bildades 1628. Den kartlägger Sverige och registrerar gränser och vem som äger mark och byggnader.']],
+  ['Varför kan vi inte visa verkligheten korrekt på ett papper?',['Jorden är rund och papperet platt. När man plattar till klotet blir något alltid fel: ytor, vinklar eller avstånd.']],
+  ['Vad är skillnaden mellan en vinkelriktig, ytriktig och längdriktig karta? När är de användbara?',['Vinkelriktig: riktningarna stämmer, bra för att navigera, till exempel Mercator. Ytriktig: storlekarna stämmer, bra för att jämföra länder. Längdriktig: avstånden stämmer, bra för att mäta sträckor. En platt karta kan ha högst två av egenskaperna.']],
+  ['Hur delas jorden in i ett gradnät, och vad använder vi det till?',['Breddgrader går runt jorden parallellt med ekvatorn, från 0 till 90 grader norr eller söder. Längdgrader går mellan polerna, från 0 till 180 grader öster eller väster om nollmeridianen. Med gradnätet kan vi ange en plats exakt med koordinater och räkna ut tidszoner.']],
+  ['Hur använder vi skala, och varför?',['Skalan visar hur mycket kartan är förminskad. 1:50 000 betyder att 1 cm på kartan är 50 000 cm, alltså 500 meter, i verkligheten. Vi behöver skala för att kunna räkna ut verkliga avstånd.']],
+  ['Vad är skillnaden mellan en topografisk, politisk och tematisk karta?',['Topografisk: hur det ser ut, med höjder, vägar och skog. Politisk: gränser mellan länder och regioner. Tematisk: ett tema, till exempel befolkning, klimat eller religion. På Globalis kan du hitta tematiska kartor över till exempel befolkning eller vatten.']],
+  ['Vad är skillnaden mellan en naturlig och en artificiell gräns?',['En naturlig gräns finns i naturen, till exempel en flod eller en bergskedja. En artificiell gräns är bestämd av människor, till exempel en rak linje på kartan.']],
+  ['Vad är skillnaden mellan relativt och absolut läge? Ge exempel.',['Absolut läge är koordinaterna, till exempel Stockholm 59° N 18° Ö, och ändras aldrig. Relativt läge är läget i förhållande till något annat, till exempel ”fyra timmar med tåg från Malmö”. Det kan ändras när det byggs snabbare tåg.']],
+  ['Vilka stater får nytt dygn först, och vilka sist?',['Först: Kiribati, Samoa, Tonga och Nya Zeeland, som ligger strax väster om datumgränsen. Sist: Amerikanska Samoa och Niue, strax öster om datumgränsen.']],
+  ['Vad har jordens största städer gemensamt, och varför har de vuxit just där?',['De flesta ligger vid vatten: vid en kust, en flod eller en stor sjö. Vattnet ger transporter och handel, dricksvatten, fiske och bördig jord. Klimatet är ofta milt och marken platt. När staden vuxit lockar den fler människor med jobb.']]
+ ],
+ q_hall:[
+  ['Vad är hållbar utveckling?',['En utveckling som tillfredsställer dagens behov utan att äventyra kommande generationers möjligheter att tillfredsställa sina behov. Vi får inte använda mer än att det räcker till dem som kommer efter oss.']],
+  ['Vad är ekologisk hållbarhet?',['Att naturen och ekosystemen fungerar på lång sikt: ren luft, rent vatten, stabilt klimat och biologisk mångfald.']],
+  ['Vad är ekonomisk hållbarhet?',['Att fattigdom motverkas så att alla har råd med sina grundläggande behov, och att resurser används klokt på lång sikt utan att skada miljön eller människor.']],
+  ['Vad är social hållbarhet?',['Att alla människor kan leva i trygghet, med mat, skola, vård, demokrati, jämställdhet och mänskliga rättigheter.']],
+  ['Vad är de globala målen?',['FN:s 17 mål för hållbar utveckling, Agenda 2030, som antogs 2015 av 193 länder. De ska utrota extrem fattigdom, minska ojämlikheter och lösa klimatkrisen till år 2030.']],
+  ['Vad menas med att mänskligheten lever över sina tillgångar?',['Att vi använder mer resurser än jorden hinner återskapa. Enligt WWF skulle det behövas 1,6 jordklot.']],
+  ['Vad innebär det ekologiska fotavtrycket?',['Ett mått från WWF på hur mycket av jordens resurser vi använder. Om alla levde som svenskar skulle det behövas 4 jordklot.']],
+  ['Hur arbetar Sverige för en ekologiskt hållbar utveckling?',['Riksdagen har stiftat miljölagar i miljöbalken, och Sverige har skärpt lagarna och minskat sina utsläpp.']],
+  ['Beskriv vattnets kretslopp.',['Solen värmer upp hav, sjöar och mark så att vattnet avdunstar. Vattenångan stiger, kyls av och kondenseras till moln. Vattnet faller som regn eller snö och rinner till sjöar och hav, eller blir grundvatten.']],
+  ['Vad är skillnaden mellan ett vattenverk och ett reningsverk?',['I vattenverket renar man grundvatten eller sjövatten till dricksvatten. I reningsverket renar man avloppsvatten innan det släpps ut i naturen.']],
+  ['Vad är en naturresurs?',['Något i naturen som vi människor använder, till exempel vatten, skog, mark och mineraler.']],
+  ['Vad saknar många människor som är livsviktigt?',['Rent dricksvatten och sanitet, alltså säkra toaletter och avlopp.']],
+  ['Beskriv vad som menas med överfiske.',['Att vi fiskar mer än fiskarna hinner föröka sig. Fiskbestånd kan kollapsa och hela ekosystemet påverkas.']],
+  ['Varför finns det föroreningar i haven?',['Från industrier, avlopp, åkrar, fartyg och skräp. Det ger oljeutsläpp, tungmetaller, övergödning och plast.']],
+  ['Hur kan vatten orsaka konflikt?',['När flera länder eller grupper vill använda samma begränsade vatten, till exempel Egypten och Etiopien vid Nilen.']],
+  ['Vad gör Golfströmmen för oss?',['Den för varmt vatten till Norden och gör vårt klimat mildare. Utan den kunde det bli 5–10 grader kallare.']],
+  ['Varför ska vi spara vatten?',['Sötvattnet är begränsat, och enorma mängder går åt till att tillverka varor, till exempel 11 000 liter för ett par jeans.']],
+  ['Vad kan vi tänka på som konsumenter?',['Handla lokalt, äta mindre kött, välja Fairtrade, köpa second hand, laga kläder och återvinna.']]
+ ],
+ q_glob:[
+  ['Vad innebär globalisering?',['Att länder, företag och människor i världen blir alltmer beroende av varandra genom handel, internet och snabba transporter.']],
+  ['Vad finns det för fördelar med att samarbeta med andra länder?',['Vi får tillgång till varor och råvaror vi inte har själva, kan dela kunskap och sälja det vi är bra på. Frihandel gör varor billigare.']],
+  ['Vad kan vara baksidan av globaliseringen?',['Arbetare i fattiga länder utnyttjas, skillnaderna mellan rika och fattiga ökar, långa transporter skadar miljön och länder blir beroende av varandra.']],
+  ['Vad kan påverka var ett företag placeras?',['Arbetskraft, löner, arbetsvillkor, råvaror, kapital, utbildningsnivå och teknik.']],
+  ['Beskriv mobilens väg från råvara till färdig mobil.',['Råvaror som kobolt bryts i Kongo. De förädlas till delar i till exempel Kina. Mobilen monteras i Kina eller Indien och designas av företag i till exempel USA. Den exporteras och importeras till Sverige, där vi köper den. Till sist blir den elavfall.']],
+  ['Vilket är det allvarligaste problemet med produktionen av mobiler?',['Du väljer själv, men motivera! Till exempel barnarbetet i koboltgruvorna, eftersom barn skadas och inte får gå i skolan. Eller miljön, eftersom gruvorna förstör natur och vatten.']],
+  ['Är handeln med mobiler rättvis? Hur kan den bli mer rättvis?',['Många menar nej: de som arbetar i gruvor och fabriker får mycket lite betalt jämfört med vad mobilen kostar. Den kan bli rättvisare med bättre löner och kontroller, lagar mot barnarbete, rättvisemärkning, återvinning av metaller och att vi använder mobilerna längre.']]
+ ]
+};
+
+const GOALS=[
+ [1,'Ingen fattigdom','#E5243B'],[2,'Ingen hunger','#DDA63A'],[3,'Hälsa och välbefinnande','#4C9F38'],[4,'God utbildning för alla','#C5192D'],
+ [5,'Jämställdhet','#FF3A21'],[6,'Rent vatten och sanitet för alla','#26BDE2'],[7,'Hållbar energi för alla','#FCC30B'],[8,'Anständiga arbetsvillkor och ekonomisk tillväxt','#A21942'],
+ [9,'Hållbar industri, innovationer och infrastruktur','#FD6925'],[10,'Minskad ojämlikhet','#DD1367'],[11,'Hållbara städer och samhällen','#FD9D24'],[12,'Hållbar konsumtion och produktion','#BF8B2E'],
+ [13,'Bekämpa klimatförändringarna','#3F7E44'],[14,'Hav och marina resurser','#0A97D9'],[15,'Ekosystem och biologisk mångfald','#56C02B'],[16,'Fredliga och inkluderande samhällen','#00689D'],
+ [17,'Genomförande och globalt partnerskap','#19486A']
+];
+
+/* [begrepp, förklaring, lärarens lista?] */
+const TERMS=[
+ ['Ekvator','Den breddgrad där jordklotet är som tjockast. Den delar jorden i norra och södra halvklotet. Det är breddgrad 0.',1],
+ ['GPS','Global Positioning System. Används för navigation. En GPS-mottagare får information från satelliter och kan visa var på jorden vi är.',1],
+ ['Kartprojektion','Hur vi visar jordglobens runda yta på ett platt papper.',1],
+ ['Koordinatsystem','Används med gradnätet för att hitta en exakt punkt på jorden, med grader, minuter och sekunder.',1],
+ ['Latitud','Breddgrader i gradnätet, kallas också paralleller. Linjerna går runt jorden från öst till väst.',1],
+ ['Longitud','Längdgrader i gradnätet, kallas också meridianer. Linjerna går från Nordpolen till Sydpolen.',1],
+ ['Politisk karta','Visar gränser som är bestämda politiskt, till exempel mellan världsdelar, länder eller regioner.',1],
+ ['Tematisk karta','Visar ett visst tema, till exempel befolkningstäthet, väder eller religion.',1],
+ ['Topografisk karta','Visar terrängen i ett område, till exempel höjdskillnader, vägar eller skog.',1],
+ ['Skala','Visar hur mycket verkligheten har förminskats på kartan.',1],
+ ['Ekologisk hållbarhet','Jordens ekosystem ska fungera på lång sikt, så att det finns mat, energi, rent vatten och ett stabilt klimat.',1],
+ ['Ekonomisk hållbarhet','Fattigdom ska motverkas så att alla har råd med sina grundläggande behov. Resurser ska användas klokt på lång sikt.',1],
+ ['Social hållbarhet','Ett stabilt samhälle där människors grundläggande behov och rättigheter uppfylls.',1],
+ ['Fossila bränslen','Bränslen av kol, olja och gas som är rester av djur och växter som levde för mycket länge sedan.',1],
+ ['Förstärkt växthuseffekt','Den del av växthuseffekten som beror på människans utsläpp av växthusgaser, till exempel när vi bränner fossila bränslen.',1],
+ ['Hållbar utveckling','Att samhället fungerar så att tillgångarna räcker för människor även i framtiden.',1],
+ ['Globalisering','Länder, företag och människor i världen blir alltmer beroende av varandra.',1],
+ ['Råvara','Något från naturen som kan bearbetas så att det blir mer värdefullt.',1],
+ ['Överfiskning','När man fiskar mer än vad naturen hinner producera.',1],
+ ['Övergödning','När det finns mer näringsämnen än naturen kan ta hand om. Ett stort problem i vatten.',1],
+ ['Gradnät','Ett nät av breddgrader och längdgrader som används för att bestämma var en plats ligger.',0],
+ ['Nollmeridianen','Längdgrad 0, som går genom Greenwich i London.',0],
+ ['Teckenförklaring','Rutan på kartan som förklarar karttecknen. Kallas också legend.',0],
+ ['GIS','Geografiskt informationssystem. Information kopplad till platser, lagrad i datorer i lager på en karta.',0],
+ ['Fjärranalys','Att samla in information om en plats utan att vara där, till exempel med satellitbilder.',0],
+ ['Absolut läge','En plats exakta läge med koordinater. Ändras aldrig.',0],
+ ['Relativt läge','En plats läge i förhållande till något annat. Kan ändras.',0],
+ ['Naturresurs','Något i naturen som människor använder, till exempel vatten, skog eller mineraler.',0],
+ ['Ekologiskt fotavtryck','Ett mått från WWF på hur mycket av jordens resurser vi använder.',0],
+ ['Virtuellt vatten','Allt vatten som går åt för att tillverka en vara.',0],
+ ['Grundvatten','Sötvatten som finns under marken. Används ofta till dricksvatten.',0],
+ ['Vattnets kretslopp','Vattnet avdunstar, bildar moln, faller som regn och snö och rinner tillbaka till hav och sjöar. Solen driver det.',0],
+ ['Biologisk mångfald','Att det finns många olika arter av växter och djur.',0],
+ ['Export','Att sälja varor till andra länder.',0],
+ ['Import','Att köpa varor från andra länder.',0],
+ ['Frihandel','Handel mellan länder utan tullar.',0],
+ ['Multinationellt företag','Ett företag med verksamhet i flera länder.',0],
+ ['Intressekonflikt','När olika grupper vill använda samma resurs på olika sätt.',0],
+ ['Agenda 2030','FN:s plan med 17 globala mål för en hållbar värld till år 2030.',0]
+];
+
+/* ---------- Skrivverkstaden ---------- */
+const WRITE={
+ vatten:{
+  intro:'Läraren har sagt att gruppuppgiften om vatten kommer som en provfråga. Välj samma problem som din grupp hade.',
+  choices:{
+   sanitet:{name:'Dricksvatten och sanitet',facts:[
+     'Var fjärde människa saknar säker tillgång till rent dricksvatten (UNICEF).',
+     '3,4 miljarder saknar säkra toaletter. 354 miljoner måste gå på toaletten utomhus.',
+     'Smutsigt vatten sprider diarré och kolera. Barn drabbas hårdast.',
+     'Kvinnor och flickor hämtar ofta vattnet och missar skola och arbete.',
+     'Orsaker: fattigdom, krig, klimatförändringar, föroreningar och trasiga vattenledningar.',
+     'Åtgärder: brunnar och pumpar, reningsverk, toaletter, handtvätt med tvål, separata skoltoaletter för flickor.'],
+    model:'Mitt problem handlar om att många människor saknar rent dricksvatten och toaletter. Var fjärde människa i världen saknar säkert dricksvatten.\n\nEn orsak är fattigdom, eftersom fattiga länder inte har råd att bygga vattenledningar och reningsverk. En annan orsak är krig och klimatförändringar, som förstör brunnar och gör att det regnar mindre.\n\nEn konsekvens är att människor blir sjuka i diarré och kolera, och många barn dör. En annan konsekvens är att flickor ofta hämtar vatten långt bort och därför missar skolan.\n\nEn åtgärd är att borra brunnar och bygga toaletter, vilket UNICEF gör. En annan är att lära ut handtvätt med tvål.\n\nUr ett socialt perspektiv blir människor friskare och fler flickor kan gå i skolan. Ur ett ekonomiskt perspektiv kan fler arbeta i stället för att vara sjuka eller hämta vatten, vilket minskar fattigdomen. Ur ett ekologiskt perspektiv blir sjöar och floder renare när avfall och avlopp tas om hand. Det hör ihop med globala mål 6, rent vatten och sanitet för alla.'},
+   konst:{name:'Konstbevattning',facts:[
+     'Jordbruket använder mest sötvatten av allt.',
+     'Aralsjön var världens fjärde största sjö men har nästan torkat ut, eftersom vattnet gick till bomullsfält.',
+     'Runt Aralsjön försvann fisket och jobben, och salt och gifter i dammet gjorde människor sjuka.',
+     'När man vattnar för mycket kan jorden bli salt och grundvattnet sjunka.',
+     'Ett par jeans kräver ungefär 11 000 liter vatten, mycket på grund av bomullen.',
+     'Åtgärder: droppbevattning som ger vatten direkt till rötterna, odla växter som passar klimatet, köpa second hand.'],
+    model:'Mitt problem handlar om konstbevattning, alltså att man leder vatten från floder och sjöar till åkrar. Jordbruket använder mest sötvatten av allt.\n\nEn orsak är att det behövs mycket mat och bomull till en växande befolkning. En annan orsak är att man odlar törstiga växter som bomull i torra områden.\n\nEn konsekvens är att sjöar och floder torkar ut. Till exempel har Aralsjön nästan försvunnit, vilket gjorde att fiskarna förlorade jobben och att människor blev sjuka av salt damm.\n\nEn åtgärd är droppbevattning, som ger vatten direkt till rötterna så att mindre går till spillo. En annan är att vi köper färre nya kläder, eftersom ett par jeans kräver 11 000 liter vatten.\n\nUr ett socialt perspektiv får människor behålla sitt vatten och sin hälsa. Ur ett ekonomiskt perspektiv kan fisket och jordbruket fortsätta i många år. Ur ett ekologiskt perspektiv räddas sjöar, floder och djurliv. Det hör ihop med globala mål 6 och mål 12.'},
+   fiske:{name:'Överfiske',facts:[
+     'Överfiske är när vi fiskar mer än fiskarna hinner föröka sig.',
+     'Torsken i Östersjön har nästan försvunnit.',
+     'Hela ekosystemet påverkas när en art minskar. Andra arter kan öka eller minska.',
+     'Många människor i världen lever på fiske, både som mat och jobb.',
+     'Orsaker: stora moderna fiskebåtar, hög efterfrågan på fisk, olagligt fiske.',
+     'Åtgärder: fiskekvoter, fiskeförbud i vissa områden och tider, köpa miljömärkt fisk som MSC, äta andra sorters fisk.'],
+    model:'Mitt problem handlar om överfiske, alltså att vi fiskar mer än fiskarna hinner föröka sig.\n\nEn orsak är att det finns stora fiskebåtar som kan fånga enorma mängder fisk. En annan orsak är att många vill äta fisk, och att en del fiskar olagligt.\n\nEn konsekvens är att fiskarter nästan försvinner. Till exempel har torsken i Östersjön minskat kraftigt. Det påverkar hela ekosystemet, eftersom andra djur är beroende av fisken. En annan konsekvens är att fiskare förlorar sina jobb.\n\nEn åtgärd är fiskekvoter, alltså regler för hur mycket man får fiska. En annan är att vi konsumenter väljer miljömärkt fisk.\n\nUr ett socialt perspektiv kan människor fortsätta ha mat och jobb. Ur ett ekonomiskt perspektiv kan fisket fortsätta i framtiden i stället för att ta slut. Ur ett ekologiskt perspektiv får fiskbestånden växa tillbaka och den biologiska mångfalden skyddas. Det hör ihop med globala mål 14, hav och marina resurser.'},
+   plast:{name:'Plast i haven',facts:[
+     'Miljontals ton plast hamnar i haven varje år.',
+     'Plasten bryts ner till mikroplaster som djur och människor får i sig.',
+     'Stora djur som valar, sköldpaddor och fåglar äter plast och kvävs.',
+     'Fisket och turismen förlorar pengar på skräpiga hav och stränder.',
+     'Orsaker: nedskräpning, dålig avfallshantering, engångsplast, tappade fiskeredskap.',
+     'Åtgärder: mindre engångsplast, panta och återvinna, städa stränder, bättre sophantering i alla länder, förbud mot vissa plastprodukter.'],
+    model:'Mitt problem handlar om plast i haven. Miljontals ton plast hamnar i haven varje år.\n\nEn orsak är att vi använder mycket engångsplast som slängs efter en gång. En annan orsak är att många länder saknar bra sophantering, så skräpet följer med floderna ut i havet.\n\nEn konsekvens är att djur som sköldpaddor och fåglar äter plasten och kvävs. En annan konsekvens är att plasten bryts ner till mikroplaster som hamnar i fisken vi äter. Fisket och turismen förlorar också pengar.\n\nEn åtgärd är att minska engångsplasten och panta och återvinna. En annan är att hjälpa fler länder att bygga bra sophantering.\n\nUr ett socialt perspektiv slipper människor få i sig mikroplaster. Ur ett ekonomiskt perspektiv kan fisket och turismen fortsätta tjäna pengar. Ur ett ekologiskt perspektiv skyddas djuren och den biologiska mångfalden. Det hör ihop med globala mål 14 och mål 12.'},
+   fororen:{name:'Föroreningar',facts:[
+     'Föroreningar är ämnen som skadar människor, djur och växter.',
+     'Oljeutsläpp, tungmetaller och miljögifter gör fisken oätlig. Gifterna samlas i näringskedjan.',
+     'Övergödning: näringsämnen ger algblomning och syrebrist, så fisk och djur dör.',
+     'Försurning kommer med regn och snö. Bakterier sprider sjukdomar. Varmt vatten från fabriker skadar fisken.',
+     'Föroreningarna kommer från industrier, avlopp, åkrar och fartyg.',
+     'Åtgärder: reningsverk, mindre konstgödsel, strängare miljölagar som miljöbalken, kalka sjöar mot försurning.'],
+    model:'Mitt problem handlar om föroreningar i vatten, alltså ämnen som skadar människor, djur och växter.\n\nEn orsak är att industrier släpper ut gifter och tungmetaller. En annan orsak är att gödsel från åkrar och avlopp rinner ut i sjöar och hav.\n\nEn konsekvens är övergödning: algerna växer, syret tar slut och fiskar dör. En annan konsekvens är att gifter samlas i fisken, vilket gör den farlig att äta.\n\nEn åtgärd är att bygga reningsverk som renar avloppsvattnet. En annan är strängare miljölagar, som miljöbalken i Sverige, och att bönderna använder mindre konstgödsel.\n\nUr ett socialt perspektiv blir dricksvattnet och maten säkrare för människor. Ur ett ekonomiskt perspektiv kan fisket och turismen fortsätta. Ur ett ekologiskt perspektiv kan djur och växter i vattnet leva och må bra. Det hör ihop med globala mål 6 och mål 14.'}
+  },
+  steps:[
+   ['Beskriv problemet','Vad handlar problemet om? Förklara kort, som för någon som aldrig hört talas om det.','Mitt problem handlar om'],
+   ['Orsaker','Varför har problemet uppstått? Skriv 1–3 orsaker.','En orsak till problemet är att'],
+   ['Konsekvenser','Vad leder problemet till? Skriv 1–3 konsekvenser.','En konsekvens av problemet är att'],
+   ['Åtgärder','Hur kan problemet lösas? Skriv 1–3 åtgärder.','En åtgärd som kan minska problemet är att'],
+   ['Vem kan göra vad?','Vad kan individen, samhället, länder och organisationer göra? Vad är svårt med det, och vad förändras då?','Vi som individer kan'],
+   ['Socialt perspektiv','Hur hjälper åtgärderna människor att leva tryggt och friskt?','Ur ett socialt perspektiv'],
+   ['Ekonomiskt perspektiv','Hur påverkar åtgärderna jobb, pengar och fattigdom?','Ur ett ekonomiskt perspektiv'],
+   ['Ekologiskt perspektiv','Hur påverkar åtgärderna naturen, djuren och vattnet?','Ur ett ekologiskt perspektiv']
+  ],
+  words:[['orsak',['orsak']],['konsekvens',['konsekvens']],['åtgärd',['åtgärd']],['hållbar utveckling',['hållbar']],['individ',['individ','vi som','jag kan']],['samhälle',['samhäll','land','länder','kommun']],['miljö',['miljö','natur']],['socialt',['social']],['ekonomiskt',['ekonomi']],['ekologiskt',['ekologi']],['globala mål',['globala mål','mål 6','mål 12','mål 14','agenda 2030']]]
+ },
+ exam:{
+  intro:'Lärarens examinationsuppgift: Vilken påverkan har mobiltelefoner, elbilar och/eller kläder på den hållbara utvecklingen? Resonera utifrån det sociala, ekonomiska och ekologiska perspektivet. Vilka lösningar finns? Ta hjälp av de globala målen.',
+  choices:{
+   mobil:{name:'Mobiltelefoner',facts:[
+     'En mobil innehåller över 40 metaller, till exempel kobolt, koppar, guld och litium. De är naturresurser och råvaror.',
+     'Kongo-Kinshasa står för mer än hälften av världens kobolt. Gruvorna är 70 procent av landets export.',
+     'Ungefär 40 000 barn arbetade i Kongos gruvor 2014, en del bara sju år. Många saknar skyddsutrustning och får lungskador.',
+     'Delarna tillverkas och mobilen monteras ofta i Kina, Sydkorea, Taiwan eller Indien. Huvudkontoren ligger ofta i USA eller Sydkorea.',
+     'Mobilen exporteras och importeras till Sverige. Långa transporter ger utsläpp.',
+     'Elavfall skeppas ibland till länder som Ghana och plockas isär under farliga förhållanden.',
+     'Lösningar: använda mobilen längre, laga den, köpa begagnat, återvinna metallerna, lagar mot barnarbete, rättvisemärkning. Mål 8, 12 och 15.'],
+    model:'Mobiltelefoner är ett bra exempel på globalisering, eftersom en mobil tillverkas i många länder innan den säljs i Sverige.\n\nMobilens väg börjar i en gruva, till exempel i Kongo där mer än hälften av världens kobolt bryts. Råvarorna förädlas till delar i länder som Kina, och mobilen monteras i en fabrik. Sedan exporteras den och Sverige importerar den. Transporterna är långa, och när mobilen är gammal blir den elavfall som ibland skeppas till länder som Ghana.\n\nUr ett ekologiskt perspektiv förstör gruvorna naturen och kan förgifta vatten. Transporterna ger utsläpp av koldioxid, vilket ger en förstärkt växthuseffekt.\n\nUr ett socialt perspektiv arbetar barn i koboltgruvorna, en del bara sju år gamla. De kan inte gå i skolan och skadar sina lungor. Det är inte socialt hållbart.\n\nUr ett ekonomiskt perspektiv tjänar de stora företagen mycket pengar, medan gruvarbetarna får mycket låga löner. Kongo är rikt på naturresurser men många är ändå fattiga, så handeln är inte rättvis.\n\nEn lösning är att vi använder mobilen längre och lagar den i stället för att köpa nytt. Det hör ihop med globala mål 12, hållbar konsumtion och produktion. En annan lösning är lagar mot barnarbete och krav på att företagen kontrollerar sina gruvor, vilket hör till mål 8, anständiga arbetsvillkor. Om metallerna återvinns behöver vi bryta mindre, vilket skyddar naturen enligt mål 15.\n\nJag tycker att det allvarligaste är barnarbetet, eftersom barn skadas och förlorar sin framtid.'},
+   elbil:{name:'Elbilar',facts:[
+     'Elbilar släpper inte ut avgaser när de körs. Om elen kommer från vind, sol eller vatten minskar koldioxidutsläppen.',
+     'Batterierna behöver kobolt och litium. Kobolten kommer främst från Kongo, där barn arbetar i gruvorna.',
+     'Litium utvinns bland annat i Chile, Argentina och Australien. I torra områden går det åt mycket vatten.',
+     'Det ger utsläpp att tillverka batteriet, och bilen och delarna transporteras långt.',
+     'Elbilar är dyra att köpa, men billigare att köra.',
+     'Lösningar: återvinna batterier, krav på schyssta gruvor, kollektivtrafik, cykel och samåkning. Mål 7, 8, 12 och 13.'],
+    model:'Elbilar beskrivs ofta som en lösning för klimatet, men de påverkar också den hållbara utvecklingen negativt.\n\nBatterierna behöver råvaror som kobolt och litium. Kobolten bryts ofta i Kongo, och litium bland annat i Chile och Australien. Råvarorna exporteras till fabriker i till exempel Kina, och bilarna importeras sedan till Sverige. Det blir många och långa transporter.\n\nUr ett ekologiskt perspektiv är elbilen bra när den körs, eftersom den inte släpper ut avgaser. Det minskar den förstärkta växthuseffekten. Men gruvorna förstör natur, och litiumbrytning kräver mycket vatten i torra områden.\n\nUr ett socialt perspektiv arbetar barn i koboltgruvorna i Kongo under farliga förhållanden. Människor som bor nära gruvorna kan förlora sitt vatten.\n\nUr ett ekonomiskt perspektiv tjänar biltillverkarna pengar, medan gruvarbetarna får låga löner. Elbilar är också dyra, så alla har inte råd.\n\nEn lösning är att återvinna batterierna så att vi behöver bryta mindre, vilket hör till globala mål 12. En annan är att kräva schyssta arbetsvillkor i gruvorna, enligt mål 8. Den bästa lösningen kan vara att åka mer kollektivt och cykla, vilket hjälper mål 13, bekämpa klimatförändringarna.'},
+   klader:{name:'Kläder',facts:[
+     'De flesta kläder i Sverige tillverkas i Kina, Indien och Bangladesh. Bomullen odlas ofta i andra länder.',
+     'Ett par jeans kräver ungefär 11 000 liter vatten. Aralsjön torkade ut på grund av bomullsodling.',
+     'Färgning av tyger kan förgifta floder. Kläderna transporteras långt.',
+     'Arbetarna har ofta mycket låga löner och osäkra fabriker. 2013 rasade Rana Plaza i Bangladesh och över 1 100 dog.',
+     'Vi i Sverige köper många kläder och slänger dem snabbt.',
+     'Lösningar: köpa second hand, laga kläder, köpa färre men bättre, Fairtrade, lämna kläder till återbruk. Mål 6, 8 och 12.'],
+    model:'Kläder är ett tydligt exempel på hur globaliseringen påverkar den hållbara utvecklingen.\n\nBomull är en råvara som odlas i ett land och sedan exporteras till fabriker i till exempel Bangladesh, Kina eller Indien. Där sys kläderna, och sedan importeras de till Sverige. Det blir många och långa transporter.\n\nUr ett ekologiskt perspektiv kräver bomullen enorma mängder vatten. Ett par jeans kräver 11 000 liter, och Aralsjön har nästan torkat ut på grund av bomullsodling. Färgerna kan också förgifta floder.\n\nUr ett socialt perspektiv arbetar många i klädfabrikerna under farliga förhållanden. Till exempel rasade fabriken Rana Plaza i Bangladesh 2013 och över 1 100 människor dog.\n\nUr ett ekonomiskt perspektiv får arbetarna mycket låga löner, medan företagen och vi konsumenter tjänar på billiga kläder. Priset täcker inte alla kostnader för människor och miljö.\n\nEn lösning är att vi köper second hand och lagar våra kläder, vilket hör till globala mål 12. En annan lösning är att välja Fairtrade och kräva bättre arbetsvillkor, enligt mål 8. Om vi köper färre nya kläder sparar vi också vatten, vilket hjälper mål 6.'}
+  },
+  steps:[
+   ['Inledning','Vad ska du skriva om, och varför är det ett exempel på globalisering?','Jag ska skriva om hur'],
+   ['Produktens väg','Var kommer råvarorna ifrån? Var tillverkas den? Hur kommer den hit? Använd export, import, råvaror och transport.','Produktens väg börjar'],
+   ['Ekologiskt perspektiv','Hur påverkas naturen, vattnet och klimatet?','Ur ett ekologiskt perspektiv'],
+   ['Socialt perspektiv','Hur påverkas människorna som arbetar med produkten?','Ur ett socialt perspektiv'],
+   ['Ekonomiskt perspektiv','Vem tjänar pengar, och vem får lite? Är handeln rättvis?','Ur ett ekonomiskt perspektiv'],
+   ['Lösningar och globala mål','Vilka lösningar finns? Koppla till minst ett globalt mål.','En lösning är att'],
+   ['Avslutning','Vad tycker du är allvarligast? Motivera.','Jag tycker att det allvarligaste är']
+  ],
+  words:[['handel',['handel','handla']],['globalisering',['globalis']],['transport',['transport']],['export',['export']],['import',['import']],['råvaror',['råvar']],['naturresurser',['naturresurs']],['socialt',['social']],['ekonomiskt',['ekonomi']],['ekologiskt',['ekologi']],['globala mål',['globala mål','mål 8','mål 12','mål 6','mål 13','mål 15','agenda 2030']]]
+ }
+};
+const STARTERS=['eftersom','det beror på att','till exempel','vilket leder till att','det gör att','därför','dessutom','å ena sidan','å andra sidan','men','samtidigt','på grund av','en lösning är','jag tycker att','sammanfattningsvis'];
+const STUCK=['Skriv som om du förklarar för en kompis på rasten.','Säg meningen högt först. Skriv sedan ner exakt det du sa.','Skriv tre ord som du kommer att tänka på. Gör sedan en mening av dem.','Tryck på ”Använd startmeningen” och skriv bara slutet.','Titta i faktarutan och välj en enda sak att skriva om.','Det får bli fult. Ett dåligt utkast är bättre än en tom ruta.','Tryck på mikrofonen på tangentbordet och prata in svaret.'];
+
+/* ---------- Lärarens utvecklingsfrågor ---------- */
+const DEV=[
+ ['Vad har (nästan) alla våra storstäder i världen gemensamt?','Nämn vattnet, och förklara varför det är viktigt.','Nästan alla storstäder ligger vid vatten, till exempel vid en kust, en flod eller en stor sjö. Det beror på att vattnet ger möjlighet till transporter och handel med båt, vilket gjorde att städerna kunde växa. Vattnet ger också dricksvatten, fisk och bördig jord för odling. Till exempel ligger Kairo vid Nilen och New York vid havet. Många storstäder ligger också där klimatet är milt och marken platt.'],
+ ['Ge ett exempel på hur samspelet mellan människa och natur ser ut.','Visa hur människan påverkar naturen, och hur naturen påverkar människan tillbaka.','Ett exempel är Aralsjön. Människor ledde bort vattnet till bomullsfält, vilket gjorde att sjön nästan torkade ut. Det påverkade sedan människorna tillbaka: fiskarna förlorade sina jobb och många blev sjuka av salt damm. Det visar att när vi förändrar naturen påverkas också vi själva.'],
+ ['Hur kan textilindustrin påverka den hållbara utvecklingen negativt?','Använd alla tre perspektiven.','Ur ett ekologiskt perspektiv kräver bomull mycket vatten, ett par jeans kräver 11 000 liter, och färgerna kan förgifta floder. Ur ett socialt perspektiv arbetar många i farliga fabriker, till exempel rasade Rana Plaza i Bangladesh 2013. Ur ett ekonomiskt perspektiv får arbetarna mycket låga löner medan företagen tjänar mycket. Dessutom ger de långa transporterna utsläpp.'],
+ ['Hur används de globala målen för att försöka uppnå hållbar utveckling?','Förklara vad målen är och ge exempel på hur de används.','De globala målen är 17 mål som FN:s länder kom överens om 2015, och de ska vara uppnådda till 2030. De visar vad som behöver göras för att utrota fattigdom, minska ojämlikhet och lösa klimatkrisen. Länder använder dem för att göra planer och lagar, företag för att förbättra arbetsvillkor och minska utsläpp, och organisationer som UNICEF för att till exempel bygga brunnar enligt mål 6. Även vi privatpersoner kan bidra, till exempel genom att köpa second hand enligt mål 12.'],
+ ['Ge egna exempel på hur vi människor påverkar den hållbara utvecklingen, både positivt och negativt.','Ge minst ett positivt och ett negativt exempel, och förklara varför.','Negativt: när vi flyger på semester släpper flyget ut koldioxid, vilket ger en förstärkt växthuseffekt. När vi köper en ny mobil varje år behövs mer kobolt från gruvor där barn arbetar. Positivt: när vi cyklar, köper second hand eller sorterar avfall minskar vi vårt fotavtryck. Samhället kan också bidra positivt med reningsverk och miljölagar.'],
+ ['Förklara vad ekologiskt avtryck eller ekologiskt fotavtryck är, och ge exempel på saker som påverkar det.','Förklara begreppet, ge siffrorna, och ge exempel.','Ekologiskt fotavtryck är ett mått från WWF som visar hur mycket av jordens resurser vi använder. Om man räknar på alla människor behövs 1,6 jordklot, och om alla levde som vi i Sverige skulle det behövas 4 jordklot. Det betyder att vi lever över våra tillgångar. Fotavtrycket blir större av till exempel flygresor, att äta mycket kött och köpa nya kläder ofta. Det blir mindre av att cykla, äta lokal mat och köpa second hand.']
+];
+
+/* ================= Lagring och framsteg ================= */
+const KEY='geoprov-nikol-v1';
+let S={done:{},plan:{},check:{},tabdone:{},write:{},fyr:{},dev:{},tab:'start'};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const mix=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+
+const panels=$$('.panel');
+function tabPct(p){const t=$$('.task',p);if(!t.length)return 0;return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+function allPct(){const t=$$('.task');return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function refresh(){
+  $$('.task').forEach(t=>{const d=!!S.done[t.dataset.task];t.classList.toggle('is-done',d);const b=$('.tick',t);if(b){b.setAttribute('aria-pressed',String(d));b.textContent=d?'Klar ✓':'Klar';}});
+  panels.forEach(p=>{const id=p.id.slice(2),pc=tabPct(p),tb=$('#tab-'+id);
+    if(tb){$('.bar i',tb).style.width=pc+'%';$('.pc',tb).textContent=pc+' %';tb.classList.toggle('done',pc===100||!!S.tabdone[id]);}
+    const db=$('[data-tabdone="'+id+'"]');if(db)db.setAttribute('aria-pressed',String(!!S.tabdone[id]));});
+  const pc=allPct();$('#ringPc').textContent=pc+' %';$('#ringArc').setAttribute('stroke-dasharray',pc+' 100');$('#ringArc').style.opacity=pc?1:0;
+  const sum=$('#tabSummary');sum.innerHTML='';
+  panels.filter(p=>p.id!=='p-start').forEach(p=>{const id=p.id.slice(2),pc=tabPct(p);
+    const b=el('button');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+    b.innerHTML='<span></span><b></b><span class="bar"><i></i></span>';
+    b.children[0].textContent=p.dataset.title+((pc===100||S.tabdone[id])?' ✓':'');b.children[1].textContent=pc+' %';b.querySelector('i').style.width=pc+'%';
+    b.onclick=()=>show(id);sum.appendChild(b);});
+}
+function setDone(id,val,quiet){
+  const was=!!S.done[id];S.done[id]=val;save();refresh();
+  if(val&&!was&&!quiet){const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');
+    const pc=tabPct(p);toast(pc===100?'Fliken '+p.dataset.title+' är 100 % klar! 🎉':'Bra jobbat! '+p.dataset.title+' är nu '+pc+' % klar.');}
+}
+const complete=id=>{if(id&&!S.done[id])setDone(id,true);};
+
+/* ================= Flikar ================= */
+const bar=$('#tabbar');
+panels.forEach(p=>{
+  const id=p.id.slice(2);p.style.setProperty('--c','var(--'+p.dataset.color+')');
+  const b=el('button','tab');b.id='tab-'+id;b.setAttribute('role','tab');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+  b.innerHTML='<span class="t"></span><span class="bar"><i></i></span><span class="pc"></span>';$('.t',b).textContent=p.dataset.title;
+  b.onclick=()=>show(id);bar.appendChild(b);
+});
+function show(id){
+  panels.forEach(p=>p.hidden=p.id!=='p-'+id);
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.id==='tab-'+id)));
+  S.tab=id;save();stopSpeak();
+  const tb=$('#tab-'+id);tb.scrollIntoView({block:'nearest',inline:'center'});
+  window.scrollTo({top:0});
+}
+$$('[data-tabdone]').forEach(b=>b.onclick=()=>{const id=b.dataset.tabdone;S.tabdone[id]=!S.tabdone[id];save();refresh();if(S.tabdone[id])toast('Snyggt! Fliken är avbockad ✓');});
+
+/* ================= Uppgifter: klar-knapp och uppläsning ================= */
+let speakBtn=null;
+function stopSpeak(){if('speechSynthesis' in window)speechSynthesis.cancel();if(speakBtn)speakBtn.setAttribute('aria-pressed','false');speakBtn=null;}
+function speak(text,btn){
+  if(!('speechSynthesis' in window))return;
+  const same=btn&&speakBtn===btn;stopSpeak();if(same)return;
+  const u=new SpeechSynthesisUtterance(text);u.lang='sv-SE';u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^sv/i.test(v.lang||''));if(v)u.voice=v;
+  if(btn){speakBtn=btn;btn.setAttribute('aria-pressed','true');u.onend=()=>{if(speakBtn===btn)stopSpeak();};}
+  speechSynthesis.speak(u);
+}
+$$('.task').forEach(t=>{
+  const h=$('header',t);
+  const say=$('.say',t);
+  if(say&&'speechSynthesis' in window){const l=el('button','listen','🔊 Lyssna');l.setAttribute('aria-pressed','false');l.onclick=()=>speak(say.innerText.replace(/→/g,', sedan '),l);h.insertBefore(l,h.children[1]||null);}
+  const b=el('button','tick','Klar');b.setAttribute('aria-pressed','false');b.onclick=()=>setDone(t.dataset.task,!S.done[t.dataset.task]);h.appendChild(b);
+});
+
+/* ================= Start: plan och checklista ================= */
+function checkRow(list,store,task,root){
+  root.innerHTML='';
+  list.forEach(([id,txt,tab,goto])=>{
+    const r=el('div','check');const i=el('input');i.type='checkbox';i.id='cb-'+id;i.checked=!!S[store][id];
+    const l=el('label',null,txt);l.htmlFor=i.id;const a=el('button','say1','Gå dit');a.style.setProperty('--c','var(--'+tab+')');a.onclick=()=>{show(tab);if(goto){const t=document.querySelector('section.task[data-task="'+goto+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),50);}};
+    i.onchange=()=>{S[store][id]=i.checked;save();const all=list.every(x=>S[store][x[0]]);if(all)complete(task);else if(S.done[task])setDone(task,false,true);};
+    r.append(i,l,a);root.appendChild(r);
+  });
+}
+checkRow(CHECK,'check','s-check',$('#checkList'));
+
+/* ================= Gemensamt: dra eller trycka ================= */
+function dragTap(chip,onDrop,onTap,targetSel){
+  let sx,sy,ghost=null,moved=false;
+  chip.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;moved=false;try{chip.setPointerCapture(e.pointerId);}catch(_){}});
+  chip.addEventListener('pointermove',e=>{if(sx===undefined)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>7){ghost=chip.cloneNode(true);ghost.classList.add('ghost','sel');document.body.appendChild(ghost);moved=true;}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
+  chip.addEventListener('pointerup',e=>{if(ghost){const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest(targetSel);ghost.remove();ghost=null;if(z)onDrop(z);}sx=undefined;});
+  chip.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null;}sx=undefined;});
+  chip.addEventListener('click',()=>{if(moved){moved=false;return;}onTap();});
+}
+function shake(x){x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong');setTimeout(()=>x.classList.remove('wrong'),400);}
+
+/* ================= Widgets ================= */
+const W={};
+
+W.sort=(root,set,task)=>{
+  const d=SORT[set];
+  function render(){
+    root.innerHTML='';let sel=null,done=0;
+    root.innerHTML='<p>Dra varje kort till rätt låda, eller tryck på kortet och sedan på lådan.</p>';
+    const pool=el('div','pool'),bk=el('div','buckets'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=render;row.append(rs,cnt);
+    const upd=()=>{cnt.textContent=done+' av '+d.items.length+' rätt';if(done===d.items.length){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');root.classList.toggle('picking',!!sel);};
+    const put=(c,b)=>{if(+c.dataset.k===+b.dataset.k){const x=el('div','in',c.textContent);b.appendChild(x);c.remove();done++;if(sel===c){sel=null;root.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};
+    d.buckets.forEach((n,k)=>{const b=el('div','bucket');b.dataset.k=k;b.appendChild(el('h4',null,n));b.onclick=e=>{if(sel&&!e.target.closest('.in'))put(sel,b);};bk.appendChild(b);});
+    mix(d.items).forEach(([t,k])=>{const c=el('button','chip',t);c.dataset.k=k;dragTap(c,b=>put(c,b),()=>pick(c),'.bucket');pool.appendChild(c);});
+    root.append(pool,bk,msg,row);upd();
+  }
+  render();
+};
+
+W.order=(root,set,task)=>{
+  const seq=ORDER[set];
+  function render(){
+    root.innerHTML='<p>Tryck på stegen i rätt ordning.</p>';
+    const ans=el('div','answer'),pool=el('div','pool'),msg=el('p','msg'),rs=el('button','btn','Börja om');let step=0;
+    rs.onclick=render;
+    mix(seq).forEach(w=>{const b=el('button','chip',w);b.style.cursor='pointer';
+      b.onclick=()=>{if(w===seq[step]){ans.appendChild(el('span',null,(step+1)+'. '+w));b.remove();step++;msg.textContent=step===seq.length?'Helt rätt! 🎉':'Bra! Vad kommer sedan?';if(step===seq.length)complete(task);}
+        else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};pool.appendChild(b);});
+    root.append(ans,pool,msg,rs);
+  }
+  render();
+};
+
+W.match=(root,set,task)=>{
+  const all=MATCH[set];let left;
+  function start(){left=mix(all);round();}
+  function round(){
+    root.innerHTML='<p>Tryck på ett ord till vänster och sedan på rätt förklaring.</p>';
+    const g=el('div','match'),L=el('div'),R=el('div'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=start;row.append(rs,cnt);
+    const set5=left.slice(0,5);let pick=null,n=set5.length;
+    cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+    set5.forEach(p=>{const b=el('button',null,p[0]);b.dataset.k=p[0];b.onclick=()=>{if(b.classList.contains('done'))return;if(pick)pick.classList.remove('sel');pick=b;b.classList.add('sel');};L.appendChild(b);});
+    mix(set5).forEach(p=>{const b=el('button',null,p[1]);b.dataset.k=p[0];b.onclick=()=>{if(!pick||b.classList.contains('done'))return;
+      if(pick.dataset.k===b.dataset.k){pick.classList.replace('sel','done');b.classList.add('done');pick=null;n--;left=left.filter(x=>x[0]!==b.dataset.k);cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+        if(n===0){if(left.length){msg.textContent='Alla rätt! Fler kommer…';setTimeout(round,900);}else{msg.textContent='Du har parat ihop allihop! 🎉';complete(task);}}else msg.textContent='Rätt! ✔';}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};R.appendChild(b);});
+    g.append(L,R);root.append(g,msg,row);
+  }
+  start();
+};
+
+W.mcq=(root,set,task)=>{
+  const Q=MCQ[set];
+  function start(){
+    const qs=mix(Q);let i=0,right=0;
+    function q(){
+      root.innerHTML='';const box=el('div','mcq');
+      if(i>=qs.length){const pc=Math.round(100*right/qs.length);
+        box.appendChild(el('p','score',pc+' % rätt på första försöket'));
+        box.appendChild(el('p',null,pc>=80?'Riktigt bra! Du kan det här.':pc>=50?'Bra jobbat! Gör om quizet så sitter det ännu bättre.':'Bra att du övar. Läs texterna igen och prova en gång till.'));
+        const r=el('button','btn primary','Gör om');r.onclick=start;box.appendChild(r);root.appendChild(box);complete(task);return;}
+      const [t,opts,ans,why]=qs[i];let first=true;
+      box.appendChild(el('p','count',(i+1)+' av '+qs.length));box.appendChild(el('p','q',t));
+      const o=el('div','opts');const order=mix(opts.map((x,k)=>k));
+      order.forEach(k=>{const b=el('button',null,opts[k]);b.onclick=()=>{
+        if(k===ans){b.classList.add('right');$$('button',o).forEach(z=>z.disabled=true);if(first)right++;
+          box.appendChild(el('div','why','Rätt! '+why));const n=el('button','btn primary',i+1<qs.length?'Nästa fråga':'Se resultatet');n.style.marginTop='.6rem';n.onclick=()=>{i++;q();};box.appendChild(n);n.focus();}
+        else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);root.appendChild(box);
+    }
+    q();
+  }
+  start();
+};
+
+W.qa=(root,set)=>{
+  QA[set].forEach(([q,ans])=>{
+    const d=el('div','qa'),b=el('button',null,q),a=el('div','a');a.hidden=true;b.setAttribute('aria-expanded','false');
+    ans.forEach(t=>a.appendChild(el('p',null,t)));
+    const s=el('button','say1','🔊 Lyssna');s.onclick=()=>speak(q+'. '+ans.join(' '),s);a.appendChild(s);
+    b.onclick=()=>{a.hidden=!a.hidden;b.setAttribute('aria-expanded',String(!a.hidden));};
+    d.append(b,a);root.appendChild(d);
+  });
+};
+
+/* ---------- Dra namn till rätt ruta ---------- */
+const LABEL={
+ kompass:{w:400,h:400,svg:(()=>{
+   const pts={N:[200,25],NO:[328,78],O:[358,200],SO:[328,322],S:[200,375],SV:[72,322],V:[42,200],NV:[72,78]};
+   let s='<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#F4F8FB"/><circle cx="200" cy="200" r="120" fill="none" stroke="#B9CBD8" stroke-width="2"/>';
+   [[0,-1],[1,0],[0,1],[-1,0]].forEach(([x,y])=>{s+=`<polygon points="${200+x*130},${200+y*130} ${200+y*14},${200-x*14} 200,200 ${200-y*14},${200+x*14}" fill="${y===-1?'#C0392B':'#17324A'}"/>`;});
+   [[1,-1],[1,1],[-1,1],[-1,-1]].forEach(([x,y])=>{s+=`<line x1="200" y1="200" x2="${200+x*72}" y2="${200+y*72}" stroke="#4D6275" stroke-width="5" stroke-linecap="round"/>`;});
+   s+='<circle cx="200" cy="200" r="9" fill="#F4F8FB" stroke="#17324A" stroke-width="3"/>';
+   Object.values(pts).forEach(([x,y])=>{s+=`<rect x="${x-42}" y="${y-17}" width="84" height="34" rx="6" fill="#fff" stroke="#9FB3C2" stroke-width="2"/>`;});
+   return s+'</svg>';})(),
+  zones:[['Norr',158,8,84,34],['Nordost',286,61,84,34],['Öster',316,183,84,34],['Sydost',286,305,84,34],['Söder',158,358,84,34],['Sydväst',30,305,84,34],['Väster',0,183,84,34],['Nordväst',30,61,84,34]]},
+ glob:{w:640,h:400,minw:560,svg:(()=>{
+   let s='<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg"><rect width="640" height="400" fill="#F4F8FB"/>';
+   s+='<circle cx="310" cy="200" r="150" fill="#CFE6F5" stroke="#17324A" stroke-width="3"/>';
+   s+='<path d="M232 130 q30 -30 60 -10 q20 30 -10 55 q-35 10 -50 -45z M330 150 q40 -20 70 10 q10 50 -30 70 q-30 0 -40 -35z M300 260 q30 -5 40 30 q-10 30 -35 20z" fill="#9CC98A" opacity=".9"/>';
+   [-1,1].forEach(k=>{const y=200+k*75,hw=Math.sqrt(150*150-75*75);s+=`<ellipse cx="310" cy="${y}" rx="${hw}" ry="14" fill="none" stroke="#7D93A6" stroke-width="2"/>`;});
+   s+='<ellipse cx="310" cy="200" rx="90" ry="150" fill="none" stroke="#7D93A6" stroke-width="2"/>';
+   s+='<ellipse cx="310" cy="200" rx="150" ry="22" fill="none" stroke="#C0392B" stroke-width="4"/>';
+   s+='<line x1="310" y1="50" x2="310" y2="350" stroke="#2E8B57" stroke-width="4"/>';
+   s+='<circle cx="310" cy="50" r="6" fill="#17324A"/><circle cx="310" cy="350" r="6" fill="#17324A"/>';
+   const L=[[480,30,312,50],[480,105,430,125],[480,185,458,200],[480,265,385,295],[480,335,312,350],[140,40,309,100],[140,120,255,145],[140,250,229,265]];
+   L.forEach(([x,y,px,py])=>{const lx=x<300?x:x,ly=y+15;s+=`<line x1="${x<300?x:x}" y1="${ly}" x2="${px}" y2="${py}" stroke="#4D6275" stroke-width="1.5"/>`;});
+   return s+'</svg>';})(),
+  zones:[['Nordpolen',480,30,150,30],['Breddgrad (latitud)',480,105,150,30],['Ekvatorn',480,185,150,30],['Södra halvklotet',480,265,150,30],['Sydpolen',480,335,150,30],['Nollmeridianen',0,40,140,30],['Norra halvklotet',0,120,140,30],['Längdgrad (longitud)',0,250,140,30]]}
+};
+W.label=(root,set,task)=>{
+  const d=LABEL[set];
+  function render(){
+    root.innerHTML='<p>Dra ordet till rätt ruta, eller tryck på ordet och sedan på rutan.</p>';
+    const sc=el('div','figscroll'),fig=el('div','fig');fig.style.maxWidth=d.w+'px';if(d.minw)fig.style.minWidth=d.minw+'px';fig.innerHTML=d.svg;sc.appendChild(fig);
+    const pool=el('div','pool'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om'),sh=el('button','btn','Visa svaren');
+    let sel=null,done=0;const n=d.zones.length;
+    const upd=()=>{cnt.textContent=done+' av '+n+' rätt';if(done===n){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');fig.classList.toggle('picking',!!sel);};
+    const put=(c,z)=>{if(z.classList.contains('ok')||z.classList.contains('shown'))return;
+      if(c.dataset.a===z.dataset.a){z.textContent=c.dataset.a;z.classList.add('ok');c.remove();done++;if(sel===c){sel=null;fig.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(z);msg.textContent='Inte där. Försök igen.';}};
+    d.zones.forEach(([a,x,y,w,h])=>{const z=el('div','zone');z.dataset.a=a;Object.assign(z.style,{left:x/d.w*100+'%',top:y/d.h*100+'%',width:w/d.w*100+'%',height:h/d.h*100+'%'});z.onclick=()=>{if(sel)put(sel,z);};fig.appendChild(z);});
+    mix(d.zones.map(z=>z[0])).forEach(a=>{const c=el('button','chip',a);c.dataset.a=a;dragTap(c,z=>put(c,z),()=>pick(c),'.zone');pool.appendChild(c);});
+    rs.onclick=render;sh.onclick=()=>{$$('.zone:not(.ok)',fig).forEach(z=>{z.textContent=z.dataset.a;z.classList.add('shown');});pool.innerHTML='';msg.textContent='Här är svaren. Tryck på Börja om och prova själv.';};
+    row.append(rs,sh,cnt);root.append(sc,pool,msg,row);upd();
+  }
+  render();
+};
+
+/* ---------- Grönland och Afrika ---------- */
+W.mercator=(root,task)=>{
+  root.innerHTML=`<div class="toggle" role="group"><button class="btn" data-m="merc">Som på Mercatorkartan</button><button class="btn" data-m="real">I verkligheten</button></div>
+  <div class="svgbox"><svg viewBox="0 0 600 270" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="270" fill="#F4F8FB"/>
+  <circle id="cA" cx="180" cy="135" r="115" fill="#E3B26B" style="transition:r .8s"/><text x="180" y="142" text-anchor="middle" font-family="Lexend,sans-serif" font-size="22" fill="#17324A">Afrika</text>
+  <circle id="cG" cx="440" cy="135" r="105" fill="#9CC4E4" style="transition:r .8s"/><text id="tG" x="440" y="142" text-anchor="middle" font-family="Lexend,sans-serif" font-size="22" fill="#17324A">Grönland</text></svg></div>
+  <p class="msg" aria-live="polite"></p>`;
+  const msg=$('.msg',root),cG=$('#cG',root);let seen={};
+  const set=m=>{seen[m]=1;$$('[data-m]',root).forEach(b=>b.classList.toggle('primary',b.dataset.m===m));
+    if(m==='merc'){cG.setAttribute('r',105);msg.textContent='På Mercatorkartan ser Grönland nästan lika stort ut som Afrika, eftersom länder nära polerna töjs ut.';}
+    else{cG.setAttribute('r',31);msg.textContent='I verkligheten är Afrika ungefär 14 gånger större än Grönland! Mercatorkartan är vinkelriktig men inte ytriktig.';}
+    if(seen.merc&&seen.real)complete(task);};
+  $$('[data-m]',root).forEach(b=>b.onclick=()=>set(b.dataset.m));set('merc');
+};
+
+/* ---------- Skalräknare ---------- */
+W.scalecalc=root=>{
+  root.innerHTML=`<div class="calc"><label>Kartans skala<select><option value="10000">10000</option><option value="25000">25000</option><option value="50000" selected>50000</option><option value="100000">100000</option><option value="1000000">1000000</option></select></label>
+  <label>Sträcka på kartan (cm)<input type="number" min="0" step="0.5" value="3" inputmode="decimal"></label></div><div class="steps"></div>`;
+  const s=$('select',root),i=$('input',root),out=$('.steps',root);
+  [...s.options].forEach(o=>o.textContent='1:'+(+o.value).toLocaleString('sv-SE'));
+  const f=n=>n.toLocaleString('sv-SE',{maximumFractionDigits:2});
+  const calc=()=>{const sk=+s.value,cm=parseFloat(String(i.value).replace(',','.'))||0,real=cm*sk,m=real/100,km=m/1000;
+    out.innerHTML=`<b>Steg 1:</b> ${f(cm)} cm × ${f(sk)} = ${f(real)} cm i verkligheten<br><b>Steg 2:</b> ${f(real)} cm ÷ 100 = ${f(m)} meter<br><b>Steg 3:</b> ${f(m)} meter ÷ 1 000 = <b>${f(km)} km</b>`;};
+  s.onchange=calc;i.oninput=calc;calc();
+};
+
+/* ---------- 100 liter vatten ---------- */
+W.water=(root,task)=>{
+  root.innerHTML=`<div class="toggle"><button class="btn" data-s="1">1. Allt vatten</button><button class="btn" data-s="2">2. Sötvattnet</button><button class="btn" data-s="3">3. Det vi lätt når</button></div>
+  <div class="water"><div class="wbar"></div><p class="msg"></p></div>`;
+  const bar=$('.wbar',root),msg=$('.msg',root);
+  const seg=(g,c,t)=>`<i style="flex-grow:${g};background:${c}">${t}</i>`;
+  const st={1:[seg(97,'#1F5F8B','Saltvatten 97 l')+seg(3,'#5BC0EB','3 l'),'Om allt vatten på jorden vore 100 liter skulle 97 liter vara saltvatten i haven. Bara ungefär 3 liter är sötvatten.'],
+    2:[seg(69,'#B9DDF0','Is och glaciärer ≈ 2 l')+seg(30,'#5B8DB8','Grundvatten ≈ 0,9 l')+seg(1,'#0F8A8A',''),'Av de 3 litrarna sötvatten är ungefär 2 liter fruset i isar och glaciärer. Nästan en liter är grundvatten under marken.'],
+    3:[seg(1,'#0F8A8A','')+seg(99,'#E3EDF2','')+'','I sjöar och floder finns bara drygt två matskedar av de 100 litrarna! Det är det vatten som är lättast att använda. Därför är det så viktigt att vi tar hand om det.']};
+  const go=k=>{bar.innerHTML=st[k][0];msg.textContent=st[k][1];$$('[data-s]',root).forEach(b=>b.classList.toggle('primary',b.dataset.s===String(k)));if(k===3)complete(task);};
+  $$('[data-s]',root).forEach(b=>b.onclick=()=>go(+b.dataset.s));go(1);
+};
+
+/* ---------- Jordklot ---------- */
+W.earths=root=>{
+  const part='<span style="display:inline-block;width:.6em;overflow:hidden;vertical-align:bottom">🌍</span>';
+  root.innerHTML=`<p>Om alla människor i världen lever som idag behövs:</p><div class="earths" aria-label="1,6 jordklot">🌍${part}</div><p><b>1,6 jordklot</b></p>
+  <p>Om alla levde som vi i Sverige skulle det behövas:</p><div class="earths" aria-label="4 jordklot">🌍🌍🌍🌍</div><p><b>4 jordklot</b>. Men vi har bara ett.</p>`;
+};
+
+/* ---------- GIS-karta ---------- */
+W.gis=(root,task)=>{
+  const layers=[['vatten','Sjö och å',1],['flod','Översvämningsrisk',0],['vag','Vägar',0],['hus','Bostäder',0],['skola','Skolor idag',0],['sr','Skyddsrum',0]];
+  let houses='';[[110,270],[140,290],[175,270],[200,300],[130,330],[165,350],[210,340],[95,310],[390,120],[420,135],[455,120],[400,160],[440,170],[470,150]].forEach(([x,y])=>houses+=`<rect x="${x}" y="${y}" width="18" height="14" fill="#C77421"/>`);
+  root.innerHTML=`<div class="toggle">${layers.map(([k,n,on])=>`<label><input type="checkbox" data-l="${k}" ${on?'checked':''}>${n}</label>`).join('')}</div>
+  <div class="svgbox"><svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" font-family="Lexend,sans-serif">
+   <rect width="600" height="400" fill="#EEF3E6"/>
+   <g data-g="flod" opacity=".35"><path d="M0 120 C150 100 200 220 330 230 S520 300 600 380" stroke="#2F6FB3" stroke-width="90" fill="none"/><ellipse cx="70" cy="60" rx="90" ry="60" fill="#2F6FB3"/></g>
+   <g data-g="vatten"><ellipse cx="60" cy="50" rx="70" ry="42" fill="#7EC0E8"/><path d="M0 120 C150 100 200 220 330 230 S520 300 600 380" stroke="#7EC0E8" stroke-width="16" fill="none"/></g>
+   <g data-g="vag" stroke="#7D8B99" stroke-width="7" fill="none" stroke-linecap="round"><path d="M0 330 H600"/><path d="M250 0 V400"/><path d="M250 150 H490"/></g>
+   <g data-g="hus">${houses}</g>
+   <g data-g="skola" font-size="22"><text x="410" y="210">🏫</text></g>
+   <g data-g="sr"><circle cx="120" cy="250" r="11" fill="#7650B0"/><text x="120" y="255" text-anchor="middle" font-size="12" fill="#fff">S</text><circle cx="480" cy="190" r="11" fill="#7650B0"/><text x="480" y="195" text-anchor="middle" font-size="12" fill="#fff">S</text></g>
+   <g font-size="20" font-weight="700" fill="#fff">
+    <circle cx="300" cy="215" r="20" fill="#17324A"/><text x="300" y="222" text-anchor="middle">A</text>
+    <circle cx="540" cy="60" r="20" fill="#17324A"/><text x="540" y="67" text-anchor="middle">B</text>
+    <circle cx="160" cy="305" r="20" fill="#17324A"/><text x="160" y="312" text-anchor="middle">C</text></g>
+  </svg></div>
+  <div class="row"><span>Bästa platsen är:</span><button class="btn" data-c="A">A</button><button class="btn" data-c="B">B</button><button class="btn" data-c="C">C</button></div><p class="msg"></p>`;
+  const vis=()=>$$('[data-l]',root).forEach(c=>{$('[data-g="'+c.dataset.l+'"]',root).style.display=c.checked?'':'none';});
+  $$('[data-l]',root).forEach(c=>c.onchange=vis);vis();
+  const fb={A:'Inte så bra. Tänd lagret Översvämningsrisk – plats A ligger precis vid ån, där det kan bli översvämning.',B:'Inte så bra. Tänd lagren Bostäder och Vägar – plats B ligger långt från alla hem och saknar väg. Hur ska barnen ta sig dit?',C:'Rätt! Plats C ligger nära bostäderna och vägarna, och utanför risken för översvämning. Det finns till och med ett skyddsrum i närheten. Så fungerar GIS: man lägger lager på varandra och jämför.'};
+  $$('[data-c]',root).forEach(b=>b.onclick=()=>{$('.msg',root).textContent=fb[b.dataset.c];if(b.dataset.c==='C'){b.classList.add('primary');complete(task);}else shake(b);});
+};
+
+/* ---------- Memory ---------- */
+W.memory=(root,set,task)=>{
+  const src=set==='goals'?GOALS.map(g=>({a:String(g[0]),b:g[1],col:g[2]})):TERMS.map(t=>({a:t[0],b:t[1]}));
+  function round(){
+    root.innerHTML='';const pairs=mix(src).slice(0,6);let open=[],got=0,lock=false,turns=0;
+    const grid=el('div','mem'),msg=el('p','msg'),row=el('div','row'),nb=el('button','btn','Ny omgång'),cnt=el('span','count');nb.onclick=round;row.append(nb,cnt);
+    const cards=mix(pairs.flatMap((p,k)=>[{k,t:p.a,num:set==='goals',col:p.col},{k,t:p.b}]));
+    cards.forEach(c=>{const b=el('button','card');b.innerHTML='?';b.setAttribute('aria-label','Kort');
+      b.onclick=()=>{if(lock||b.classList.contains('open')||b.classList.contains('got'))return;
+        b.classList.add('open');b.innerHTML='';const s=el('span',c.num?'num':null,c.t);b.appendChild(s);if(c.col){b.style.borderColor=c.col;s.style.color=c.col;}open.push([b,c]);
+        if(open.length===2){turns++;const [x,y]=open;
+          if(x[1].k===y[1].k){x[0].classList.add('got');y[0].classList.add('got');open=[];got++;msg.textContent='Ett par! ✔';
+            if(got===pairs.length){msg.textContent='Alla par på '+turns+' försök! 🎉';complete(task);}}
+          else{lock=true;setTimeout(()=>{open.forEach(([z])=>{z.classList.remove('open');z.innerHTML='?';z.style.borderColor='';});open=[];lock=false;},1300);}
+          cnt.textContent=turns+' försök';}};
+      grid.appendChild(b);});
+    root.append(grid,msg,row);
+  }
+  round();
+};
+
+/* ---------- Gissa begreppet ---------- */
+W.guess=(root,task)=>{
+  function start(){let order=mix(TERMS).slice(0,10),i=0,right=0;
+    function q(){root.innerHTML='';const box=el('div','mcq');
+      if(i>=order.length){box.appendChild(el('p','score',right+' av '+order.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;box.appendChild(r);root.appendChild(box);complete(task);return;}
+      const t=order[i];let first=true;box.appendChild(el('p','count',(i+1)+' av '+order.length));box.appendChild(el('p','q',t[1]));
+      const o=el('div','opts');mix([t].concat(mix(TERMS.filter(x=>x!==t)).slice(0,3))).forEach(x=>{const b=el('button',null,x[0]);
+        b.onclick=()=>{if(x===t){b.classList.add('right');if(first)right++;$$('button',o).forEach(z=>z.disabled=true);const n=el('button','btn primary','Nästa');n.style.marginTop='.6rem';n.onclick=()=>{i++;q();};box.appendChild(n);n.focus();}
+          else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);root.appendChild(box);}
+    q();}
+  start();
+};
+
+/* ---------- Fyrfältare ---------- */
+W.fyr=(root,task)=>{
+  const F=['Förklara med egna ord','Ge ett exempel','Beskriv en bild eller symbol','Skriv en mening med ordet'];
+  S.fyr=S.fyr||{};S.fyr.sel=S.fyr.sel||['','','',''];S.fyr.txt=S.fyr.txt||{};
+  const check=()=>{const ok=S.fyr.sel.every(t=>t&&F.every((_,k)=>((S.fyr.txt[t]||[])[k]||'').trim().length>=4));if(ok)complete(task);};
+  for(let n=0;n<4;n++){
+    const wrap=el('div');const lab=el('label',null,'Begrepp '+(n+1)+': ');const s=el('select');s.style.cssText='font:inherit;padding:.3rem .5rem;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:40px';
+    s.appendChild(new Option('Välj ett begrepp',''));TERMS.forEach(t=>s.appendChild(new Option(t[0],t[0])));s.value=S.fyr.sel[n];lab.appendChild(s);
+    const g=el('div','fyr');
+    const draw=()=>{g.innerHTML='';const t=s.value;if(!t)return;const arr=S.fyr.txt[t]=S.fyr.txt[t]||['','','',''];
+      F.forEach((f,k)=>{const l=el('label',null,f);const ta=el('textarea');ta.value=arr[k];ta.oninput=()=>{arr[k]=ta.value;save();check();};l.appendChild(ta);g.appendChild(l);});};
+    s.onchange=()=>{S.fyr.sel[n]=s.value;save();draw();check();};draw();
+    wrap.append(lab,g);root.appendChild(wrap);
+  }
+};
+
+/* ---------- Utvecklingsfrågor ---------- */
+W.dev=(root,task)=>{
+  S.dev=S.dev||{};S.dev.seen=S.dev.seen||{};S.dev.txt=S.dev.txt||{};
+  DEV.forEach(([q,tip,model],i)=>{
+    const box=el('div','wstep');box.appendChild(el('h4',null,(i+1)+'. '+q));box.appendChild(el('p','help','Tips: '+tip));
+    const ta=el('textarea');ta.placeholder='Skriv ditt svar här, eller svara högt.';ta.value=S.dev.txt[i]||'';ta.oninput=()=>{S.dev.txt[i]=ta.value;save();};
+    const row=el('div','mini');const sb=el('button',null,'Visa exempelsvar'),lb=el('button',null,'🔊 Lyssna på frågan');
+    const m=el('div','hintbox');m.hidden=true;m.textContent=model;
+    sb.onclick=()=>{m.hidden=!m.hidden;sb.textContent=m.hidden?'Visa exempelsvar':'Dölj exempelsvar';S.dev.seen[i]=1;save();if(DEV.every((_,k)=>S.dev.seen[k]))complete(task);};
+    lb.onclick=()=>speak(q+' '+tip,lb);row.append(lb,sb);box.append(ta,row,m);root.appendChild(box);
+  });
+};
+
+/* ---------- Skrivverkstaden ---------- */
+let lastTA=null;
+W.write=(root,set,task)=>{
+  const cfg=WRITE[set];S.write[set]=S.write[set]||{choice:Object.keys(cfg.choices)[0],t:{}};const st=S.write[set];
+  const cheers=['Snyggt! Ett steg klart.','Bra! Fortsätt så.','Där satt den!','Grymt, nu är du igång.','Bra jobbat – ett steg i taget.'];
+  function render(){
+    root.innerHTML='';root.appendChild(el('p',null,cfg.intro));
+    const ch=el('div','choose');Object.entries(cfg.choices).forEach(([k,c])=>{const b=el('button',null,c.name);b.setAttribute('aria-pressed',String(st.choice===k));b.onclick=()=>{st.choice=k;save();render();};ch.appendChild(b);});
+    root.appendChild(el('p',null,'Välj vad du vill skriva om:'));root.appendChild(ch);
+    const c=cfg.choices[st.choice];const T=st.t[st.choice]=st.t[st.choice]||cfg.steps.map(()=>'');
+    const fb=el('details','factbank');fb.open=true;fb.innerHTML='<summary><b>Faktaruta: '+c.name+'</b></summary>';const ul=el('ul');c.facts.forEach(f=>ul.appendChild(el('li',null,f)));fb.appendChild(ul);root.appendChild(fb);
+    root.appendChild(el('p',null,'Ord och perspektiv som läraren vill se. De blir gröna när du har använt dem:'));
+    const ck=el('div','checker');cfg.words.forEach(([w])=>{const s=el('span',null,w);s.dataset.w=w;ck.appendChild(s);});root.appendChild(ck);
+    const pr=el('div','wprog');pr.innerHTML='<i></i>';const pl=el('p','count');root.append(pr,pl);
+    const cheer=el('p','cheer');cheer.setAttribute('aria-live','polite');
+    const upd=()=>{const all=T.join(' ').toLowerCase();
+      $$('span',ck).forEach(s=>{const stems=cfg.words.find(x=>x[0]===s.dataset.w)[1];s.classList.toggle('got',stems.some(x=>all.includes(x)));});
+      const f=T.filter(x=>x.trim().length>=20).length;$('i',pr).style.width=Math.round(100*f/T.length)+'%';pl.textContent=Math.round(100*f/T.length)+' % av stegen klara';
+      if(f===T.length)complete(task);};
+    cfg.steps.forEach(([title,help,starter],k)=>{
+      const box=el('div','wstep');const h=el('h4');h.innerHTML='<span class="st">'+(k+1)+'</span>';h.appendChild(document.createTextNode(title));box.appendChild(h);
+      box.appendChild(el('p','help',help));const ta=el('textarea');ta.value=T[k];ta.setAttribute('aria-label',title);
+      const mark=()=>box.classList.toggle('filled',ta.value.trim().length>=20);
+      let was=ta.value.trim().length>=20;
+      ta.onfocus=()=>lastTA=ta;ta.oninput=()=>{T[k]=ta.value;save();mark();upd();const now=ta.value.trim().length>=20;if(now&&!was)cheer.textContent=cheers[Math.floor(Math.random()*cheers.length)];was=now;};
+      const mini=el('div','mini');const sb=el('button',null,'Använd startmeningen'),rb=el('button',null,'🔊 Läs upp'),hb=el('button',null,'Fastnat?');
+      const hint=el('p','hintbox');hint.hidden=true;
+      sb.onclick=()=>{if(!ta.value.trim().startsWith(starter)){ta.value=starter+' '+ta.value.trimStart();}ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);ta.oninput();};
+      rb.onclick=()=>speak(ta.value.trim()||'Rutan är tom. '+help,rb);
+      hb.onclick=()=>{hint.hidden=false;hint.textContent=STUCK[Math.floor(Math.random()*STUCK.length)];};
+      mini.append(sb,rb,hb);box.append(ta,mini,hint);mark();root.appendChild(box);
+    });
+    root.appendChild(cheer);
+    const wb=el('details','wordbank');wb.innerHTML='<summary>Sambandsord – tryck för att lägga in i rutan du skriver i</summary>';const wm=el('div','mini');
+    STARTERS.forEach(w=>{const b=el('button',null,w);b.onmousedown=e=>e.preventDefault();b.onclick=()=>{const ta=lastTA&&root.contains(lastTA)?lastTA:$$('textarea',root)[0];const p=ta.selectionStart??ta.value.length;const pre=ta.value.slice(0,p),post=ta.value.slice(p);const ins=(pre&&!/\s$/.test(pre)?' ':'')+w+' ';ta.value=pre+ins+post;ta.focus();ta.setSelectionRange(p+ins.length,p+ins.length);ta.oninput();};wm.appendChild(b);});
+    wb.appendChild(wm);root.appendChild(wb);
+    const row=el('div','row');const full=el('div','full');full.hidden=true;const mod=el('div','hintbox');mod.hidden=true;mod.style.whiteSpace='pre-wrap';
+    const fb2=el('button','btn','Visa hela texten'),rd=el('button','btn','🔊 Läs upp hela texten'),cp=el('button','btn','Kopiera texten'),mb=el('button','btn','Visa ett exempelsvar');
+    const text=()=>T.map(x=>x.trim()).filter(Boolean).join('\n\n');
+    fb2.onclick=()=>{full.hidden=!full.hidden;full.textContent=text()||'Du har inte skrivit något än. Börja med det steg du vet mest om!';fb2.textContent=full.hidden?'Visa hela texten':'Dölj hela texten';};
+    rd.onclick=()=>speak(text()||'Du har inte skrivit något än.',rd);
+    cp.onclick=async()=>{try{await navigator.clipboard.writeText(text());toast('Texten är kopierad.');}catch(e){toast('Markera texten i rutan och kopiera den själv.');full.hidden=false;full.textContent=text();}};
+    mb.onclick=()=>{mod.hidden=!mod.hidden;mod.textContent='Exempelsvar om '+c.name.toLowerCase()+':\n\n'+c.model;mb.textContent=mod.hidden?'Visa ett exempelsvar':'Dölj exempelsvaret';};
+    row.append(fb2,rd,cp,mb);root.append(row,full,mod);
+    root.appendChild(el('p','count','Tips: Försök själv först, och titta på exempelsvaret efteråt. Skriv inte av det – använd det för att se vad du kan lägga till.'));
+    upd();
+  }
+  render();
+};
+
+/* ---------- Listor ---------- */
+(function(){
+  const gl=$('#goalList');gl.appendChild(el('h3',null,'De 17 målen'));const wrap=el('div');
+  GOALS.forEach(([n,t,c])=>{const s=el('span','goal',n+' '+t);s.style.background=c;if(n===7||n===2||n===11)s.style.color='#17324A';wrap.appendChild(s);});gl.appendChild(wrap);
+  const tl=$('#termList');
+  TERMS.forEach(([t,f,teach])=>{const d=el('div','term');const h=el('h4',null,t);if(teach)h.appendChild(el('span','badge','Lärarens lista'));
+    const s=el('button','say1','🔊');s.setAttribute('aria-label','Lyssna på '+t);s.onclick=()=>speak(t+'. '+f,s);h.appendChild(s);d.append(h,el('p',null,f));tl.appendChild(d);});
+})();
+
+
+/* ================= Pass enligt Edgars upplägg ================= */
+const QPASS={"q_kart": [["metoder", "g02"], ["kartprojektion?", "g02"], ["Beskriv vad GIS", "g09"], ["när GIS", "g09"], ["GPS till", "g09"], ["fjärranalys", "g09"], ["äldsta", "g01"], ["topografi", "g01"], ["Lantmäteriet", "g01"], ["korrekt på ett papper", "g02"], ["vinkelriktig", "g02"], ["gradnät", "g06"], ["skala, och", "g04"], ["topografisk, politisk", "g04"], ["naturlig och en artificiell", "g11"], ["relativt och absolut", "g06"], ["nytt dygn", "g06"], ["största städer", "g11"]], "q_hall": [["Vad är hållbar utveckling", "g19"], ["ekologisk hållbarhet", "g19"], ["ekonomisk hållbarhet", "g19"], ["social hållbarhet", "g19"], ["globala målen", "g23"], ["lever över", "g18"], ["ekologiska fotavtrycket", "g18"], ["Sverige för", "g19"], ["kretslopp", "g13"], ["vattenverk", "g13"], ["naturresurs?", "g12"], ["livsviktigt", "g14"], ["överfiske", "g15"], ["föroreningar", "g15"], ["konflikt", "g16"], ["Golfströmmen", "g17"], ["spara vatten", "g15"], ["konsumenter", "g18"]], "q_glob": [["innebär globalisering", "g21"], ["fördelar", "g21"], ["baksidan", "g21"], ["placeras", "g21"], ["mobilens väg", "g22"], ["allvarligaste", "g22"], ["rättvis", "g22"]]};
+function qPass(set,q){const k=(QPASS[set]||[]).find(([w])=>q.includes(w));return k?k[1]:null;}
+
+function goTo(tab,task){show(tab);if(task){const t=document.querySelector('section.task[data-task="'+task+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),60);}}
+const MEMSRC={kart:'q_kart',vatten:'q_hall',hall:'q_hall',mal:'q_hall',glob:'q_glob'};
+const taskTitle=id=>{const t=document.querySelector('section.task[data-task="'+id+'"] h3');return t?t.textContent:id;};
+function curPass(){return PLAN.find(p=>p[0]===S.cur&&!S.plan[p[0]])||PLAN.find(p=>!S.plan[p[0]]);}
+function renderPlan(){
+  const root=$('#planList');root.innerHTML='';const cur=curPass();
+  PLAN.forEach((p,k)=>{const [id,t,tab,sum,ex,pages]=p;
+    const r=el('div','plrow'+(cur&&cur[0]===id?' cur':''));const c=el('input');c.type='checkbox';c.checked=!!S.plan[id];c.setAttribute('aria-label','Pass '+(k+1)+' klart');
+    c.onchange=()=>{S.plan[id]=c.checked;save();checkPlanTask();renderPlan();renderPass();};
+    const tx=el('span','t');tx.appendChild(el('b',null,'Pass '+(k+1)+': '));tx.appendChild(document.createTextNode(t));tx.appendChild(el('span','m',pages?'📖 Läs '+pages:'Övningspass – ingen läsning i boken'));
+    const b=el('button','say1',S.plan[id]?'Gör igen':'Starta');b.onclick=()=>{S.cur=id;save();renderPlan();renderPass();window.scrollTo({top:0,behavior:'smooth'});};
+    r.append(c,tx,b);root.appendChild(r);});
+}
+function checkPlanTask(){if(PLAN.every(p=>S.plan[p[0]]))complete('s-plan');else if(S.done['s-plan'])setDone('s-plan',false,true);}
+function renderPass(){
+  const box=$('#passCard');box.innerHTML='';const p=curPass();
+  if(!p){box.innerHTML='<div class="ph"><h2>Alla pass är klara! 🎉</h2><p>Gör övningsprovet en gång till, eller välj ett pass i studieplanen att göra igen.</p></div>';return;}
+  const [id,t,tab,sum,ex,pages,guide]=p,n=PLAN.indexOf(p)+1;
+  const ph=el('div','ph');ph.appendChild(el('h2',null,'Pass '+n+' av '+PLAN.length+': '+t));ph.appendChild(el('p',null,'Ungefär 20 minuter. Gör stegen i ordning.'));
+  const pb=el('div','pb');let st=0;
+  const step=(title,mins)=>{const d=el('div','pstep');const h=el('h3');h.appendChild(el('span','n',String(++st)));h.appendChild(document.createTextNode(title+(mins?' ('+mins+')':'')));d.appendChild(h);pb.appendChild(d);return d;};
+  // 1 Minnesstart
+  const pool=['q_kart','q_hall','q_glob'].flatMap(k=>QA[k].filter(([q])=>{const ps=qPass(k,q);return ps&&ps!==id&&S.plan[ps];}));
+  const m=step('Minnesstart','2 min');
+  if(!pool.length)m.appendChild(el('p',null,'Idag hoppar du över minnesstarten. Den börjar när du har läst lite mer.'));
+  else{m.appendChild(el('p',null,'Tre frågor från det du har läst tidigare. Svara högt, tryck sedan för att se svaret.'));mix(pool).slice(0,3).forEach(([q,a])=>{const d=el('div','qa'),b=el('button',null,q),ans=el('div','a');ans.hidden=true;b.setAttribute('aria-expanded','false');a.forEach(x=>ans.appendChild(el('p',null,x)));b.onclick=()=>{ans.hidden=!ans.hidden;b.setAttribute('aria-expanded',String(!ans.hidden));};d.append(b,ans);m.appendChild(d);});}
+  // 2 Läs
+  if(pages){const r=step('Läs i boken','8–10 min');const pp=el('p');pp.appendChild(document.createTextNode('Läs '));pp.appendChild(el('span','book',pages));pp.appendChild(document.createTextNode(' i Geografi 7–9. Du kan också lyssna på samma text hos NE.'));r.appendChild(pp);
+    if(guide&&guide.length){r.appendChild(el('p',null,'Leta efter svaret på de här frågorna medan du läser:'));const ul=el('ol','guide');guide.forEach(g=>ul.appendChild(el('li',null,g)));r.appendChild(ul);}}
+  else if(!ex.every(e=>e===sum)){const r=step('Läs eller lyssna på sidan','5 min');r.appendChild(el('p',null,'Det här finns inte i boken. Läs eller lyssna på texten ”'+taskTitle(sum)+'” på sidan.'));const b=el('button','btn','Öppna texten');b.onclick=()=>goTo(tab,sum);r.appendChild(b);}
+  // 3 Hjärnsläpp
+  if(pages){const h=step('Hjärnsläpp','2 min');h.appendChild(el('p',null,'Stäng boken. Skriv eller säg högt tre saker du minns. Det gör inget om det blir fel!'));const ta=el('textarea');ta.placeholder='1. …  2. …  3. …';h.appendChild(ta);
+    const b=el('button','btn','Jämför med sammanfattningen');b.onclick=()=>goTo(tab,sum);h.appendChild(b);}
+  // 4 Öva
+  if(ex.length){const o=step('Öva','5–8 min');ex.forEach(e=>{const b=el('button','btn'+(S.done[e]?'':' primary'),(S.done[e]?'✓ ':'▶ ')+taskTitle(e));b.style.margin='.2rem .4rem .2rem 0';b.onclick=()=>goTo(tab,e);o.appendChild(b);});
+    if(/steg/.test(t))o.appendChild(el('p','count','Skriv bara de steg som står i passets namn idag. Resten tar du nästa pass.'));}
+  // klar
+  const f=el('div','pstep');const done=el('button','bigbtn','Klart – bocka av passet ✓');done.style.setProperty('--c','var(--ok)');
+  done.onclick=()=>{S.plan[id]=true;S.cur=null;save();checkPlanTask();renderPlan();renderPass();toast('Pass '+n+' klart! Bra jobbat 🎉');window.scrollTo({top:0,behavior:'smooth'});};
+  f.appendChild(done);pb.appendChild(f);
+  box.append(ph,pb);
+}
+
+/* ---------- Timer ---------- */
+(function(){let t=null;const b=$('#timerBtn'),o=$('#timerOut');
+  b.onclick=()=>{if(t){clearInterval(t);t=null;b.textContent='Starta fem minuters skrivning';o.textContent='';return;}
+    let s=300;b.textContent='Stoppa';const tick=()=>{o.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+' kvar – skriv utan att stanna!';if(s--<=0){clearInterval(t);t=null;b.textContent='Starta fem minuters skrivning';o.textContent='Tiden är ute. Bra jobbat! 🎉';}};tick();t=setInterval(tick,1000);};})();
+
+
+/* ================= Flytta framsteg ================= */
+(function(){
+  const NAME=KEY.startsWith('geo')?'geografi':'spanska';const msg=$('#mvMsg');
+  const pack=()=>JSON.stringify({app:KEY,saved:new Date().toISOString(),data:S});
+  $('#mvDown').onclick=()=>{try{const b=new Blob([pack()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nikol-'+NAME+'-framsteg.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);msg.textContent='Filen är nedladdad. Skicka den till den nya enheten, till exempel med AirDrop eller mejl.';}catch(e){msg.textContent='Det gick inte att ladda ner. Prova ”Kopiera som text” i stället.';}};
+  $('#mvCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pack());msg.textContent='Texten är kopierad. Skicka den till dig själv och klistra in den på den nya enheten.';}catch(e){$('#mvText').value=pack();msg.textContent='Markera texten i rutan nedanför och kopiera den själv.';}};
+  const load=txt=>{try{const o=JSON.parse(txt);if(!o||o.app!==KEY||typeof o.data!=='object')throw 0;
+      if(!confirm('Vill du ersätta framstegen på den här enheten med de sparade från '+new Date(o.saved).toLocaleDateString('sv-SE')+'?'))return;
+      S=Object.assign(S,o.data);save();msg.textContent='Klart! Sidan laddas om.';setTimeout(()=>location.reload(),600);}
+    catch(e){msg.textContent='Det där ser inte ut som en framstegsfil för '+NAME+'. Kontrollera att du valde rätt fil.';}};
+  $('#mvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>load(r.result);r.readAsText(f);};
+  $('#mvPaste').onclick=()=>load($('#mvText').value.trim());
+})();
+
+/* ================= Starta ================= */
+$$('[data-widget]').forEach(r=>{const f=W[r.dataset.widget];if(!f)return;const a=r.dataset.set;f(r,a||r.dataset.task,a?r.dataset.task:undefined);});
+renderPlan();renderPass();
+refresh();
+show(panels.some(p=>p.id==='p-'+S.tab)?S.tab:'start');
+</script></body></html>

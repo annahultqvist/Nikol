@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¡Vamos, Nikol! – Spanska steg 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F4EFE8; --paper:#FFFFFF; --ink:#2B2320; --soft:#6A5B52; --line:#E2D7CB;
+  --start:#B5452B; --playa:#1C7FA0; --ciudad:#B8661B; --cafe:#7A5236; --mundo:#2E7D4F; --redov:#7650B0; --ord:#4D6275;
+  --el:#1C7FA0; --la:#C2553A;
+  --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#1C1714; --paper:#28211C; --ink:#F2EBE4; --soft:#C2B3A7; --line:#43372F;
+    --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8;
+    --el:#5BB8DA; --la:#F08A6C;
+    --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1C1714; --paper:#28211C; --ink:#F2EBE4; --soft:#C2B3A7; --line:#43372F;
+  --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8;
+  --el:#5BB8DA; --la:#F08A6C;
+  --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.125rem;line-height:1.75;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:48rem;margin:0 auto;padding:0 1rem 5rem}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .3rem}
+h2{font-size:1.5rem;line-height:1.3;margin:0 0 .5rem;color:var(--c)}
+h3{font-size:1.15rem;line-height:1.35;margin:1.1rem 0 .3rem}
+p{margin:.35rem 0 .85rem}
+ul.plain{margin:.3rem 0 .9rem;padding-left:1.2rem}
+ul.plain li{margin:.2rem 0}
+
+/* ---------- Header: gradnät behind the overall progress ---------- */
+.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
+.hero svg.grid{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero .wrap{position:relative;display:flex;align-items:center;gap:1.2rem;padding-top:1.4rem;padding-bottom:1.2rem}
+.ring{flex:none;width:6.5rem;height:6.5rem;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero p{margin:0;color:var(--soft)}
+
+/* ---------- Tab bar ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+.tabs .wrap{display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.tab{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.35rem .7rem;cursor:pointer;min-height:44px;line-height:1.2;text-align:left}
+.tab .t{font-weight:500;font-size:.98rem;white-space:nowrap}
+.tab .bar{width:100%;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--c);width:0}
+.tab .pc{font-size:.8rem;color:var(--soft)}
+.tab[aria-selected="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--paper))}
+.tab.done .t::after{content:" ✓";color:var(--ok)}
+
+/* ---------- Panels and tasks ---------- */
+.panel{padding-top:1.2rem}
+.panel[hidden]{display:none}
+.intro{background:var(--paper);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;border-top:8px solid var(--c)}
+.task{background:var(--paper);border-radius:14px;padding:1rem 1.2rem 1.1rem;margin:0 0 1rem;border-left:8px solid var(--c);transition:background .3s}
+.task.is-done{border-left-color:var(--ok)}
+.task>header{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.4rem}
+.task>header h3{margin:0;flex:1;font-size:1.2rem}
+.tick{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.2rem .8rem;cursor:pointer;font-size:.92rem;min-height:40px;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kind{display:inline-block;font-size:.85rem;color:var(--soft);margin-bottom:.2rem}
+.listen{border:2px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:.15rem .8rem;cursor:pointer;font-size:.92rem;min-height:36px}
+.listen[aria-pressed="true"]{background:var(--c);color:#fff}
+.trick{background:color-mix(in srgb,var(--c) 11%,transparent);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.fact{border:2px dashed var(--c);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 1rem}
+.chain span{background:color-mix(in srgb,var(--c) 14%,transparent);border:2px solid var(--c);border-radius:8px;padding:.1rem .55rem;font-weight:500}
+.chain i{font-style:normal;color:var(--c);font-weight:700}
+.tabdone{display:flex;justify-content:center;margin:1.5rem 0}
+.bigbtn{border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.6rem 1.4rem;cursor:pointer;font-weight:500;min-height:48px}
+.bigbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,250%);visibility:hidden;background:var(--ink);color:var(--paper);padding:.7rem 1.2rem;border-radius:999px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center;font-weight:500}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* ---------- Generic exercise bits ---------- */
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.4rem .9rem;cursor:pointer;min-height:44px;font-size:1rem}
+.btn.primary{border-color:var(--c);background:var(--c);color:#fff}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.count{color:var(--soft);font-size:.95rem;margin-left:auto}
+.msg{font-weight:500;min-height:1.6rem;margin:.5rem 0 0}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{border:2px solid var(--c);background:var(--paper);border-radius:10px;padding:.4rem .8rem;cursor:grab;min-height:44px;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;line-height:1.35;font-size:1rem}
+.chip.sel{background:var(--c);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-60%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wrong{border-color:var(--bad)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.answer{display:flex;flex-wrap:wrap;gap:.4rem;min-height:3rem;padding:.5rem;border-radius:10px;border:2px dashed var(--line);margin:.6rem 0}
+.answer span{background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .7rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin:.8rem 0 .3rem}
+.bucket{border:2px dashed var(--c);border-radius:12px;padding:.5rem;min-height:6rem;cursor:pointer;background:color-mix(in srgb,var(--c) 6%,var(--paper))}
+.bucket h4{margin:0 0 .3rem;font-size:1.02rem;color:var(--c);text-align:center}
+.bucket .in{font-size:.9rem;background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .5rem;margin:.25rem 0;line-height:1.35}
+.picking .bucket{border-style:solid}
+.match{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:.6rem}
+.match>div{display:flex;flex-direction:column;gap:.5rem}
+.match button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.5rem .7rem;cursor:pointer;line-height:1.4;font-size:1rem}
+.match button.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,var(--paper))}
+.match button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--paper));cursor:default}
+.mcq .q{font-weight:500;font-size:1.15rem;margin:.3rem 0 .6rem}
+.mcq .opts{display:grid;gap:.5rem}
+.mcq .opts button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;line-height:1.4}
+.mcq .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.mcq .why{background:color-mix(in srgb,var(--ok) 10%,var(--paper));border-radius:10px;padding:.5rem .8rem;margin-top:.6rem}
+.score{font-size:1.4rem;font-weight:700;color:var(--c)}
+.qa{border-bottom:2px solid var(--line)}
+.qa:last-child{border-bottom:0}
+.qa>button{text-align:left;width:100%;background:none;border:0;padding:.65rem 0;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.qa>button::before{content:"＋";color:var(--soft);font-weight:700}
+.qa>button[aria-expanded="true"]::before{content:"－"}
+.qa .a{background:color-mix(in srgb,var(--c) 9%,var(--paper));border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem}
+.qa .a p{margin:.2rem 0 .5rem}
+.say1{border:2px solid var(--line);background:transparent;border-radius:999px;padding:.05rem .7rem;cursor:pointer;font-size:.9rem}
+.wk{margin:1.4rem 0 .1rem;color:var(--soft);font-size:1.02rem}
+
+/* label exercise */
+.figscroll{overflow-x:auto;border-radius:10px;background:#fff;border:2px solid var(--line)}
+.fig{position:relative;container-type:inline-size;width:100%;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone{position:absolute;border:2px dashed var(--c);border-radius:6px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.3cqw,16px);line-height:1.1;color:#17324A;cursor:pointer;padding:0 3px;text-align:center;font-weight:500}
+.zone.ok{border:2px solid #2E8B57;background:#E3F4EA;color:#1D5E3A}
+.zone.shown{border:2px solid #7D8B99;background:#EEF1F4;color:#4A5A6B}
+.picking .zone:not(.ok):not(.shown){border-style:solid;background:#E8F0FC}
+
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:.5rem;margin:.7rem 0}
+.card{min-height:5.2rem;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:.4rem;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.card.open{background:var(--paper);color:var(--ink)}
+.card.got{background:color-mix(in srgb,var(--ok) 15%,var(--paper));border-color:var(--ok);color:var(--ink);cursor:default}
+.card .num{font-size:1.6rem;font-weight:700}
+
+/* globala mål chips */
+.goal{display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;color:#fff;padding:.1rem .5rem;font-weight:500;font-size:.92rem;margin:.15rem .1rem}
+
+/* checklist */
+.check{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.check label{flex:1;cursor:pointer}
+.check a{color:var(--c);font-size:.92rem}
+.tabsum{display:grid;gap:.5rem;margin:.6rem 0}
+.tabsum button{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.5rem .8rem;cursor:pointer}
+.tabsum .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.tabsum .bar i{display:block;height:100%;background:var(--c)}
+
+/* writing workshop */
+.ladder{counter-reset:st;display:grid;gap:.4rem;margin:.6rem 0 1rem}
+.ladder div{counter-increment:st;display:flex;gap:.6rem;align-items:flex-start;background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.45rem .7rem}
+.ladder div::before{content:counter(st);flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;margin-top:.15rem}
+.choose{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .8rem}
+.choose button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.3rem .9rem;cursor:pointer;min-height:42px}
+.choose button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.wstep{border:2px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.7rem 0;background:var(--paper)}
+.wstep.filled{border-color:var(--ok)}
+.wstep h4{margin:0;font-size:1.05rem;display:flex;gap:.5rem;align-items:center}
+.wstep h4 .st{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.wstep.filled h4 .st{background:var(--ok)}
+.wstep .help{color:var(--soft);font-size:.98rem;margin:.2rem 0 .4rem}
+.wstep textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;line-height:1.6;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.5rem .7rem;resize:vertical}
+.wstep textarea:focus{border-color:var(--c);outline:none}
+.mini{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 0}
+.mini button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.1rem .7rem;cursor:pointer;font-size:.88rem;min-height:34px}
+.hintbox{background:var(--hl);border-radius:10px;padding:.5rem .8rem;margin:.5rem 0 0;font-size:.98rem}
+.wordbank{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:10;background:var(--paper);border:2px solid var(--c);border-radius:12px;padding:.5rem .7rem;margin:.8rem 0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wordbank summary{cursor:pointer;font-weight:500;color:var(--c)}
+.wordbank .mini button{border-color:var(--c)}
+.checker{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .8rem}
+.checker span{border:2px solid var(--line);border-radius:999px;padding:.05rem .65rem;font-size:.9rem;color:var(--soft)}
+.checker span.got{border-color:var(--ok);background:var(--ok);color:#fff}
+.factbank{border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--paper));border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:.6rem 0}
+.factbank ul{margin:.2rem 0;padding-left:1.1rem}
+.full{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line)}
+.wprog{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:.3rem 0 .2rem}
+.wprog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cheer{color:var(--ok);font-weight:500;min-height:1.5rem}
+.fyr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0 1rem}
+.fyr label{display:block;font-size:.9rem;color:var(--soft)}
+.fyr textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+@media (max-width:520px){.fyr{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+
+/* small visual widgets */
+.water{display:grid;gap:.6rem;margin:.6rem 0}
+.wbar{display:flex;height:3rem;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+.wbar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-size:.9rem;font-weight:500;transition:flex-grow .6s;white-space:nowrap;overflow:hidden}
+.earths{font-size:2.4rem;line-height:1.2;letter-spacing:.1rem;margin:.2rem 0}
+.term{border-left:6px solid var(--c);padding:.45rem .9rem;margin:.6rem 0;background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:0 10px 10px 0}
+.term h4{margin:0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:1.1rem}
+.term p{margin:.15rem 0}
+.badge{font-size:.78rem;font-weight:500;border-radius:999px;padding:0 .5rem;background:var(--c);color:#fff}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.6rem;margin:.5rem 0}
+.calc label{font-size:.92rem;color:var(--soft)}
+.calc select,.calc input{display:block;width:100%;font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.steps{background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.6rem .9rem;line-height:1.9}
+.toggle{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.toggle label{display:flex;gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:999px;padding:.2rem .8rem;cursor:pointer;min-height:40px;font-size:.95rem}
+.toggle input{accent-color:var(--c);width:1.1rem;height:1.1rem}
+.svgbox{border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#F4F8F1}
+.svgbox svg{display:block;width:100%;height:auto}
+
+/* ---------- Spanska ---------- */
+.es{font-weight:500}
+.slow{display:flex;align-items:center;gap:.4rem;font-size:.9rem;color:var(--soft);margin-top:.4rem}
+.slow input{accent-color:var(--start);width:1.1rem;height:1.1rem}
+.phr{display:grid;gap:.35rem;margin:.5rem 0}
+.phr button{display:grid;grid-template-columns:auto 1fr;gap:.1rem .7rem;align-items:center;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.45rem .7rem;cursor:pointer;line-height:1.35}
+.phr button .ic{grid-row:span 2;font-size:1.3rem}
+.phr button .sv{color:var(--soft);font-size:.95rem}
+.phr button[aria-pressed="true"]{border-color:var(--c)}
+.flash{border:3px solid var(--c);border-radius:16px;min-height:11rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;background:color-mix(in srgb,var(--c) 8%,var(--paper));cursor:pointer;width:100%}
+.flash .em{font-size:3rem;line-height:1.1}
+.flash .w{font-size:1.6rem;font-weight:700;margin:.3rem 0}
+.flash .hint{color:var(--soft);font-size:.9rem}
+.big-say{font-size:1.4rem;border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.5rem 1.4rem;cursor:pointer;min-height:56px}
+.opts4{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.6rem 0}
+.opts4 button{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.6rem .5rem;cursor:pointer;font-size:1.05rem;min-height:64px;line-height:1.3}
+.opts4 button .em{display:block;font-size:1.8rem}
+.opts4 button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.numgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;margin:.6rem 0}
+.numgrid button{border:2px solid var(--line);background:var(--bg);border-radius:10px;font-size:1.2rem;font-weight:700;min-height:48px;cursor:pointer}
+.numgrid button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.conj{display:grid;grid-template-columns:auto 1fr auto;gap:.3rem .8rem;align-items:center;margin:.6rem 0;font-size:1.1rem}
+.conj .p{color:var(--soft)}
+.conj b .end{padding:0 .1rem;border-radius:4px}
+.e0{background:#FFD8CC}.e1{background:#FFE9A8}.e2{background:#CDEFD8}.e3{background:#CFE4FA}.e4{background:#E6D8FA}.e5{background:#F9D0E2}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .end{color:#2B2320}}
+:root[data-theme="dark"] .end{color:#2B2320}
+.g-el{color:var(--el);font-weight:700}.g-la{color:var(--la);font-weight:700}
+.reader{font-size:1.2rem;line-height:2;background:var(--bg);border-radius:12px;padding:.8rem 1rem}
+.reader .wd{cursor:pointer;border-bottom:2px dotted var(--line);border-radius:3px}
+.reader .wd.gl{background:var(--hl)}
+.gloss{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);border-radius:12px;padding:.5rem .9rem;margin:.5rem 0;min-height:2.6rem;z-index:5}
+.form{display:grid;gap:.6rem;margin:.6rem 0}
+.form label{display:grid;gap:.15rem;font-size:.95rem;color:var(--soft)}
+.form .toggle label{display:flex;color:var(--ink)}
+.form input,.form select{font:inherit;font-size:1.05rem;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.out{background:color-mix(in srgb,var(--c) 8%,var(--paper));border:2px solid var(--c);border-radius:12px;padding:.8rem 1rem;font-size:1.15rem;line-height:1.8}
+.out p{margin:.1rem 0;display:flex;gap:.5rem;align-items:flex-start}
+.out p button{flex:none}
+.chat{display:grid;gap:.5rem;margin:.6rem 0}
+.bub{max-width:85%;border-radius:16px;padding:.5rem .9rem;line-height:1.45}
+.bub.v{background:color-mix(in srgb,var(--c) 14%,var(--paper));justify-self:start;border-bottom-left-radius:4px}
+.bub.y{background:var(--ok);color:#fff;justify-self:end;border-bottom-right-radius:4px}
+.bub small{display:block;opacity:.8;font-size:.85rem}
+.passport{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.8rem,1fr));gap:.5rem;margin:.6rem 0}
+.stamp{border:2px dashed var(--line);border-radius:12px;padding:.5rem .3rem;text-align:center;min-height:6.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.85rem;line-height:1.25;background:var(--bg);cursor:default}
+.stamp .fl{font-size:2rem;filter:grayscale(1);opacity:.35}
+.stamp.got{border-style:solid;border-color:var(--start);background:var(--paper);cursor:pointer;transform:rotate(-2deg)}
+.stamp.got:nth-child(even){transform:rotate(2deg)}
+.stamp.got .fl{filter:none;opacity:1}
+.factpop{background:color-mix(in srgb,var(--start) 10%,var(--paper));border-radius:12px;padding:.6rem .9rem;margin:.4rem 0;min-height:1rem}
+.mission{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;background:var(--start);color:#fff;border-radius:16px;padding:1rem 1.2rem;margin-bottom:1rem}
+.mission h2{color:#fff;margin:0}
+.mission button{border:0;background:#fff;color:var(--start);font-weight:700;border-radius:999px;padding:.6rem 1.4rem;min-height:48px;cursor:pointer;font-size:1.1rem}
+.cheerup{font-size:1.15rem}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="grid" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--line)" stroke-width="2"><circle cx="700" cy="40" r="60"/><circle cx="700" cy="40" r="90"/><path d="M0 170 Q100 150 200 170 T400 170 T600 170 T800 170"/><path d="M0 190 Q100 170 200 190 T400 190 T600 190 T800 190"/></g>
+  </svg>
+  <div class="wrap">
+    <div class="ring" aria-label="Hur mycket som är klart">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--line)" stroke-width="3.2"/><circle id="ringArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 100"/></svg>
+      <b id="ringPc">0 %</b>
+    </div>
+    <div>
+      <h1>¡Vamos, Nikol!</h1>
+      <p>Spanska steg 6 – presentera dig, din familj och den spansktalande världen.</p>
+      <label class="slow"><input type="checkbox" id="slowCb"> 🐢 Långsamt tal</label>
+    </div>
+  </div>
+</div>
+<nav class="tabs" aria-label="Flikar"><div class="wrap" id="tabbar" role="tablist"></div></nav>
+<main class="wrap">
+
+<!-- ======================= START ======================= -->
+<section class="panel" id="p-start" data-color="start" data-title="Start" hidden>
+  <div class="mission">
+    <h2>Dagens uppdrag</h2>
+    <span id="missionTxt">Max 15 minuter. Sen är du klar för idag.</span>
+    <button id="missionBtn">Kör! ▶</button>
+  </div>
+
+  <section class="task" data-task="s-gratis">
+    <header><h3>Du kan redan spanska! 🎉</h3></header>
+    <div class="say">
+    <p>Visste du att spanska är ett av de lättaste språken att stava? Det skrivs nästan precis som det låter. Varje bokstav har ett ljud. Engelska är mycket krångligare!</p>
+    <p>Och du kan redan massor av spanska ord. Testa!</p>
+    </div>
+    <div data-widget="gratis" data-task="s-gratis"></div>
+  </section>
+
+  <section class="task" data-task="s-pass">
+    <header><h3>Ditt pass – samla stämplar</h3></header>
+    <p>Varje gång du blir klar med en uppgift får du en stämpel och låser upp ett nytt spansktalande land. Tryck på ett land du har låst upp för att läsa något kul om det.</p>
+    <div id="passport"></div>
+  </section>
+
+  <section class="task" data-task="s-plan">
+    <header><h3>Studieplan – korta pass</h3></header>
+    <p>Varje pass tar 10–15 minuter. Ett eller två om dagen räcker. ”Dagens uppdrag” ovanför tar dig alltid till nästa pass.</p>
+    <div id="planList"></div>
+  </section>
+
+  <section class="task" data-task="s-mal">
+    <header><h3>Det här ska du kunna – lärarens mål</h3></header>
+    <div id="checkList"></div>
+    <div class="fact"><b>Redovisningarna:</b> Läsa – En el campamento de verano. Skriva – Una visita a España. Höra – La familia de Alba. Tala – Este/esta soy yo och En el quiosco. Du tränar på alla fyra i fliken <b>Redovisning</b>.</div>
+  </section>
+
+  <details class="intro" id="moveBox" style="--c:var(--start)">
+    <summary><b>Flytta dina framsteg till en annan enhet</b></summary>
+    <p>Har du pluggat på en annan dator eller iPad? Spara framstegen som en fil där, skicka filen hit och hämta in den.</p>
+    <h3>1. Spara framstegen på den enhet du har pluggat på</h3>
+    <div class="row"><button class="btn primary" id="mvDown">Ladda ner framstegsfil</button><button class="btn" id="mvCopy">Kopiera som text</button></div>
+    <h3>2. Hämta in dem på den nya enheten</h3>
+    <div class="row"><label class="btn" style="display:inline-flex;align-items:center">Välj framstegsfil<input type="file" id="mvFile" accept=".json,application/json,text/plain" hidden></label></div>
+    <p class="count">Eller klistra in texten här:</p>
+    <textarea id="mvText" style="width:100%;min-height:4rem;font:inherit;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem"></textarea>
+    <div class="row"><button class="btn" id="mvPaste">Hämta in texten</button></div>
+    <p class="msg" id="mvMsg" aria-live="polite"></p>
+  </details>
+
+  <div class="intro" style="--c:var(--start)">
+    <h2>Hur långt har du kommit?</h2>
+    <div class="tabsum" id="tabSummary"></div>
+  </div>
+</section>
+
+<!-- ======================= 1A EN LA PLAYA ======================= -->
+<section class="panel" id="p-playa" data-color="playa" data-title="1A En la playa" hidden>
+  <div class="intro"><h2>1A En la playa 🏖️</h2><p>Hälsa, fråga hur någon mår, köpa vatten och frukt, och räkna till tio.</p></div>
+
+  <section class="task" data-task="a-fras">
+    <header><h3>Lyssna: hälsningsfraser</h3></header>
+    <p>Tryck på en fras för att höra den. Säg efter högt!</p>
+    <div data-widget="phrases" data-set="halsa"></div>
+  </section>
+
+  <section class="task" data-task="a-svar">
+    <header><h3>Öva: Vad svarar man?</h3></header>
+    <div data-widget="match" data-set="frågasvar" data-task="a-svar"></div>
+  </section>
+
+  <section class="task" data-task="a-ord">
+    <header><h3>Ordkort: på stranden och i staden</h3></header>
+    <div data-widget="flash" data-set="A" data-task="a-ord"></div>
+  </section>
+
+  <section class="task" data-task="a-hor">
+    <header><h3>Öva: Lyssna och tryck på rätt bild</h3></header>
+    <div data-widget="listenpick" data-set="A" data-task="a-hor"></div>
+  </section>
+
+  <section class="task" data-task="a-num">
+    <header><h3>Siffrorna 0–10</h3></header>
+    <div data-widget="phrases" data-set="num10"></div>
+    <h3>Lyssna och tryck på rätt siffra</h3>
+    <div data-widget="numgame" data-set="10" data-task="a-num"></div>
+  </section>
+
+  <section class="task" data-task="a-uttal">
+    <header><h3>Uttal: så låter spanskan</h3></header>
+    <div class="say">
+    <p>Spanska uttalas nästan alltid likadant. Lär dig de här reglerna, så kan du läsa allt högt!</p>
+    </div>
+    <div data-widget="phrases" data-set="uttal"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="playa">Jag är klar med 1A</button></div>
+</section>
+
+<!-- ======================= 1B EN LA CIUDAD ======================= -->
+<section class="panel" id="p-ciudad" data-color="ciudad" data-title="1B En la ciudad" hidden>
+  <div class="intro"><h2>1B En la ciudad 🏙️</h2><p>Berätta hur gammal du är, om din familj, och var saker finns.</p></div>
+
+  <section class="task" data-task="b-fras">
+    <header><h3>Lyssna: orden i 1B</h3></header>
+    <div data-widget="phrases" data-set="B"></div>
+  </section>
+
+  <section class="task" data-task="b-num">
+    <header><h3>Siffrorna 11–20</h3></header>
+    <div class="trick">Knep: 16–19 är ”tio och sex”, ”tio och sju” och så vidare: dieci-séis, dieci-siete, dieci-ocho, dieci-nueve.</div>
+    <div data-widget="phrases" data-set="num20"></div>
+    <h3>Lyssna och tryck på rätt siffra</h3>
+    <div data-widget="numgame" data-set="20" data-task="b-num"></div>
+  </section>
+
+  <section class="task" data-task="b-fam">
+    <header><h3>La familia – familjen</h3></header>
+    <div data-widget="phrases" data-set="familia"></div>
+    <h3>Memory</h3>
+    <div data-widget="memory" data-set="familia" data-task="b-fam"></div>
+  </section>
+
+  <section class="task" data-task="b-tener">
+    <header><h3>Tener (ha) och estar (må, befinna sig)</h3></header>
+    <div class="say">
+    <p><b>Tener</b> betyder ”ha”. På spanska <b>har</b> man år: <i>Tengo trece años</i> betyder ”jag är tretton år”, men egentligen ”jag har tretton år”.</p>
+    <p><b>Estar</b> används när man säger hur man mår och var något finns: <i>Estoy bien</i> (jag mår bra), <i>¿Dónde está el mercado?</i> (var ligger marknaden?).</p>
+    </div>
+    <div data-widget="conjtable" data-set="tener_estar"></div>
+    <h3>Testa dig själv</h3>
+    <div data-widget="mcq" data-set="tener" data-task="b-tener"></div>
+  </section>
+
+  <section class="task" data-task="b-un">
+    <header><h3>Un eller una?</h3></header>
+    <div class="say">
+    <p>Spanska ord är antingen <span class="g-el">han-ord</span> eller <span class="g-la">hon-ord</span>. Han-ord får <span class="g-el">un</span> (en), hon-ord får <span class="g-la">una</span>.</p>
+    <p>Knep: ord som slutar på <b>-o</b> är oftast han-ord: <span class="g-el">un</span> gato. Ord som slutar på <b>-a</b> är oftast hon-ord: <span class="g-la">una</span> naranja.</p>
+    </div>
+    <div data-widget="sort" data-set="ununa" data-task="b-un"></div>
+  </section>
+
+  <section class="task" data-task="b-bygg">
+    <header><h3>Bygg meningar</h3></header>
+    <div data-widget="build" data-set="B" data-task="b-bygg"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="ciudad">Jag är klar med 1B</button></div>
+</section>
+
+<!-- ======================= 1C EN LA CAFETERÍA ======================= -->
+<section class="panel" id="p-cafe" data-color="cafe" data-title="1C En la cafetería" hidden>
+  <div class="intro"><h2>1C En la cafetería ☕</h2><p>Berätta varifrån du är, vilka språk du pratar, och böj ar-verb.</p></div>
+
+  <section class="task" data-task="c-fras">
+    <header><h3>Lyssna: orden i 1C</h3></header>
+    <div data-widget="phrases" data-set="C"></div>
+  </section>
+
+  <section class="task" data-task="c-land">
+    <header><h3>Länder och språk</h3></header>
+    <div data-widget="phrases" data-set="paises"></div>
+    <div class="trick">Språk skrivs med liten bokstav på spanska: <i>español, sueco, inglés</i>.</div>
+    <div data-widget="match" data-set="landsprak" data-task="c-land"></div>
+  </section>
+
+  <section class="task" data-task="c-pron">
+    <header><h3>Personliga pronomen</h3></header>
+    <div data-widget="phrases" data-set="pronomen"></div>
+    <div class="trick"><b>usted</b> är ett artigt ”ni” till en person, som ”Ni” till en vuxen man inte känner. <b>vosotros</b> är ”ni” till flera, som används i Spanien.</div>
+    <div data-widget="memory" data-set="pronomen" data-task="c-pron"></div>
+  </section>
+
+  <section class="task" data-task="c-ar">
+    <header><h3>Verbmaskinen: ar-verb</h3></header>
+    <div class="say">
+    <p>De flesta spanska verb slutar på <b>-ar</b> i grundformen, till exempel <i>hablar</i>, prata. Ta bort -ar, och lägg till en ändelse som visar vem som gör något. Ändelsen berättar vem det är, så man behöver ofta inte säga <i>yo</i> eller <i>tú</i>.</p>
+    </div>
+    <div data-widget="verbmachine" data-task="c-ar"></div>
+  </section>
+
+  <section class="task" data-task="c-ser">
+    <header><h3>Ser – att vara</h3></header>
+    <div class="say">
+    <p><b>Ser</b> betyder ”vara”. Det används när man säger <b>vem</b> man är, <b>vad</b> man är och <b>varifrån</b> man är: <i>Soy Nikol. Soy de Suecia. Mi padre es camarero.</i></p>
+    <div class="trick"><b>Ser eller estar?</b> Ser = vem, vad, varifrån. Estar = hur man mår och var man är just nu.</div>
+    </div>
+    <div data-widget="conjtable" data-set="ser"></div>
+    <div data-widget="mcq" data-set="ser" data-task="c-ser"></div>
+  </section>
+
+  <section class="task" data-task="c-el">
+    <header><h3>El eller la?</h3></header>
+    <div class="say"><p>Den bestämda formen, ”katten” eller ”flickan”, får <span class="g-el">el</span> för han-ord och <span class="g-la">la</span> för hon-ord: <span class="g-el">el</span> gato, <span class="g-la">la</span> chica.</p></div>
+    <div data-widget="sort" data-set="ella" data-task="c-el"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="cafe">Jag är klar med 1C</button></div>
+</section>
+
+<!-- ======================= MUNDO ======================= -->
+<section class="panel" id="p-mundo" data-color="mundo" data-title="Mundo hispano" hidden>
+  <div class="intro"><h2>El mundo hispanohablante 🌎</h2><p>Spanien, Latinamerika och Mafalda.</p></div>
+
+  <section class="task" data-task="m-las">
+    <header><h3>Läs: Den spansktalande världen</h3></header>
+    <div class="say">
+    <p>Spanska är modersmål för ungefär <b>500 miljoner människor</b>. Det talas i Spanien, i nästan hela Latinamerika och i Ekvatorialguinea i Afrika. Mexiko är landet med flest spansktalande.</p>
+    <p><b>Spanien</b> är ett av svenskarnas favoritländer för semester. Varje år åker väldigt många svenska turister dit, till exempel till Kanarieöarna, Mallorca och Costa del Sol. Spanien är känt för sina stränder, fotboll, mode och stora städer som huvudstaden Madrid och Barcelona.</p>
+    <p><b>Latinamerika</b> är enormt. Här finns Anderna med höga berg och vita snötoppar, regnskog, korallrev i Karibiska havet och exotiska djur. I Venezuela finns <b>Salto Ángel</b>, världens högsta vattenfall.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="m-huvud">
+    <header><h3>Öva: Länder och huvudstäder</h3></header>
+    <div data-widget="match" data-set="huvudstad" data-task="m-huvud"></div>
+  </section>
+
+  <section class="task" data-task="m-maf">
+    <header><h3>Läs: Mafalda</h3></header>
+    <div class="say">
+    <p><b>Mafalda</b> är en seriefigur, en flicka som en argentinsk serietecknare skapade på 1960-talet. Hon är sex år och bor i <b>Buenos Aires</b>, huvudstaden i Argentina. Hon bor med sin mamma, sin pappa och sin lillebror Guille.</p>
+    <p>Mafalda gillar Beatles, fred och demokrati. Hon tycker inte om krig, orättvisor och soppa! Hennes bästa vänner heter bland annat Felipe, Manolito och Susanita.</p>
+    <div class="trick"><b>-ito och -ita</b> gör ord mindre och gulligare: Susana blir Susanita, Manolo blir Manolito, hermano blir hermanito, lillebror.</div>
+    </div>
+    <div data-widget="mcq" data-set="mafalda" data-task="m-maf"></div>
+  </section>
+
+  <section class="task" data-task="m-quiz">
+    <header><h3>Quiz: Vad vet du om den spansktalande världen?</h3></header>
+    <div data-widget="mcq" data-set="mundo" data-task="m-quiz"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="mundo">Jag är klar med Mundo hispano</button></div>
+</section>
+
+<!-- ======================= REDOVISNING ======================= -->
+<section class="panel" id="p-redov" data-color="redov" data-title="Redovisning" hidden>
+  <div class="intro"><h2>Träna inför redovisningarna 🎤</h2><p>Här tränar du på läsa, höra, skriva och tala. Texterna är nyskrivna för att likna lärarens, med samma ord.</p></div>
+
+  <section class="task" data-task="r-tala1">
+    <header><h3>Tala: Este soy yo / Esta soy yo</h3></header>
+    <p>Fyll i om dig själv. Sidan bygger din presentation på spanska. Lyssna på den och öva en mening i taget.</p>
+    <div data-widget="present" data-task="r-tala1"></div>
+  </section>
+
+  <section class="task" data-task="r-tala2">
+    <header><h3>Tala: En el quiosco</h3></header>
+    <p>Du är i en kiosk i Spanien. Försäljaren pratar, och du väljer vad du ska svara. Säg svaret högt innan du trycker!</p>
+    <div data-widget="kiosk" data-task="r-tala2"></div>
+  </section>
+
+  <section class="task" data-task="r-las">
+    <header><h3>Läsa: ¡Hola desde el campamento!</h3></header>
+    <p>Lyssna och läs samtidigt. Tryck på ett ord du inte kan, så ser du vad det betyder.</p>
+    <div data-widget="reader" data-task="r-las"></div>
+  </section>
+
+  <section class="task" data-task="r-hor">
+    <header><h3>Höra: La familia de Lucas</h3></header>
+    <p>Lyssna utan att läsa först. Du kan lyssna så många gånger du vill, och slå på 🐢 Långsamt tal högst upp.</p>
+    <div data-widget="listening" data-task="r-hor"></div>
+  </section>
+
+  <section class="task" data-task="r-skriv">
+    <header><h3>Skriva: Una visita a España</h3></header>
+    <p>Du är på semester i Spanien och skickar ett vykort. Välj i rutorna, så bygger sidan texten. Sen kan du ändra och lägga till.</p>
+    <div data-widget="postcard" data-task="r-skriv"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="redov">Jag är klar med Redovisning</button></div>
+</section>
+
+<!-- ======================= ORDBANK ======================= -->
+<section class="panel" id="p-ord" data-color="ord" data-title="Ordbank" hidden>
+  <div class="intro"><h2>Ordbank 📚</h2><p>Alla ord från steg 6. Tryck på ett ord för att höra det.</p></div>
+
+  <section class="task" data-task="o-mem">
+    <header><h3>Memory med orden</h3></header>
+    <div data-widget="memory" data-set="ord" data-task="o-mem"></div>
+  </section>
+
+  <section class="task" data-task="o-fraga">
+    <header><h3>Frågeord</h3></header>
+    <div data-widget="phrases" data-set="fragor"></div>
+    <div data-widget="match" data-set="frageord" data-task="o-fraga"></div>
+  </section>
+
+  <section class="task" data-task="o-lista">
+    <header><h3>Alla ord</h3></header>
+    <div data-widget="phrases" data-set="allaA"></div>
+    <div data-widget="phrases" data-set="allaB"></div>
+    <div data-widget="phrases" data-set="allaC"></div>
+    <div data-widget="phrases" data-set="allaM"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="ord">Jag är klar med Ordbanken</button></div>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+
+const NUM=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte'];
+
+const PLAN=[
+ ['p01','Du kan redan spanska! – gratisorden','start','s-gratis'],
+ ['p02','Hälsningsfraser och ”Vad svarar man?”','playa','a-fras'],
+ ['p03','Ordkort: på stranden och i staden','playa','a-ord'],
+ ['p04','Lyssna och tryck på rätt bild','playa','a-hor'],
+ ['p05','Siffrorna 0–10','playa','a-num'],
+ ['p06','Uttal: så låter spanskan','playa','a-uttal'],
+ ['p07','Orden i 1B','ciudad','b-fras'],
+ ['p08','Siffrorna 11–20','ciudad','b-num'],
+ ['p09','La familia – familjen','ciudad','b-fam'],
+ ['p10','Tener och estar','ciudad','b-tener'],
+ ['p11','Un eller una?','ciudad','b-un'],
+ ['p12','Bygg meningar','ciudad','b-bygg'],
+ ['p13','Orden i 1C','cafe','c-fras'],
+ ['p14','Länder och språk','cafe','c-land'],
+ ['p15','Personliga pronomen','cafe','c-pron'],
+ ['p16','Verbmaskinen: ar-verb','cafe','c-ar'],
+ ['p17','Ser – att vara','cafe','c-ser'],
+ ['p18','El eller la?','cafe','c-el'],
+ ['p19','Den spansktalande världen och huvudstäderna','mundo','m-las'],
+ ['p20','Mafalda','mundo','m-maf'],
+ ['p21','Quiz om den spansktalande världen','mundo','m-quiz'],
+ ['p22','Este/esta soy yo – bygg din presentation','redov','r-tala1'],
+ ['p23','Este/esta soy yo – öva att säga den','redov','r-tala1'],
+ ['p24','En el quiosco – rollspel','redov','r-tala2'],
+ ['p25','Läsa: ¡Hola desde el campamento!','redov','r-las'],
+ ['p26','Höra: La familia de Lucas','redov','r-hor'],
+ ['p27','Skriva: Una visita a España','redov','r-skriv'],
+ ['p28','Frågeord och memory med orden','ord','o-fraga'],
+ ['p29','Repetition: kiosken och din presentation en gång till','redov','r-tala2']
+];
+const CHECK=[
+ ['c1','Använda namnen på länder och språk','cafe'],
+ ['c2','Presentera mig själv, min familj och någon annan','redov'],
+ ['c3','Använda regelbundna ar-verb i presens','cafe'],
+ ['c4','Räkna till 20','ciudad'],
+ ['c5','Några fakta om Spanien och Latinamerika','mundo']
+];
+
+/* [spanska, svenska, emoji] */
+const PHR={
+ halsa:[['¡Hola!','Hej!','👋'],['¿Qué tal?','Hur är det?','🙂'],['Bien.','Bra.','👍'],['Muy bien, gracias.','Mycket bra, tack.','😄'],['¿Y tú?','Och du?','👉'],['Buenos días.','God dag. God morgon.','🌅'],['Buenas tardes.','God eftermiddag.','☀️'],['Buenas noches.','God kväll. God natt.','🌙'],['Me llamo Nikol.','Jag heter Nikol.','🙋‍♀️'],['¿Cómo te llamas?','Vad heter du?','❓'],['¿Dónde vives?','Var bor du?','🏠'],['Vivo en Estocolmo.','Jag bor i Stockholm.','🇸🇪'],['Por favor.','Snälla. Tack (när man ber om något).','🙏'],['Gracias.','Tack.','💛'],['¡Mira!','Titta!','👀'],['¿Vamos?','Ska vi gå?','🚶'],['¿Cuánto cuesta?','Hur mycket kostar det?','💶'],['Tome.','Varsågod.','🤲'],['Adiós.','Hej då.','👋'],['¡Hasta luego!','Vi ses!','😉']],
+ num10:NUM.slice(0,11).map((w,i)=>[w,String(i),'']),
+ num20:NUM.slice(11).map((w,i)=>[w,String(i+11),'']),
+ uttal:[['hola','H är stum: ”ola”','🤫'],['me llamo','LL låter som j: ”me jamo”','🔤'],['la playa','Y låter också som j: ”la plaja”','🏖️'],['chico','CH låter som tj: ”tjiko”','👦'],['mucho','CH igen: ”mutjo”','➕'],['España','Ñ låter som nj: ”Espanja”','🇪🇸'],['jugar','J låter som ett väsande h: ”hugar”','🎮'],['¿Qué tal?','QU låter som k: ”ke tal”','❓'],['gracias','C före e och i: läsp-ljud i Spanien, s i Latinamerika','💛'],['vivo','V låter nästan som b: ”bibo”','🏠'],['perro','RR rullas extra mycket','🐕'],['¿Cómo estás?','Accenten visar betoningen: es-TÁS','🎯']],
+ B:[['la ciudad','staden','🏙️'],['la vendedora','försäljerskan','🛒'],['no','nej','❌'],['pero','men','↔️'],['¿Cuántos años tienes?','Hur gammal är du?','🎂'],['Tengo trece años.','Jag är tretton år.','1️⃣3️⃣'],['¿Tienes hermanos?','Har du syskon?','👫'],['un hermano','en bror','👦'],['Se llama Juan.','Han heter Juan.','🏷️'],['Tiene quince años.','Han är femton år.','🎂'],['aquí','här','📍'],['allí','där','👉'],['que','som','🔗'],['Está allí.','Den ligger där.','📌'],['¿Cómo estás?','Hur mår du?','🙂'],['Estoy bien.','Jag mår bra.','😊'],['¿Dónde está el abuelo?','Var är farfar?','👴'],['el mercado','marknaden','🧺'],['vale','okej','👌'],['hay','det finns','✅']],
+ familia:[['la familia','familjen','👨‍👩‍👧‍👦'],['los padres','föräldrarna','👫'],['la madre','mamman','👩'],['el padre','pappan','👨'],['el hermano','brodern','👦'],['la hermana','systern','👧'],['los hermanos','syskonen','👦👧'],['el hermanito','lillebrodern','🧒'],['la hermanita','lillasystern','👶'],['el abuelo','farfar, morfar','👴'],['la abuela','farmor, mormor','👵'],['el primo','killkusinen','🧑'],['la prima','tjejkusinen','👩‍🦰'],['el hijo','sonen','👦'],['la hija','dottern','👧'],['la madrastra','styvmamman, plastmamman','👩'],['el padrastro','styvpappan, plastpappan','👨'],['No tengo hermanos.','Jag har inga syskon.','🙅']],
+ C:[['para','för att, till','➡️'],['jugar online','spela online','🎮'],['el camarero','kyparen','🧑‍🍳'],['la leche','mjölken','🥛'],['un café con leche','en kaffe med mjölk','☕'],['un momento','ett ögonblick','⏱️'],['soy','jag är','🙋'],['jugamos','vi spelar','🎲'],['¿De dónde eres?','Varifrån är du?','🌍'],['Soy de Suecia.','Jag är från Sverige.','🇸🇪'],['un poco','lite','🤏'],['¿Hablas español?','Pratar du spanska?','🗣️'],['Hablo un poco de español.','Jag pratar lite spanska.','💬'],['también','också','➕'],['Estoy lista.','Jag är redo (tjej).','✅'],['Estoy listo.','Jag är redo (kille).','✅'],['¡A jugar!','Nu spelar vi!','🎉'],['las lenguas','språken','🔤'],['estudio','jag studerar','📖'],['No hablo francés.','Jag pratar inte franska.','🙅'],['claro que sí','självklart','💯'],['la capital','huvudstaden','🏛️']],
+ paises:[['Suecia – sueco','Sverige – svenska','🇸🇪'],['España – español','Spanien – spanska','🇪🇸'],['Inglaterra – inglés','England – engelska','🇬🇧'],['Irlanda – inglés','Irland – engelska','🇮🇪'],['Francia – francés','Frankrike – franska','🇫🇷'],['Alemania – alemán','Tyskland – tyska','🇩🇪'],['Italia – italiano','Italien – italienska','🇮🇹'],['Noruega – noruego','Norge – norska','🇳🇴'],['Dinamarca – danés','Danmark – danska','🇩🇰'],['Finlandia – finés','Finland – finska','🇫🇮']],
+ pronomen:[['yo','jag','🙋'],['tú','du','👉'],['él','han','👦'],['ella','hon','👧'],['usted','Ni (artigt, en person)','🎩'],['nosotros','vi','👫'],['vosotros','ni','👥'],['ellos','de (killar eller blandat)','👬'],['ellas','de (bara tjejer)','👭']],
+ fragor:[['¿Cómo?','Hur?','❓'],['¿Qué?','Vad?','❓'],['¿Dónde?','Var?','📍'],['¿De dónde?','Varifrån?','🌍'],['¿Adónde?','Vart?','➡️'],['¿Cuándo?','När?','🕐'],['¿Cuánto?','Hur mycket?','💶'],['¿Cuántos?','Hur många?','🔢'],['¿Por qué?','Varför?','🤔'],['¿Quién?','Vem?','🧑']],
+ M:[['animales exóticos','exotiska djur','🦜'],['arrecifes de corales','korallrev','🪸'],['enorme','enorm','🐘'],['un país','ett land','🗺️'],['el clima','klimatet','🌤️'],['maravilloso','fantastisk','✨'],['muchos','många','🔢'],['con','med','🤝'],['además','dessutom','➕'],['el mar','havet','🌊'],['en el norte','i norr','⬆️'],['en el este','i öster','➡️'],['el salto','vattenfallet','💦'],['más alta del mundo','världens högsta','🏔️'],['como','som','🟰'],['blancas','vita','⚪'],['las montañas','bergen','⛰️'],['las vacaciones','semestern','🏝️'],['la costa','kusten','🏖️'],['cada año','varje år','📅'],['grande','stor','📏'],['la moda','modet','👗'],['el fútbol','fotbollen','⚽'],['¿Adónde van los suecos?','Vart åker svenskarna?','✈️']]
+};
+/* ord med bild till ordkort och hörövning */
+const WORDS={A:[['la playa','stranden','🏖️'],['el agua','vattnet','💧'],['una botella de agua','en flaska vatten','🍶'],['la fruta','frukten','🍎'],['el melón','melonen','🍈'],['la naranja','apelsinen','🍊'],['la pera','päronet','🍐'],['el plátano','bananen','🍌'],['el mango','mangon','🥭'],['el voleibol','volleybollen','🏐'],['el taxi','taxin','🚕'],['el hotel','hotellet','🏨'],['la farmacia','apoteket','💊'],['el restaurante','restaurangen','🍽️'],['la cafetería','kaféet','☕'],['la oficina de turismo','turistbyrån','ℹ️'],['el centro','centrum','🏙️'],['el señor','herrn','👨'],['la señora','damen','👩'],['el bar','baren','🍹']]};
+PHR.allaA=WORDS.A.concat(PHR.halsa);PHR.allaB=PHR.B.concat(PHR.familia);PHR.allaC=PHR.C.concat(PHR.paises);PHR.allaM=PHR.M;
+const PHR_TITLE={allaA:'1A En la playa',allaB:'1B En la ciudad och familjen',allaC:'1C En la cafetería, länder och språk',allaM:'España y América Latina'};
+
+const MATCH={
+ 'frågasvar':[['¿Qué tal?','Bien, gracias.'],['¿Cómo te llamas?','Me llamo Nikol.'],['¿Dónde vives?','Vivo en Estocolmo.'],['¿Vamos?','Sí, vamos.'],['¿Cuánto cuesta?','Dos euros.'],['¿Cuántos años tienes?','Tengo trece años.'],['¿De dónde eres?','Soy de Suecia.'],['¿Cómo estás?','Estoy muy bien.'],['¡Adiós!','¡Hasta luego!'],['¿Hablas español?','Sí, un poco.']],
+ landsprak:[['Suecia','sueco'],['España','español'],['Inglaterra','inglés'],['Francia','francés'],['Alemania','alemán'],['Italia','italiano'],['Noruega','noruego'],['Dinamarca','danés'],['Finlandia','finés']],
+ huvudstad:[['España','Madrid'],['México','Ciudad de México'],['Argentina','Buenos Aires'],['Colombia','Bogotá'],['Perú','Lima'],['Chile','Santiago'],['Cuba','La Habana'],['Venezuela','Caracas'],['Suecia','Estocolmo']],
+ frageord:[['¿Cómo?','Hur?'],['¿Qué?','Vad?'],['¿Dónde?','Var?'],['¿De dónde?','Varifrån?'],['¿Adónde?','Vart?'],['¿Cuándo?','När?'],['¿Cuánto?','Hur mycket?'],['¿Por qué?','Varför?'],['¿Quién?','Vem?']]
+};
+const SORT={
+ ununa:{buckets:['un (han-ord)','una (hon-ord)'],items:[['… gato (katt)',0],['… perro (hund)',0],['… hermano (bror)',0],['… chico (kille)',0],['… abuelo (morfar)',0],['… primo (kusin)',0],['… melón (melon)',0],['… hotel (hotell)',0],['… padre (pappa) – undantag!',0],['… chica (tjej)',1],['… hermana (syster)',1],['… naranja (apelsin)',1],['… pera (päron)',1],['… bicicleta (cykel)',1],['… mesa (bord)',1],['… playa (strand)',1],['… madre (mamma) – undantag!',1],['… ciudad (stad)',1]]},
+ ella:{buckets:['el (han-ord)','la (hon-ord)'],items:[['… gato (katten)',0],['… chico (pojken)',0],['… padre (pappan)',0],['… perro (hunden)',0],['… caballo (hästen)',0],['… mercado (marknaden)',0],['… centro (centrum)',0],['… casa (huset)',1],['… chica (flickan)',1],['… madre (mamman)',1],['… naranja (apelsinen)',1],['… pera (päronet)',1],['… playa (stranden)',1],['… cafetería (kaféet)',1]]}
+};
+const CONJ={
+ tener_estar:[['tener','ha',['tengo','tienes','tiene','tenemos','tenéis','tienen']],['estar','må, befinna sig',['estoy','estás','está','estamos','estáis','están']]],
+ ser:[['ser','vara',['soy','eres','es','somos','sois','son']]]
+};
+const PRON=['yo','tú','él / ella / usted','nosotros','vosotros','ellos / ellas'];
+const ARVERBS=[['hablar','prata'],['estudiar','studera'],['escuchar','lyssna'],['mirar','titta'],['tomar','ta, dricka'],['trabajar','arbeta'],['bailar','dansa'],['cantar','sjunga'],['nadar','simma'],['viajar','resa'],['comprar','köpa'],['cocinar','laga mat']];
+const AREND=['o','as','a','amos','áis','an'];
+
+const MCQ={
+ tener:[
+  ['Jag är 13 år. ___ trece años.',['Tengo','Tienes','Tiene','Estoy'],0,'Ålder säger man med tener: tengo = jag har.'],
+  ['Hur gammal är du? ¿Cuántos años ___?',['tienes','tengo','tiene','estás'],0,'Tú tienes = du har.'],
+  ['Han har en hund. ___ un perro.',['Tiene','Tengo','Está','Tienes'],0,'Él tiene = han har.'],
+  ['Har du syskon? ¿___ hermanos?',['Tienes','Tengo','Estás','Tiene'],0,'Tú tienes = har du.'],
+  ['Hur mår du? ¿Cómo ___?',['estás','estoy','tienes','está'],0,'Hur man mår säger man med estar.'],
+  ['Jag mår bra. ___ bien.',['Estoy','Tengo','Está','Estás'],0,'Yo estoy = jag mår.'],
+  ['Var är farmor? ¿Dónde ___ la abuela?',['está','estoy','tiene','estás'],0,'Var någon är säger man med estar: está.'],
+  ['Kaféet ligger där. La cafetería ___ allí.',['está','tiene','estoy','tengo'],0,'Var något ligger säger man med estar.']],
+ ser:[
+  ['Jag är från Sverige. ___ de Suecia.',['Soy','Eres','Es','Estoy'],0,'Varifrån man är säger man med ser: soy = jag är.'],
+  ['Varifrån är du? ¿De dónde ___?',['eres','soy','es','estás'],0,'Tú eres = du är.'],
+  ['Min pappa är kypare. Mi padre ___ camarero.',['es','soy','está','eres'],0,'Vad man är säger man med ser: él es.'],
+  ['Juan är en kille. Juan ___ un chico.',['es','eres','está','soy'],0,'Juan es = Juan är.'],
+  ['Vi är från Spanien. ___ de España.',['Somos','Son','Soy','Sois'],0,'Nosotros somos = vi är.'],
+  ['Hur säger man ”Jag mår bra”?',['Estoy bien.','Soy bien.','Es bien.','Tengo bien.'],0,'Hur man mår säger man med estar.'],
+  ['Hur säger man ”Var ligger kaféet?”',['¿Dónde está la cafetería?','¿Dónde es la cafetería?','¿Dónde soy la cafetería?','¿Dónde tiene la cafetería?'],0,'Var något ligger säger man med estar.'],
+  ['Hur säger man ”Mafalda är från Argentina”?',['Mafalda es de Argentina.','Mafalda está de Argentina.','Mafalda soy de Argentina.','Mafalda tiene de Argentina.'],0,'Varifrån någon är säger man med ser.']],
+ mafalda:[
+  ['¿De dónde es Mafalda?',['Es de Argentina.','Es de México.','Es de Colombia.','Es de Perú.'],0,'Mafalda är från Argentina, i södra Latinamerika.'],
+  ['¿Dónde vive Mafalda?',['Vive en Buenos Aires.','Vive en Santiago.','Vive en Lima.','Vive en Bogotá.'],0,'Buenos Aires är huvudstaden i Argentina.'],
+  ['¿Cuántos años tiene Mafalda?',['Tiene seis años.','Tiene ocho años.','Tiene diez años.','Tiene doce años.'],0,'Mafalda är sex år.'],
+  ['¿Cómo se llama su hermano?',['Guille','Felipe','Manolito','Juan'],0,'Lillebror heter Guille.'],
+  ['¿Qué mascota tiene Mafalda?',['una tortuga','un perro','un gato','un caballo'],0,'Hon har en sköldpadda, una tortuga.'],
+  ['Vad tycker Mafalda INTE om?',['la sopa – soppa','la paz – fred','la democracia – demokrati','los Beatles'],0,'Mafalda hatar soppa!'],
+  ['Vad blir Manolo med -ito?',['Manolito','Manolita','Manolote','Manolón'],0,'Pojknamn får -ito, flicknamn får -ita.']],
+ mundo:[
+  ['Ungefär hur många har spanska som modersmål?',['500 miljoner','5 miljoner','50 miljoner','5 miljarder'],0,'Spanska är ett av världens största språk.'],
+  ['Vilket land har flest spansktalande?',['Mexiko','Spanien','Argentina','Colombia'],0,'Mexiko har över 120 miljoner invånare.'],
+  ['Var finns världens högsta vattenfall, Salto Ángel?',['Venezuela','Mexiko','Spanien','Chile'],0,'Salto Ángel är nästan en kilometer högt.'],
+  ['Vilket land i Afrika har spanska som officiellt språk?',['Ekvatorialguinea','Egypten','Kenya','Marocko'],0,'Ekvatorialguinea var en spansk koloni.'],
+  ['Vad heter Spaniens huvudstad?',['Madrid','Barcelona','Sevilla','Málaga'],0,'Barcelona är Spaniens näst största stad.'],
+  ['Vilket språk talas i Brasilien?',['Portugisiska','Spanska','Engelska','Franska'],0,'Brasilien är Latinamerikas största land, men där talar man portugisiska!'],
+  ['Vad betyder ”¿Adónde van los suecos de vacaciones?”',['Vart åker svenskarna på semester?','Var bor svenskarna?','Varför åker svenskarna hem?','När slutar svenskarnas semester?'],0,'¿Adónde? = vart?'],
+  ['Vad betyder ”arrecifes de corales”?',['korallrev','kokosnötter','vulkaner','regnskogar'],0,'Det finns korallrev i Karibiska havet.']],
+ lucas:[
+  ['Hur gammal är Lucas?',['14 år','12 år','16 år','10 år'],0,'Tengo catorce años = jag är fjorton år.'],
+  ['Var bor Lucas?',['I Valencia','I Madrid','I Colombia','I Stockholm'],0,'Vivo en Valencia.'],
+  ['Varifrån är hans mamma?',['Colombia','Spanien','Mexiko','Argentina'],0,'Es de Colombia.'],
+  ['Vad jobbar hans pappa med?',['Han är kypare','Han är försäljare','Han är lärare','Han kör taxi'],0,'Es camarero = han är kypare.'],
+  ['Hur många systrar har Lucas?',['Två','En','Tre','Inga'],0,'Tengo dos hermanas.'],
+  ['Hur gammal är Ana?',['16 år','10 år','14 år','6 år'],0,'Ana tiene dieciséis.'],
+  ['Vilket husdjur har familjen?',['En hund','En katt','En sköldpadda','En häst'],0,'Un perro = en hund.'],
+  ['Vilket språk pratar mamman också?',['Engelska','Franska','Svenska','Tyska'],0,'Habla también inglés.']],
+ lucia:[
+  ['Hur gammal är Lucía?',['13 år','15 år','12 år','16 år'],0,'Tengo trece años.'],
+  ['Var ligger lägret?',['Vid kusten','I Madrid','I Stockholm','I bergen'],0,'En la costa = vid kusten.'],
+  ['Varifrån är Elsa?',['Stockholm','Sevilla','Mexiko','England'],0,'Es de Estocolmo.'],
+  ['Vilka språk pratar Elsa?',['Svenska, engelska och lite spanska','Bara svenska','Spanska och franska','Engelska och tyska'],0,'Habla sueco, inglés y un poco de español.'],
+  ['Vad gör de på eftermiddagen?',['Spelar volleyboll eller simmar','Studerar engelska','Sover','Går på marknaden'],0,'Por la tarde jugamos al voleibol o nadamos.'],
+  ['Vem är Óscar?',['Elsas bror','Lucías bror','En kypare','Lucías sköldpadda'],0,'Elsa tiene un hermano. Se llama Óscar.'],
+  ['Har Lucía några syskon?',['Nej, men hon har en sköldpadda','Ja, en bror','Ja, två systrar','Nej, men hon har en hund'],0,'No tengo hermanos, pero tengo una tortuga.']]
+};
+
+const BUILD={B:[
+ [['Tengo','trece','años.'],'Jag är tretton år.'],
+ [['¿Cuántos','años','tienes?'],'Hur gammal är du?'],
+ [['Mi','hermano','se','llama','Juan.'],'Min bror heter Juan.'],
+ [['¿Dónde','está','el','mercado?'],'Var ligger marknaden?'],
+ [['La','cafetería','está','allí.'],'Kaféet ligger där.'],
+ [['Hablo','un','poco','de','español.'],'Jag pratar lite spanska.'],
+ [['¿Cómo','se','llama','la','chica?'],'Vad heter flickan?'],
+ [['Soy','de','Estocolmo,','en','Suecia.'],'Jag är från Stockholm, i Sverige.']
+]};
+
+const GRATIS=[['taxi','taxi'],['hotel','hotell'],['restaurante','restaurang'],['fútbol','fotboll'],['música','musik'],['chocolate','choklad'],['familia','familj'],['capital','huvudstad'],['turista','turist'],['clima','klimat'],['moda','mode'],['sopa','soppa'],['democracia','demokrati'],['centro','centrum'],['número','nummer'],['foto','foto'],['pizza','pizza'],['persona','person'],['paraíso','paradis'],['tango','tango'],['farmacia','apotek'],['fruta','frukt']];
+
+const COUNTRIES=[
+ ['🇪🇸','España','Madrid','Svenskarnas favoritland att semestra i. Middag äter man sent, ofta klockan 21 eller 22!'],
+ ['🇲🇽','México','Ciudad de México','Landet med flest spansktalande i världen. Choklad och tomater kommer ursprungligen härifrån.'],
+ ['🇦🇷','Argentina','Buenos Aires','Tangons hemland – och Mafaldas!'],
+ ['🇨🇴','Colombia','Bogotá','Känt för sitt kaffe, och ett av världens mest artrika länder.'],
+ ['🇵🇪','Perú','Lima','Här ligger Machu Picchu, en gammal inkastad högt uppe i Anderna.'],
+ ['🇨🇱','Chile','Santiago','Ett av världens längsta och smalaste länder. Atacamaöknen är en av de torraste platserna på jorden.'],
+ ['🇻🇪','Venezuela','Caracas','Här finns Salto Ángel, världens högsta vattenfall – nästan en kilometer högt!'],
+ ['🇨🇺','Cuba','La Habana','På gatorna kör fortfarande gamla amerikanska bilar från 1950-talet.'],
+ ['🇪🇨','Ecuador','Quito','Landet har fått sitt namn efter ekvatorn. Hit hör Galápagosöarna med jättesköldpaddor.'],
+ ['🇧🇴','Bolivia','Sucre','Här ligger Salar de Uyuni, världens största saltöken.'],
+ ['🇺🇾','Uruguay','Montevideo','Vann det allra första fotbolls-VM, år 1930.'],
+ ['🇵🇾','Paraguay','Asunción','De flesta pratar både spanska och urfolksspråket guaraní.'],
+ ['🇨🇷','Costa Rica','San José','Har ingen armé sedan 1948, och massor av regnskog och vulkaner.'],
+ ['🇵🇦','Panamá','Ciudad de Panamá','Panamakanalen förbinder Atlanten och Stilla havet.'],
+ ['🇬🇹','Guatemala','Ciudad de Guatemala','Här finns Tikal, en jättelik ruinstad från mayafolket.'],
+ ['🇭🇳','Honduras','Tegucigalpa','Utanför kusten finns korallrev i Karibiska havet.'],
+ ['🇸🇻','El Salvador','San Salvador','Centralamerikas minsta land, med över tjugo vulkaner.'],
+ ['🇳🇮','Nicaragua','Managua','I Nicaraguasjön lever hajar – i sötvatten!'],
+ ['🇩🇴','República Dominicana','Santo Domingo','Baseboll är landets stora sport.'],
+ ['🇬🇶','Guinea Ecuatorial','Malabo','Det enda landet i Afrika där spanska är officiellt språk.']
+];
+
+/* Läsa: egen text i stil med lärarens */
+const READER=`¡Hola! Me llamo Lucía y tengo trece años. Soy de Sevilla, una ciudad en el sur de España. Ahora estoy en un campamento de verano en la costa. Aquí hay chicos y chicas de muchos países: de Suecia, de Inglaterra, de Argentina y de México.
+Mi mejor amiga en el campamento se llama Elsa. Es de Estocolmo, la capital de Suecia. Elsa habla sueco, inglés y un poco de español. Yo hablo español y un poco de inglés.
+Por la mañana estudiamos inglés. Por la tarde jugamos al voleibol en la playa o nadamos en el mar. En la cafetería tomamos agua mineral, fruta o café con leche.
+Elsa tiene un hermano. Se llama Óscar y tiene quince años. Yo no tengo hermanos, pero tengo una tortuga. Se llama Tito. ¡El campamento es fantástico!`;
+const GLOSS={hola:'hej',me:'me llamo = jag heter',llamo:'me llamo = jag heter',lucía:'ett namn',y:'och',tengo:'jag har',trece:'tretton',años:'år',soy:'jag är',de:'från, av',sevilla:'stad i södra Spanien',una:'en',ciudad:'stad',en:'i, på',el:'(bestämd form, han-ord)',sur:'söder',españa:'Spanien',ahora:'nu',estoy:'jag är (befinner mig)',un:'en, ett',campamento:'läger',verano:'sommar',costa:'kust',aquí:'här',hay:'det finns',chicos:'killar',chicas:'tjejer',muchos:'många',países:'länder',suecia:'Sverige',inglaterra:'England',argentina:'Argentina',méxico:'Mexiko',mi:'min',mejor:'bästa',amiga:'(tjej)kompis',se:'se llama = hon/han heter',llama:'se llama = hon/han heter',elsa:'ett namn',es:'hon/han är',estocolmo:'Stockholm',la:'(bestämd form, hon-ord)',capital:'huvudstad',habla:'hon/han pratar',sueco:'svenska',inglés:'engelska',poco:'un poco = lite',español:'spanska',yo:'jag',hablo:'jag pratar',por:'por la mañana = på morgonen',mañana:'morgon',estudiamos:'vi studerar',tarde:'eftermiddag',jugamos:'vi spelar',al:'till (a + el)',voleibol:'volleyboll',playa:'strand',o:'eller',nadamos:'vi simmar',mar:'hav',cafetería:'kafé',tomamos:'vi dricker, tar',agua:'vatten',mineral:'mineral-',fruta:'frukt',café:'kaffe',con:'med',leche:'mjölk',tiene:'hon/han har',hermano:'bror',óscar:'ett namn',quince:'femton',no:'inte, nej',hermanos:'syskon',pero:'men',tortuga:'sköldpadda',tito:'ett namn',fantástico:'fantastiskt'};
+
+/* Höra: egen text */
+const LISTEN=[
+ ['Hola, me llamo Lucas.','Hej, jag heter Lucas.'],
+ ['Tengo catorce años y vivo en Valencia, en España.','Jag är fjorton år och bor i Valencia, i Spanien.'],
+ ['Mi familia es grande.','Min familj är stor.'],
+ ['Mi madre se llama Carmen y es de Colombia.','Min mamma heter Carmen och är från Colombia.'],
+ ['Mi padre se llama Pablo y es camarero en una cafetería.','Min pappa heter Pablo och är kypare på ett kafé.'],
+ ['Tengo dos hermanas. Se llaman Sara y Ana.','Jag har två systrar. De heter Sara och Ana.'],
+ ['Sara tiene diez años y Ana tiene dieciséis.','Sara är tio år och Ana är sexton.'],
+ ['También tenemos un perro. Se llama Rex.','Vi har också en hund. Han heter Rex.'],
+ ['En casa hablamos español, pero mi madre habla también inglés.','Hemma pratar vi spanska, men mamma pratar också engelska.'],
+ ['¡Adiós!','Hej då!']
+];
+
+/* Kiosken */
+const KIOSK_ITEMS=[['una botella de agua mineral','en flaska mineralvatten'],['un melón','en melon'],['dos naranjas','två apelsiner'],['un café con leche','en kaffe med mjölk'],['un plátano','en banan'],['tres peras','tre päron']];
+
+/* Mål för skrivandet */
+const POST={
+ city:[['Barcelona','Barcelona'],['Madrid','Madrid'],['Sevilla','Sevilla'],['Málaga','Málaga'],['Mallorca','Mallorca'],['Gran Canaria','Gran Canaria']],
+ with:[['mi familia','min familj'],['mi madre','min mamma'],['mi padre','min pappa'],['mis amigos','mina kompisar']],
+ desc:[['La playa es fantástica.','Stranden är fantastisk.'],['Hay muchos turistas.','Det finns många turister.'],['Es una ciudad grande.','Det är en stor stad.'],['El clima es maravilloso.','Klimatet är underbart.'],['Hay un mercado con mucha fruta.','Det finns en marknad med mycket frukt.']],
+ hotel:[['El hotel está en el centro.','Hotellet ligger i centrum.'],['El hotel está en la costa.','Hotellet ligger vid kusten.'],['El hotel está aquí, al lado del mar.','Hotellet ligger här, bredvid havet.']],
+ am:[['estoy en la playa','är jag på stranden'],['nado en el mar','simmar jag i havet'],['tomo un café con leche','dricker jag en kaffe med mjölk'],['compro fruta en el mercado','köper jag frukt på marknaden']],
+ pm:[['juego al voleibol','spelar jag volleyboll'],['miro el fútbol en un bar','tittar jag på fotboll på en bar'],['estudio español','studerar jag spanska'],['bailo en la playa','dansar jag på stranden']],
+ lang:[['Hablo un poco de español con el camarero.','Jag pratar lite spanska med kyparen.'],['Hablo inglés y un poco de español.','Jag pratar engelska och lite spanska.'],['¡Ahora hablo mucho español!','Nu pratar jag mycket spanska!']]
+};
+/* ================= Lagring och framsteg ================= */
+const KEY='spanska-nikol-v1';
+let S={done:{},plan:{},check:{},tabdone:{},present:{},post:{},slow:false,tab:'start'};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const mix=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+
+const panels=$$('.panel');
+function tabPct(p){const t=$$('.task',p);if(!t.length)return 0;return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+function allPct(){const t=$$('.task');return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function refresh(){
+  $$('.task').forEach(t=>{const d=!!S.done[t.dataset.task];t.classList.toggle('is-done',d);const b=$('.tick',t);if(b){b.setAttribute('aria-pressed',String(d));b.textContent=d?'Klar ✓':'Klar';}});
+  panels.forEach(p=>{const id=p.id.slice(2),pc=tabPct(p),tb=$('#tab-'+id);
+    if(tb){$('.bar i',tb).style.width=pc+'%';$('.pc',tb).textContent=pc+' %';tb.classList.toggle('done',pc===100||!!S.tabdone[id]);}
+    const db=$('[data-tabdone="'+id+'"]');if(db)db.setAttribute('aria-pressed',String(!!S.tabdone[id]));});
+  const pc=allPct();$('#ringPc').textContent=pc+' %';$('#ringArc').setAttribute('stroke-dasharray',pc+' 100');$('#ringArc').style.opacity=pc?1:0;
+  renderPassport();
+  const sum=$('#tabSummary');sum.innerHTML='';
+  panels.filter(p=>p.id!=='p-start').forEach(p=>{const id=p.id.slice(2),pc=tabPct(p);
+    const b=el('button');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+    b.innerHTML='<span></span><b></b><span class="bar"><i></i></span>';
+    b.children[0].textContent=p.dataset.title+((pc===100||S.tabdone[id])?' ✓':'');b.children[1].textContent=pc+' %';b.querySelector('i').style.width=pc+'%';
+    b.onclick=()=>show(id);sum.appendChild(b);});
+}
+function setDone(id,val,quiet){
+  const was=!!S.done[id];S.done[id]=val;save();refresh();
+  if(val&&!was&&!quiet){const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');
+    const pc=tabPct(p);toast(pc===100?'Fliken '+p.dataset.title+' är 100 % klar! 🎉':'Bra jobbat! '+p.dataset.title+' är nu '+pc+' % klar.');}
+}
+const complete=id=>{if(!id||S.done[id])return;
+  const before=stampCount();
+  const pe=PLAN.find(p=>p[3]===id&&!S.plan[p[0]]);if(pe){S.plan[pe[0]]=true;const cb=document.getElementById('cb-'+pe[0]);if(cb)cb.checked=true;}
+  setDone(id,true,true);const after=stampCount();
+  if(after>before){const c=COUNTRIES[after-1];toast('Ny stämpel! '+c[0]+' '+c[1]+' är upplåst 🎉');}
+  else{const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');toast('¡Muy bien! '+p.dataset.title+' är nu '+tabPct(p)+' % klar.');}
+  renderMission();};
+function stampCount(){return Math.min(COUNTRIES.length,$$('.task').filter(x=>S.done[x.dataset.task]).length);}
+
+/* ================= Flikar ================= */
+const bar=$('#tabbar');
+panels.forEach(p=>{
+  const id=p.id.slice(2);p.style.setProperty('--c','var(--'+p.dataset.color+')');
+  const b=el('button','tab');b.id='tab-'+id;b.setAttribute('role','tab');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+  b.innerHTML='<span class="t"></span><span class="bar"><i></i></span><span class="pc"></span>';$('.t',b).textContent=p.dataset.title;
+  b.onclick=()=>show(id);bar.appendChild(b);
+});
+function show(id){
+  panels.forEach(p=>p.hidden=p.id!=='p-'+id);
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.id==='tab-'+id)));
+  S.tab=id;save();stopSpeak();
+  const tb=$('#tab-'+id);tb.scrollIntoView({block:'nearest',inline:'center'});
+  window.scrollTo({top:0});
+}
+$$('[data-tabdone]').forEach(b=>b.onclick=()=>{const id=b.dataset.tabdone;S.tabdone[id]=!S.tabdone[id];save();refresh();if(S.tabdone[id])toast('Snyggt! Fliken är avbockad ✓');});
+
+/* ================= Uppgifter: klar-knapp och uppläsning ================= */
+let speakBtn=null;
+function stopSpeak(){if('speechSynthesis' in window)speechSynthesis.cancel();if(speakBtn)speakBtn.setAttribute('aria-pressed','false');speakBtn=null;}
+function voiceFor(lang){const vs=speechSynthesis.getVoices();
+  if(lang==='es')return vs.find(v=>/^es[-_]ES/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang));
+  return vs.find(v=>/^sv/i.test(v.lang||''));}
+function speak(text,btn,lang,onend){
+  if(!('speechSynthesis' in window))return;
+  const same=btn&&speakBtn===btn;stopSpeak();if(same)return;
+  const u=new SpeechSynthesisUtterance(text);u.lang=lang==='es'?'es-ES':'sv-SE';
+  u.rate=lang==='es'?(S.slow?.62:.85):.92;
+  const v=voiceFor(lang);if(v)u.voice=v;
+  if(onend)u.addEventListener('end',onend);
+  if(btn){speakBtn=btn;btn.setAttribute('aria-pressed','true');u.onend=()=>{if(speakBtn===btn)stopSpeak();};}
+  speechSynthesis.speak(u);
+}
+$$('.task').forEach(t=>{
+  const h=$('header',t);
+  const say=$('.say',t);
+  if(say&&'speechSynthesis' in window){const l=el('button','listen','🔊 Lyssna');l.setAttribute('aria-pressed','false');l.onclick=()=>speak(say.innerText.replace(/→/g,', sedan '),l);h.insertBefore(l,h.children[1]||null);}
+  const b=el('button','tick','Klar');b.setAttribute('aria-pressed','false');b.onclick=()=>setDone(t.dataset.task,!S.done[t.dataset.task]);h.appendChild(b);
+});
+
+/* ================= Start: plan och checklista ================= */
+function checkRow(list,store,task,root){
+  root.innerHTML='';
+  list.forEach(([id,txt,tab,goto])=>{
+    const r=el('div','check');const i=el('input');i.type='checkbox';i.id='cb-'+id;i.checked=!!S[store][id];
+    const l=el('label',null,txt);l.htmlFor=i.id;const a=el('button','say1','Gå dit');a.style.setProperty('--c','var(--'+tab+')');a.onclick=()=>goTo(tab,goto);
+    i.onchange=()=>{S[store][id]=i.checked;save();renderMission();const all=list.every(x=>S[store][x[0]]);if(all)complete(task);else if(S.done[task])setDone(task,false,true);};
+    r.append(i,l,a);root.appendChild(r);
+  });
+}
+checkRow(PLAN,'plan','s-plan',$('#planList'));
+checkRow(CHECK,'check','s-mal',$('#checkList'));
+
+/* ================= Gemensamt: dra eller trycka ================= */
+function dragTap(chip,onDrop,onTap,targetSel){
+  let sx,sy,ghost=null,moved=false;
+  chip.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;moved=false;try{chip.setPointerCapture(e.pointerId);}catch(_){}});
+  chip.addEventListener('pointermove',e=>{if(sx===undefined)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>7){ghost=chip.cloneNode(true);ghost.classList.add('ghost','sel');document.body.appendChild(ghost);moved=true;}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
+  chip.addEventListener('pointerup',e=>{if(ghost){const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest(targetSel);ghost.remove();ghost=null;if(z)onDrop(z);}sx=undefined;});
+  chip.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null;}sx=undefined;});
+  chip.addEventListener('click',()=>{if(moved){moved=false;return;}onTap();});
+}
+function shake(x){x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong');setTimeout(()=>x.classList.remove('wrong'),400);}
+
+/* ================= Widgets ================= */
+const W={};
+
+W.sort=(root,set,task)=>{
+  const d=SORT[set];
+  function render(){
+    root.innerHTML='';let sel=null,done=0;
+    root.innerHTML='<p>Dra varje kort till rätt låda, eller tryck på kortet och sedan på lådan.</p>';
+    const pool=el('div','pool'),bk=el('div','buckets'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=render;row.append(rs,cnt);
+    const upd=()=>{cnt.textContent=done+' av '+d.items.length+' rätt';if(done===d.items.length){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');root.classList.toggle('picking',!!sel);};
+    const put=(c,b)=>{if(+c.dataset.k===+b.dataset.k){const x=el('div','in',c.textContent);b.appendChild(x);c.remove();done++;if(sel===c){sel=null;root.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};
+    d.buckets.forEach((n,k)=>{const b=el('div','bucket');b.dataset.k=k;b.appendChild(el('h4',null,n));b.onclick=e=>{if(sel&&!e.target.closest('.in'))put(sel,b);};bk.appendChild(b);});
+    mix(d.items).forEach(([t,k])=>{const c=el('button','chip',t);c.dataset.k=k;dragTap(c,b=>put(c,b),()=>pick(c),'.bucket');pool.appendChild(c);});
+    root.append(pool,bk,msg,row);upd();
+  }
+  render();
+};
+
+W.order=(root,set,task)=>{
+  const seq=ORDER[set];
+  function render(){
+    root.innerHTML='<p>Tryck på stegen i rätt ordning.</p>';
+    const ans=el('div','answer'),pool=el('div','pool'),msg=el('p','msg'),rs=el('button','btn','Börja om');let step=0;
+    rs.onclick=render;
+    mix(seq).forEach(w=>{const b=el('button','chip',w);b.style.cursor='pointer';
+      b.onclick=()=>{if(w===seq[step]){ans.appendChild(el('span',null,(step+1)+'. '+w));b.remove();step++;msg.textContent=step===seq.length?'Helt rätt! 🎉':'Bra! Vad kommer sedan?';if(step===seq.length)complete(task);}
+        else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};pool.appendChild(b);});
+    root.append(ans,pool,msg,rs);
+  }
+  render();
+};
+
+W.match=(root,set,task)=>{
+  const all=MATCH[set];let left;
+  function start(){left=mix(all);round();}
+  function round(){
+    root.innerHTML='<p>Tryck på ett ord till vänster och sedan på rätt förklaring.</p>';
+    const g=el('div','match'),L=el('div'),R=el('div'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=start;row.append(rs,cnt);
+    const set5=left.slice(0,5);let pick=null,n=set5.length;
+    cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+    set5.forEach(p=>{const b=el('button',null,p[0]);b.dataset.k=p[0];b.onclick=()=>{if(b.classList.contains('done'))return;if(pick)pick.classList.remove('sel');pick=b;b.classList.add('sel');};L.appendChild(b);});
+    mix(set5).forEach(p=>{const b=el('button',null,p[1]);b.dataset.k=p[0];b.onclick=()=>{if(!pick||b.classList.contains('done'))return;
+      if(pick.dataset.k===b.dataset.k){pick.classList.replace('sel','done');b.classList.add('done');pick=null;n--;left=left.filter(x=>x[0]!==b.dataset.k);cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+        if(n===0){if(left.length){msg.textContent='Alla rätt! Fler kommer…';setTimeout(round,900);}else{msg.textContent='Du har parat ihop allihop! 🎉';complete(task);}}else msg.textContent='Rätt! ✔';}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};R.appendChild(b);});
+    g.append(L,R);root.append(g,msg,row);
+  }
+  start();
+};
+
+W.mcq=(root,set,task)=>{
+  const Q=MCQ[set];
+  function start(){
+    const qs=mix(Q);let i=0,right=0;
+    function q(){
+      root.innerHTML='';const box=el('div','mcq');
+      if(i>=qs.length){const pc=Math.round(100*right/qs.length);
+        box.appendChild(el('p','score',pc+' % rätt på första försöket'));
+        box.appendChild(el('p',null,pc>=80?'Riktigt bra! Du kan det här.':pc>=50?'Bra jobbat! Gör om quizet så sitter det ännu bättre.':'Bra att du övar. Läs texterna igen och prova en gång till.'));
+        const r=el('button','btn primary','Gör om');r.onclick=start;box.appendChild(r);root.appendChild(box);complete(task);return;}
+      const [t,opts,ans,why]=qs[i];let first=true;
+      box.appendChild(el('p','count',(i+1)+' av '+qs.length));box.appendChild(el('p','q',t));
+      const o=el('div','opts');const order=mix(opts.map((x,k)=>k));
+      order.forEach(k=>{const b=el('button',null,opts[k]);b.onclick=()=>{
+        if(k===ans){b.classList.add('right');$$('button',o).forEach(z=>z.disabled=true);if(first)right++;
+          box.appendChild(el('div','why','Rätt! '+why));const n=el('button','btn primary',i+1<qs.length?'Nästa fråga':'Se resultatet');n.style.marginTop='.6rem';n.onclick=()=>{i++;q();};box.appendChild(n);n.focus();}
+        else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);root.appendChild(box);
+    }
+    q();
+  }
+  start();
+};
+
+
+function goTo(tab,task){show(tab);if(task){const t=document.querySelector('section.task[data-task="'+task+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),60);}}
+function renderMission(){
+  const next=PLAN.find(p=>!S.plan[p[0]]);const t=$('#missionTxt'),b=$('#missionBtn');
+  if(!next){t.textContent='Du har gjort alla pass! Välj något du vill repetera, till exempel kiosken eller din presentation.';b.onclick=()=>goTo('redov','r-tala1');return;}
+  const n=PLAN.indexOf(next)+1;t.textContent='Pass '+n+' av '+PLAN.length+': '+next[1]+'. Max 15 minuter, sen är du klar för idag.';
+  b.onclick=()=>goTo(next[2],next[3]);
+}
+function renderPassport(){
+  const box=$('#passport');if(!box)return;const n=stampCount();box.innerHTML='';
+  const head=el('p',null,'Du har '+n+' av '+COUNTRIES.length+' stämplar.');const grid=el('div','passport');const pop=el('div','factpop');pop.textContent=n?'Tryck på ett land!':'Gör din första uppgift så får du din första stämpel.';
+  COUNTRIES.forEach((c,i)=>{const got=i<n;const d=el('button','stamp'+(got?' got':''));d.innerHTML='<span class="fl"></span><span></span>';
+    d.children[0].textContent=c[0];d.children[1].textContent=got?c[1]:'?';d.disabled=!got;
+    if(got)d.onclick=()=>{pop.innerHTML='';const h=el('b',null,c[0]+' '+c[1]+' – huvudstad: '+c[2]);const s=el('button','say1','🔊');s.onclick=()=>speak(c[1]+'. '+c[2],s,'es');pop.append(h,s,el('p',null,c[3]));};
+    grid.appendChild(d);});
+  box.append(head,grid,pop);
+}
+
+/* ---------- Fraslista med uppläsning ---------- */
+W.phrases=(root,set)=>{
+  if(PHR_TITLE[set])root.appendChild(el('h3',null,PHR_TITLE[set]));
+  const box=el('div','phr');
+  PHR[set].forEach(([es,sv,em])=>{const b=el('button');b.setAttribute('aria-pressed','false');
+    b.innerHTML='<span class="ic"></span><span class="es"></span><span class="sv"></span>';
+    b.children[0].textContent=em||'🔊';b.children[1].textContent=es;b.children[2].textContent=sv;
+    b.onclick=()=>speak(es.replace(/ – /g,'. '),b,'es');box.appendChild(b);});
+  const all=el('button','btn','🔊 Lyssna på alla');
+  all.onclick=()=>{let i=0;const list=PHR[set];const next=()=>{if(i>=list.length)return;const w=list[i++][0].replace(/ – /g,'. ');speak(w,null,'es',()=>setTimeout(next,700));};next();};
+  root.append(box,all);
+};
+
+/* ---------- Gratisord ---------- */
+W.gratis=(root,task)=>{
+  function start(){
+    const qs=mix(GRATIS).slice(0,12);let i=0,right=0;
+    function q(){root.innerHTML='';
+      if(i>=qs.length){root.appendChild(el('p','score',right+' av '+qs.length+' rätt!'));
+        root.appendChild(el('p','cheerup',right>=9?'Du kan redan spanska. På riktigt! 🎉 Massor av spanska ord liknar svenska, och det kommer att hjälpa dig hela tiden.':'Bra! Nu vet du att många spanska ord liknar svenska. Prova igen, så får du ännu fler rätt.'));
+        const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const [es,sv]=qs[i];let first=true;
+      root.appendChild(el('p','count',(i+1)+' av '+qs.length));
+      const w=el('button','big-say','🔊 '+es);w.onclick=()=>speak(es,null,'es');root.appendChild(w);speak(es,null,'es');
+      root.appendChild(el('p',null,'Vad betyder det?'));
+      const o=el('div','opts4');mix([sv].concat(mix(GRATIS.filter(x=>x[1]!==sv).map(x=>x[1])).slice(0,3))).forEach(t=>{const b=el('button',null,t);
+        b.onclick=()=>{if(t===sv){b.classList.add('right');if(first)right++;$$('button',o).forEach(z=>z.disabled=true);setTimeout(()=>{i++;q();},700);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      root.appendChild(o);}
+    q();}
+  start();
+};
+
+/* ---------- Ordkort ---------- */
+W.flash=(root,set,task)=>{
+  const list=WORDS[set];let order=mix(list),i=0,flip=false,known=new Set();
+  const card=el('button','flash'),row=el('div','row'),msg=el('p','msg');
+  const draw=()=>{const [es,sv,em]=order[i];card.innerHTML='';card.appendChild(el('span','em',em));
+    card.appendChild(el('span','w',flip?sv:es));card.appendChild(el('span','hint',flip?es:'Tryck för att vända'));
+    msg.textContent=known.size+' av '+list.length+' ord kan du';};
+  card.onclick=()=>{flip=!flip;draw();if(!flip)speak(order[i][0],null,'es');};
+  const say=el('button','btn','🔊 Lyssna');say.onclick=()=>speak(order[i][0],null,'es');
+  const no=el('button','btn','Öva mer'),yes=el('button','btn primary','Jag kan det ✓');
+  const nxt=()=>{i=(i+1)%order.length;flip=false;draw();speak(order[i][0],null,'es');};
+  no.onclick=nxt;yes.onclick=()=>{known.add(order[i][0]);if(known.size>=Math.min(12,list.length))complete(task);
+    order=order.filter((x,k)=>k===i||!known.has(x[0]));if(order.length>1){order.splice(i,1);i=i%order.length;}flip=false;draw();speak(order[i][0],null,'es');};
+  row.append(say,no,yes);root.append(card,row,msg);draw();
+  root.appendChild(el('p','count','När du kan 12 ord blir uppgiften klar.'));
+};
+
+/* ---------- Lyssna och välj bild ---------- */
+W.listenpick=(root,set,task)=>{
+  const list=WORDS[set];
+  function start(){const qs=mix(list).slice(0,10);let i=0,right=0;
+    function q(){root.innerHTML='';
+      if(i>=qs.length){root.appendChild(el('p','score',right+' av '+qs.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const t=qs[i];let first=true;root.appendChild(el('p','count',(i+1)+' av '+qs.length));
+      const w=el('button','big-say','🔊 Lyssna igen');w.onclick=()=>speak(t[0],null,'es');root.appendChild(w);setTimeout(()=>speak(t[0],null,'es'),200);
+      const o=el('div','opts4');mix([t].concat(mix(list.filter(x=>x!==t)).slice(0,3))).forEach(x=>{const b=el('button');b.innerHTML='<span class="em"></span><span></span>';b.children[0].textContent=x[2];b.children[1].textContent=x[1];
+        b.onclick=()=>{if(x===t){b.classList.add('right');b.children[1].textContent=x[0]+' – '+x[1];if(first)right++;$$('button',o).forEach(z=>z.disabled=true);setTimeout(()=>{i++;q();},1100);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      root.appendChild(o);}
+    q();}
+  root.innerHTML='';const s=el('button','btn primary','Starta ▶');s.onclick=start;root.append(el('p',null,'Du hör ett ord på spanska. Tryck på rätt bild.'),s);
+};
+
+/* ---------- Sifferlek ---------- */
+W.numgame=(root,set,task)=>{
+  const max=+set;
+  function start(){const qs=mix([...Array(max+1).keys()].filter(n=>max===10||n>10)).slice(0,8);let i=0,right=0;
+    function q(){root.innerHTML='';
+      if(i>=qs.length){root.appendChild(el('p','score',right+' av '+qs.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const n=qs[i];let first=true;root.appendChild(el('p','count',(i+1)+' av '+qs.length));
+      const w=el('button','big-say','🔊 Lyssna igen');w.onclick=()=>speak(NUM[n],null,'es');root.appendChild(w);setTimeout(()=>speak(NUM[n],null,'es'),200);
+      const g=el('div','numgrid');for(let k=0;k<=max;k++){const b=el('button',null,String(k));
+        b.onclick=()=>{if(k===n){b.classList.add('right');if(first)right++;root.appendChild(el('p','msg','Rätt! '+n+' = '+NUM[n]));$$('button',g).forEach(z=>z.disabled=true);setTimeout(()=>{i++;q();},1100);}else{first=false;shake(b);}};g.appendChild(b);}
+      root.appendChild(g);}
+    q();}
+  root.innerHTML='';const s=el('button','btn primary','Starta ▶');s.onclick=start;root.appendChild(s);
+};
+
+/* ---------- Böjningstabell ---------- */
+W.conjtable=(root,set)=>{
+  CONJ[set].forEach(([inf,sv,forms])=>{
+    root.appendChild(el('h3',null,inf+' – '+sv));const t=el('div','conj');
+    forms.forEach((f,k)=>{t.appendChild(el('span','p',PRON[k]));const b=el('b',null,f);t.appendChild(b);const s=el('button','say1','🔊');s.onclick=()=>speak(PRON[k].split(' ')[0]+' '+f,s,'es');t.appendChild(s);});
+    root.appendChild(t);});
+};
+
+/* ---------- Verbmaskinen ---------- */
+W.verbmachine=(root,task)=>{
+  const sel=el('select');sel.style.cssText='font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px';
+  ARVERBS.forEach(([v,sv])=>sel.appendChild(new Option(v+' – '+sv,v)));
+  const tbl=el('div','conj');
+  const draw=()=>{const v=sel.value,stem=v.slice(0,-2);tbl.innerHTML='';
+    AREND.forEach((e,k)=>{tbl.appendChild(el('span','p',PRON[k]));const b=el('b');b.appendChild(document.createTextNode(stem));const sp=el('span','end e'+k,e);b.appendChild(sp);tbl.appendChild(b);
+      const s=el('button','say1','🔊');s.onclick=()=>speak(PRON[k].split(' ')[0]+' '+stem+e,s,'es');tbl.appendChild(s);});};
+  sel.onchange=draw;
+  root.append(el('p',null,'Välj ett verb. Stammen är svart och ändelsen har färg. Ändelserna är likadana för alla ar-verb!'),sel,tbl);draw();
+  root.appendChild(el('div','trick','Knep: -o = jag, -as = du, -a = han/hon, -amos = vi, -áis = ni, -an = de.'));
+  root.appendChild(el('h3',null,'Testa dig själv'));
+  const quiz=el('div');root.appendChild(quiz);
+  function start(){let i=0,right=0;const N=8;
+    function q(){quiz.innerHTML='';const box=el('div','mcq');
+      if(i>=N){box.appendChild(el('p','score',right+' av '+N+' rätt'));const r=el('button','btn primary','Gör om');r.onclick=start;box.appendChild(r);quiz.appendChild(box);complete(task);return;}
+      const [v,sv]=ARVERBS[Math.floor(Math.random()*ARVERBS.length)],k=Math.floor(Math.random()*6),stem=v.slice(0,-2);let first=true;
+      box.appendChild(el('p','count',(i+1)+' av '+N));box.appendChild(el('p','q',PRON[k]+' + '+v+' ('+sv+')'));
+      const o=el('div','opts');
+      let pick=mix([k].concat(mix([0,1,2,3,4,5].filter(j=>j!==k)).slice(0,3)));
+      pick.forEach(j=>{const b=el('button',null,stem+AREND[j]);b.onclick=()=>{if(j===k){b.classList.add('right');if(first)right++;speak(PRON[k].split(' ')[0]+' '+stem+AREND[j],null,'es');$$('button',o).forEach(z=>z.disabled=true);setTimeout(()=>{i++;q();},1000);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);quiz.appendChild(box);}
+    q();}
+  start();
+};
+
+/* ---------- Bygg meningar ---------- */
+W.build=(root,set,task)=>{
+  const list=BUILD[set];let n=0;
+  function q(){root.innerHTML='';
+    if(n>=list.length){root.appendChild(el('p','score','Alla meningar klara! 🎉'));const r=el('button','btn primary','Gör om');r.onclick=()=>{n=0;q();};root.appendChild(r);complete(task);return;}
+    const [words,sv]=list[n];let step=0;
+    root.appendChild(el('p','count',(n+1)+' av '+list.length));root.appendChild(el('p','q','”'+sv+'”'));
+    const ans=el('div','answer'),pool=el('div','pool'),msg=el('p','msg');
+    mix(words.map((w,k)=>[w,k])).forEach(([w,k])=>{const b=el('button','chip',w);b.style.cursor='pointer';
+      b.onclick=()=>{if(words[step]===w){ans.appendChild(el('span',null,w));b.remove();step++;
+        if(step===words.length){msg.textContent='¡Perfecto!';speak(words.join(' '),null,'es');setTimeout(()=>{n++;q();},1600);}}
+        else{shake(b);msg.textContent='Inte riktigt. Vilket ord kommer nu?';}};pool.appendChild(b);});
+    root.append(ans,pool,msg);}
+  q();
+};
+
+/* ---------- Läsa ---------- */
+W.reader=(root,task)=>{
+  const gl=el('div','gloss');gl.textContent='Tryck på ett ord.';
+  const box=el('div','reader');
+  READER.split('\n').forEach(par=>{const p=el('p');par.split(/(\s+)/).forEach(tok=>{
+    if(/^\s+$/.test(tok)){p.appendChild(document.createTextNode(tok));return;}
+    const key=tok.toLowerCase().replace(/[¡!¿?.,:;]/g,'');const s=el('span','wd',tok);
+    s.onclick=()=>{$$('.wd.gl',box).forEach(z=>z.classList.remove('gl'));s.classList.add('gl');gl.textContent=key+' = '+(GLOSS[key]||'(ett namn eller ett ord du redan kan)');speak(key,null,'es');};p.appendChild(s);});box.appendChild(p);});
+  const play=el('button','btn','🔊 Lyssna på hela texten');play.onclick=()=>speak(READER.replace(/\n/g,' '),play,'es');
+  root.append(play,box,gl);
+  root.appendChild(el('h3',null,'Frågor till texten'));const qbox=el('div');root.appendChild(qbox);
+  W.mcq(qbox,'lucia',task);
+};
+
+/* ---------- Höra ---------- */
+W.listening=(root,task)=>{
+  const row=el('div','row');const all=el('button','btn primary','▶ Lyssna på hela');const one=el('button','btn','▶ En mening i taget');const show=el('button','btn','Visa texten');
+  const txt=el('div','out');txt.hidden=true;let k=0;
+  LISTEN.forEach(([es,sv])=>{const p=el('p');const b=el('button','say1','🔊');b.onclick=()=>speak(es,b,'es');const t=el('span');t.innerHTML='<b></b><br><small></small>';t.querySelector('b').textContent=es;t.querySelector('small').textContent=sv;p.append(b,t);txt.appendChild(p);});
+  all.onclick=()=>speak(LISTEN.map(x=>x[0]).join(' '),all,'es');
+  one.onclick=()=>{speak(LISTEN[k][0],null,'es');one.textContent='▶ Mening '+(k+1)+' av '+LISTEN.length+' – nästa';k=(k+1)%LISTEN.length;};
+  show.onclick=()=>{txt.hidden=!txt.hidden;show.textContent=txt.hidden?'Visa texten':'Dölj texten';};
+  row.append(all,one,show);root.append(row,txt);
+  root.appendChild(el('h3',null,'Frågor'));const qbox=el('div');root.appendChild(qbox);W.mcq(qbox,'lucas',task);
+};
+
+/* ---------- Este/esta soy yo ---------- */
+W.present=(root,task)=>{
+  const P=S.present=Object.assign({who:'yo',g:'a',name:'',age:13,from:'Suecia',city:'Estocolmo',langs:['sueco','inglés'],sib:'no',sibname:'',sibage:10,mom:'',dad:'',pet:'no',petname:''},S.present||{});
+  const langs=[['sueco','svenska'],['inglés','engelska'],['un poco de español','lite spanska'],['francés','franska'],['alemán','tyska'],['árabe','arabiska'],['finés','finska']];
+  const countries=[['Suecia','Sverige'],['España','Spanien'],['Finlandia','Finland'],['Noruega','Norge'],['Dinamarca','Danmark'],['Polonia','Polen'],['Irak','Irak'],['Siria','Syrien'],['Somalia','Somalia'],['Chile','Chile']];
+  const form=el('div','form');const out=el('div','out');const row=el('div','row');
+  const f=(lab,node)=>{const l=el('label',null,lab);l.appendChild(node);form.appendChild(l);return node;};
+  const sel=(opts,val,on)=>{const s=el('select');opts.forEach(([v,t])=>s.appendChild(new Option(t,v)));s.value=val;s.onchange=()=>{on(s.value);save();draw();};return s;};
+  const inp=(val,on,ph)=>{const i=el('input');i.value=val;i.placeholder=ph||'';i.oninput=()=>{on(i.value);save();draw();};return i;};
+  f('Vem presenterar du?',sel([['yo','Mig själv'],['otro','Någon annan']],P.who,v=>P.who=v));
+  f('Tjej eller kille?',sel([['a','Tjej'],['o','Kille']],P.g,v=>P.g=v));
+  f('Namn',inp(P.name,v=>P.name=v,'Nikol'));
+  f('Ålder',sel([...Array(11).keys()].map(k=>[String(k+10),(k+10)+' – '+NUM[k+10]]),String(P.age),v=>P.age=+v));
+  f('Land',sel(countries,P.from,v=>P.from=v));
+  f('Stad',inp(P.city,v=>P.city=v));
+  const lb=el('div','toggle');langs.forEach(([v,t])=>{const l=el('label');const c=el('input');c.type='checkbox';c.checked=P.langs.includes(v);c.onchange=()=>{P.langs=langs.map(x=>x[0]).filter(x=>x===v?c.checked:P.langs.includes(x));save();draw();};l.append(c,document.createTextNode(t));lb.appendChild(l);});
+  f('Språk',lb);
+  f('Syskon',sel([['no','Inga syskon'],['hno','En bror'],['hna','En syster'],['dos','Två syskon']],P.sib,v=>P.sib=v));
+  f('Syskonets namn (om en bror eller syster)',inp(P.sibname,v=>P.sibname=v));
+  f('Syskonets ålder',sel([...Array(21).keys()].map(k=>[String(k),k+' – '+NUM[k]]),String(P.sibage),v=>P.sibage=+v));
+  f('Mammas namn (valfritt)',inp(P.mom,v=>P.mom=v));
+  f('Pappas namn (valfritt)',inp(P.dad,v=>P.dad=v));
+  f('Husdjur',sel([['no','Inget husdjur'],['un perro','En hund'],['un gato','En katt'],['una tortuga','En sköldpadda'],['un caballo','En häst']],P.pet,v=>P.pet=v));
+  f('Husdjurets namn',inp(P.petname,v=>P.petname=v));
+  let hide=false;
+  function lines(){
+    const me=P.who==='yo',fem=P.g==='a',n=P.name||'Nikol',L=[];
+    const join=a=>a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' y '+a[a.length-1];
+    const langSv={'sueco':'svenska','inglés':'engelska','un poco de español':'lite spanska','francés':'franska','alemán':'tyska','árabe':'arabiska','finés':'finska'};
+    const cSv=Object.fromEntries(countries);
+    if(me){L.push([(fem?'Esta':'Este')+' soy yo. ¡Hola! Me llamo '+n+'.','Det här är jag. Hej! Jag heter '+n+'.']);
+      L.push(['Tengo '+NUM[P.age]+' años.','Jag är '+P.age+' år.']);
+      L.push(['Soy de '+P.from+' y vivo en '+P.city+'.','Jag är från '+cSv[P.from]+' och bor i '+P.city+'.']);
+      if(P.langs.length)L.push(['Hablo '+join(P.langs)+'.','Jag pratar '+join(P.langs.map(x=>langSv[x])).replace(' y ',' och ')+'.']);}
+    else{L.push([(fem?'Esta es mi amiga.':'Este es mi amigo.')+' Se llama '+n+'.','Det här är min kompis. '+(fem?'Hon':'Han')+' heter '+n+'.']);
+      L.push(['Tiene '+NUM[P.age]+' años.',(fem?'Hon':'Han')+' är '+P.age+' år.']);
+      L.push(['Es de '+P.from+' y vive en '+P.city+'.',(fem?'Hon':'Han')+' är från '+cSv[P.from]+' och bor i '+P.city+'.']);
+      if(P.langs.length)L.push(['Habla '+join(P.langs)+'.',(fem?'Hon':'Han')+' pratar '+join(P.langs.map(x=>langSv[x])).replace(' y ',' och ')+'.']);}
+    const t=me?'Tengo':'Tiene',hs=me?'Jag har':(fem?'Hon har':'Han har');
+    if(P.sib==='no')L.push([me?'No tengo hermanos.':'No tiene hermanos.',me?'Jag har inga syskon.':(fem?'Hon':'Han')+' har inga syskon.']);
+    else if(P.sib==='dos')L.push([t+' dos hermanos.',hs+' två syskon.']);
+    else{const b=P.sib==='hno';L.push([t+(b?' un hermano':' una hermana')+'. Se llama '+(P.sibname||'…')+' y tiene '+NUM[P.sibage]+' años.',hs+(b?' en bror. Han':' en syster. Hon')+' heter '+(P.sibname||'…')+' och är '+P.sibage+' år.']);}
+    if(P.mom)L.push([(me?'Mi':'Su')+' madre se llama '+P.mom+'.',(me?'Min':(fem?'Hennes':'Hans'))+' mamma heter '+P.mom+'.']);
+    if(P.dad)L.push([(me?'Mi':'Su')+' padre se llama '+P.dad+'.',(me?'Min':(fem?'Hennes':'Hans'))+' pappa heter '+P.dad+'.']);
+    const petSv={'un perro':'en hund','un gato':'en katt','una tortuga':'en sköldpadda','un caballo':'en häst'};
+    if(P.pet!=='no')L.push([t+' '+P.pet+'. Se llama '+(P.petname||'…')+'.',hs+' '+petSv[P.pet]+'. Den heter '+(P.petname||'…')+'.']);
+    if(me)L.push(['¡Adiós!','Hej då!']);
+    return L;}
+  function draw(){out.innerHTML='';lines().forEach(([es,sv])=>{const p=el('p');const b=el('button','say1','🔊');b.onclick=()=>speak(es,b,'es');
+      const t=el('span');if(hide){const r=el('button','say1','Visa');t.appendChild(el('small',null,sv+' '));t.appendChild(r);r.onclick=()=>{t.innerHTML='';t.appendChild(el('b',null,es));};}else{t.innerHTML='<b></b><br><small></small>';t.querySelector('b').textContent=es;t.querySelector('small').textContent=sv;}
+      p.append(b,t);out.appendChild(p);});}
+  const play=el('button','btn primary','🔊 Lyssna på hela');play.onclick=()=>{speak(lines().map(x=>x[0]).join(' '),play,'es');if((P.name||'').trim())complete(task);};
+  const hb=el('button','btn','Öva utantill: dölj spanskan');hb.onclick=()=>{hide=!hide;hb.textContent=hide?'Visa spanskan igen':'Öva utantill: dölj spanskan';draw();};
+  const cp=el('button','btn','Kopiera texten');cp.onclick=async()=>{try{await navigator.clipboard.writeText(lines().map(x=>x[0]).join('\n'));toast('Texten är kopierad.');}catch(e){toast('Markera texten och kopiera den själv.');}};
+  row.append(play,hb,cp);
+  const d=el('details');d.open=!P.name;d.innerHTML='<summary><b>Fyll i om dig</b></summary>';d.appendChild(form);
+  root.append(d,el('h3',null,'Din presentation'),out,row,el('div','trick','Så övar du: lyssna på en mening, säg den högt, lyssna igen. När det går bra – dölj spanskan och försök säga den själv bara med hjälp av svenskan.'));draw();
+};
+
+/* ---------- Kiosken ---------- */
+W.kiosk=(root,task)=>{
+  function run(){
+    const [item,itemSv]=KIOSK_ITEMS[Math.floor(Math.random()*KIOSK_ITEMS.length)],price=2+Math.floor(Math.random()*18);
+    const priceEs=NUM[price]+' euros';
+    const steps=[
+      ['¡Buenos días!','God dag!',[['¡Buenos días, señora!','God dag!',1],['¡Hasta luego!','Vi ses!',0],['Tengo trece años.','Jag är tretton år.',0]]],
+      ['¿Qué tal?','Hur är det?',[['Muy bien, gracias.','Mycket bra, tack.',1],['Me llamo Juan.','Jag heter Juan.',0],['Soy de Suecia.','Jag är från Sverige.',0]]],
+      ['¿Qué quieres?','Vad vill du ha?',[[cap(item)+', por favor.',cap(itemSv)+', tack.',1],['¿Dónde está el mercado?','Var ligger marknaden?',0],['No hablo francés.','Jag pratar inte franska.',0]]],
+      ['Tome.','Varsågod.',[['Gracias. ¿Cuánto cuesta?','Tack. Hur mycket kostar det?',1],['¿Cómo estás?','Hur mår du?',0],['¡Mira, voleibol!','Titta, volleyboll!',0]]],
+      [cap(priceEs)+', por favor.',price+' euro, tack.',[['Tome. ¡Gracias!','Varsågod. Tack!',1],['¿Cuántos años tienes?','Hur gammal är du?',0],['Hablo un poco de inglés.','Jag pratar lite engelska.',0]]],
+      ['Gracias. ¡Adiós!','Tack. Hej då!',[['¡Adiós! ¡Hasta luego!','Hej då! Vi ses!',1],['¿Tienes hermanos?','Har du syskon?',0],['Estoy lista.','Jag är redo.',0]]]];
+    root.innerHTML='';const chat=el('div','chat'),opts=el('div','opts'),msg=el('p','msg');opts.className='mcq';const ob=el('div','opts');opts.appendChild(ob);
+    root.append(chat,opts,msg);let s=0;
+    const bub=(cls,es,sv)=>{const b=el('div','bub '+cls);b.appendChild(document.createTextNode(es));b.appendChild(el('small',null,sv));chat.appendChild(b);b.scrollIntoView({block:'nearest'});};
+    function step(){
+      if(s>=steps.length){msg.textContent='¡Perfecto! Du klarade kiosken. 🎉';const r=el('button','btn primary','En gång till – nytt köp');r.onclick=run;ob.innerHTML='';ob.appendChild(r);complete(task);return;}
+      const [ves,vsv,ch]=steps[s];bub('v','🧑‍💼 '+ves,vsv);speak(ves,null,'es');ob.innerHTML='';msg.textContent='Vad svarar du? Säg det högt först!';
+      mix(ch).forEach(([es,sv,ok])=>{const b=el('button');b.innerHTML='<b></b><br><small></small>';b.querySelector('b').textContent=es;b.querySelector('small').textContent=sv;
+        b.onclick=()=>{if(ok){bub('y',es,sv);speak(es,null,'es');s++;setTimeout(step,1600);ob.innerHTML='';}else{shake(b);msg.textContent='Det passar inte riktigt här. Vad brukar man säga?';}};ob.appendChild(b);});}
+    step();}
+  const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+  root.innerHTML='';const b=el('button','btn primary','Gå in i kiosken ▶');b.onclick=run;root.appendChild(b);
+};
+
+/* ---------- Vykort ---------- */
+W.postcard=(root,task)=>{
+  const P=S.post=Object.assign({to:'',from:'',city:0,with:0,desc:[0,1],hotel:0,am:0,pm:0,lang:0,edit:''},S.post||{});
+  const form=el('div','form'),out=el('div','out'),ta=el('textarea'),row=el('div','row');
+  ta.style.cssText='width:100%;min-height:10rem;font:inherit;font-size:1.05rem;line-height:1.6;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.6rem .8rem;margin-top:.5rem';
+  const f=(lab,node)=>{const l=el('label',null,lab);l.appendChild(node);form.appendChild(l);};
+  const inp=(k,ph)=>{const i=el('input');i.value=P[k];i.placeholder=ph;i.oninput=()=>{P[k]=i.value;save();draw();};return i;};
+  const sel=(k,list,pre)=>{const s=el('select');list.forEach(([es,sv],j)=>s.appendChild(new Option((pre||'')+es+' – '+sv,j)));s.value=P[k];s.onchange=()=>{P[k]=+s.value;save();draw();};return s;};
+  f('Till (namn)',inp('to','Mamma'));
+  f('Var är du?',sel('city',POST.city));
+  f('Med vem?',sel('with',POST.with));
+  const dsc=el('div','toggle');POST.desc.forEach(([es,sv],j)=>{const l=el('label');const c=el('input');c.type='checkbox';c.checked=P.desc.includes(j);c.onchange=()=>{P.desc=POST.desc.map((x,k)=>k).filter(k=>k===j?c.checked:P.desc.includes(k));save();draw();};l.append(c,document.createTextNode(es));dsc.appendChild(l);});
+  f('Hur är det där? Välj en eller flera',dsc);
+  f('Hotellet',sel('hotel',POST.hotel));
+  f('Por la mañana… (på morgonen)',sel('am',POST.am));
+  f('Por la tarde… (på eftermiddagen)',sel('pm',POST.pm));
+  f('Språket',sel('lang',POST.lang));
+  f('Från (ditt namn)',inp('from','Nikol'));
+  const L=()=>[
+    ['¡Hola, '+(P.to||'…')+'!','Hej '+(P.to||'…')+'!'],
+    ['Estoy en '+POST.city[P.city][0]+' con '+POST.with[P.with][0]+'.','Jag är i '+POST.city[P.city][1]+' med '+POST.with[P.with][1]+'.'],
+    ...P.desc.map(j=>POST.desc[j]),
+    POST.hotel[P.hotel],
+    ['Por la mañana '+POST.am[P.am][0]+'.','På morgonen '+POST.am[P.am][1]+'.'],
+    ['Por la tarde '+POST.pm[P.pm][0]+'.','På eftermiddagen '+POST.pm[P.pm][1]+'.'],
+    POST.lang[P.lang],
+    ['¡Hasta luego!','Vi ses!'],[(P.from||'Nikol'),'']];
+  function draw(){out.innerHTML='';L().forEach(([es,sv])=>{const p=el('p');const t=el('span');t.innerHTML='<b></b>'+(sv?'<br><small></small>':'');t.querySelector('b').textContent=es;if(sv)t.querySelector('small').textContent=sv;const b=el('button','say1','🔊');b.onclick=()=>speak(es,b,'es');p.append(b,t);out.appendChild(p);});
+    if(!P.edit)ta.value=L().map(x=>x[0]).join('\n');}
+  ta.value=P.edit||'';ta.oninput=()=>{P.edit=ta.value;save();if(ta.value.trim().length>40)complete(task);};
+  const rd=el('button','btn primary','🔊 Läs upp vykortet');rd.onclick=()=>{speak(ta.value,rd,'es');complete(task);};
+  const rs=el('button','btn','Börja om texten');rs.onclick=()=>{P.edit='';save();draw();ta.value=L().map(x=>x[0]).join('\n');};
+  const cp=el('button','btn','Kopiera');cp.onclick=async()=>{try{await navigator.clipboard.writeText(ta.value);toast('Vykortet är kopierat.');}catch(e){toast('Markera texten och kopiera den själv.');}};
+  row.append(rd,rs,cp);
+  root.append(form,el('h3',null,'Ditt vykort'),out,el('h3',null,'Gör det till ditt eget'),el('p',null,'Här kan du ändra, ta bort och lägga till egna meningar. Försök lägga till minst en mening själv, till exempel om vädret eller maten.'),ta,row);draw();
+};
+/* ---------- Memory ---------- */
+W.memory=(root,set,task)=>{
+  const src=(set==='ord'?WORDS.A.concat(PHR.B,PHR.familia,PHR.C).filter(x=>x[0].length<22):PHR[set]).map(t=>({a:t[0],b:(t[2]&&set!=='pronomen'?t[2]+' ':'')+t[1]}));
+  function round(){
+    root.innerHTML='';const pairs=mix(src).slice(0,6);let open=[],got=0,lock=false,turns=0;
+    const grid=el('div','mem'),msg=el('p','msg'),row=el('div','row'),nb=el('button','btn','Ny omgång'),cnt=el('span','count');nb.onclick=round;row.append(nb,cnt);
+    const cards=mix(pairs.flatMap((p,k)=>[{k,t:p.a,es:1},{k,t:p.b}]));
+    cards.forEach(c=>{const b=el('button','card');b.innerHTML='?';b.setAttribute('aria-label','Kort');
+      b.onclick=()=>{if(lock||b.classList.contains('open')||b.classList.contains('got'))return;
+        b.classList.add('open');b.innerHTML='';const s=el('span',c.num?'num':null,c.t);b.appendChild(s);if(c.es)speak(c.t,null,'es');if(c.col){b.style.borderColor=c.col;s.style.color=c.col;}open.push([b,c]);
+        if(open.length===2){turns++;const [x,y]=open;
+          if(x[1].k===y[1].k){x[0].classList.add('got');y[0].classList.add('got');open=[];got++;msg.textContent='Ett par! ✔';
+            if(got===pairs.length){msg.textContent='Alla par på '+turns+' försök! 🎉';complete(task);}}
+          else{lock=true;setTimeout(()=>{open.forEach(([z])=>{z.classList.remove('open');z.innerHTML='?';z.style.borderColor='';});open=[];lock=false;},1300);}
+          cnt.textContent=turns+' försök';}};
+      grid.appendChild(b);});
+    root.append(grid,msg,row);
+  }
+  round();
+};
+
+
+/* ================= Flytta framsteg ================= */
+(function(){
+  const NAME=KEY.startsWith('geo')?'geografi':'spanska';const msg=$('#mvMsg');
+  const pack=()=>JSON.stringify({app:KEY,saved:new Date().toISOString(),data:S});
+  $('#mvDown').onclick=()=>{try{const b=new Blob([pack()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nikol-'+NAME+'-framsteg.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);msg.textContent='Filen är nedladdad. Skicka den till den nya enheten, till exempel med AirDrop eller mejl.';}catch(e){msg.textContent='Det gick inte att ladda ner. Prova ”Kopiera som text” i stället.';}};
+  $('#mvCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pack());msg.textContent='Texten är kopierad. Skicka den till dig själv och klistra in den på den nya enheten.';}catch(e){$('#mvText').value=pack();msg.textContent='Markera texten i rutan nedanför och kopiera den själv.';}};
+  const load=txt=>{try{const o=JSON.parse(txt);if(!o||o.app!==KEY||typeof o.data!=='object')throw 0;
+      if(!confirm('Vill du ersätta framstegen på den här enheten med de sparade från '+new Date(o.saved).toLocaleDateString('sv-SE')+'?'))return;
+      S=Object.assign(S,o.data);save();msg.textContent='Klart! Sidan laddas om.';setTimeout(()=>location.reload(),600);}
+    catch(e){msg.textContent='Det där ser inte ut som en framstegsfil för '+NAME+'. Kontrollera att du valde rätt fil.';}};
+  $('#mvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>load(r.result);r.readAsText(f);};
+  $('#mvPaste').onclick=()=>load($('#mvText').value.trim());
+})();
+
+/* ================= Starta ================= */
+$$('[data-widget]').forEach(r=>{const f=W[r.dataset.widget];if(!f)return;const a=r.dataset.set;f(r,a||r.dataset.task,a?r.dataset.task:undefined);});
+(function(){const c=$('#slowCb');c.checked=!!S.slow;c.onchange=()=>{S.slow=c.checked;save();};})();
+if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}
+refresh();renderMission();
+show(panels.some(p=>p.id==='p-'+S.tab)?S.tab:'start');
+</script></body></html>
