@@ -13,7 +13,7 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
   --bg:#F4EFE8; --paper:#FFFFFF; --ink:#2B2320; --soft:#6A5B52; --line:#E2D7CB;
-  --start:#B5452B; --playa:#1C7FA0; --ciudad:#B8661B; --cafe:#7A5236; --mundo:#2E7D4F; --redov:#7650B0; --ord:#4D6275;
+  --start:#B5452B; --playa:#1C7FA0; --ciudad:#B8661B; --cafe:#7A5236; --mundo:#2E7D4F; --redov:#7650B0; --ord:#4D6275; --socorro:#C2327A;
   --el:#1C7FA0; --la:#C2553A;
   --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
 }
@@ -21,7 +21,7 @@
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#1C1714; --paper:#28211C; --ink:#F2EBE4; --soft:#C2B3A7; --line:#43372F;
-    --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8;
+    --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8; --socorro:#F07AB0;
     --el:#5BB8DA; --la:#F08A6C;
     --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
   }
@@ -29,7 +29,7 @@
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#1C1714; --paper:#28211C; --ink:#F2EBE4; --soft:#C2B3A7; --line:#43372F;
-  --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8;
+  --start:#F08A6C; --playa:#5BB8DA; --ciudad:#F0A452; --cafe:#D2A07A; --mundo:#6CC88A; --redov:#AE8CEB; --ord:#A8B8C8; --socorro:#F07AB0;
   --el:#5BB8DA; --la:#F08A6C;
   --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
 }
@@ -271,6 +271,23 @@ ul.plain li{margin:.2rem 0}
 .mission h2{color:#fff;margin:0}
 .mission button{border:0;background:#fff;color:var(--start);font-weight:700;border-radius:999px;padding:.6rem 1.4rem;min-height:48px;cursor:pointer;font-size:1.1rem}
 .cheerup{font-size:1.15rem}
+
+.sw{display:inline-block;width:1.6em;height:1.6em;border-radius:6px;border:2px solid rgba(0,0,0,.25);vertical-align:middle}
+.flash .em .sw,.opts4 .em .sw{width:2.6rem;height:2.6rem}
+.tiles{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.tiles button{min-width:2.8rem;min-height:2.8rem;font-size:1.3rem;font-weight:700;border:2px solid var(--c);background:var(--paper);border-radius:10px;cursor:pointer}
+.slots{display:flex;flex-wrap:wrap;gap:.3rem;min-height:3.2rem;padding:.4rem;border:2px dashed var(--line);border-radius:10px;margin:.5rem 0}
+.slots span{min-width:2.4rem;height:2.6rem;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;background:var(--ok);color:#fff;border-radius:8px;padding:0 .3rem}
+.closet{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.6rem 0}
+.closet label{display:grid;gap:.15rem;font-size:.95rem;color:var(--soft)}
+.closet select{font:inherit;font-size:1.05rem;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.dressed{font-size:1.5rem;font-weight:700;text-align:center;padding:1rem;border-radius:14px;background:color-mix(in srgb,var(--c) 8%,var(--paper));border:3px solid var(--c);margin:.4rem 0}
+.dressed .end{padding:0 .15rem;border-radius:5px;background:#FFE9A8;color:#2B2320}
+.dressed .big{font-size:3rem;display:block}
+.ans{font-size:1.3rem;font-weight:700;margin:.5rem 0}
+.typein{font:inherit;font-size:1.1rem;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px;width:min(100%,18rem)}
+[hidden]{display:none!important}
+@media (max-width:520px){.closet{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -320,7 +337,7 @@ ul.plain li{margin:.2rem 0}
 
   <section class="task" data-task="s-plan">
     <header><h3>Studieplan – korta pass</h3></header>
-    <p>Varje pass tar 10–15 minuter. Ett eller två om dagen räcker. ”Dagens uppdrag” ovanför tar dig alltid till nästa pass.</p>
+    <p>Varje pass tar 10–15 minuter. Ett eller två om dagen räcker. ”Dagens uppdrag” ovanför tar dig alltid till nästa pass. Först kommer steg 7 (2A), och steg 6 finns kvar längre ner för repetition.</p>
     <div id="planList"></div>
   </section>
 
@@ -347,6 +364,102 @@ ul.plain li{margin:.2rem 0}
     <h2>Hur långt har du kommit?</h2>
     <div class="tabsum" id="tabSummary"></div>
   </div>
+</section>
+
+<!-- ======================= 2A ¡SOCORRO! ======================= -->
+<section class="panel" id="p-socorro" data-color="socorro" data-title="2A ¡Socorro!" hidden>
+  <div class="intro"><h2>Steg 7 · 2A ¡Socorro! 👕</h2><p>Kläder och färger, vad du gillar, och talen 20–49. Orden tränar du i en trappa från lätt till svårt.</p></div>
+
+  <section class="task" data-task="s2-fras">
+    <header><h3>Lyssna: fraserna från ¡Socorro!</h3></header>
+    <p>Tryck på en fras för att höra den. Säg efter högt!</p>
+    <div data-widget="phrases" data-set="socorro"></div>
+  </section>
+
+  <section class="task" data-task="s2-ord1">
+    <header><h3>Ordtrappan steg 1: titta och lyssna</h3></header>
+    <div data-widget="flash" data-set="S" data-task="s2-ord1"></div>
+  </section>
+
+  <section class="task" data-task="s2-ord2">
+    <header><h3>Ordtrappan steg 2: lyssna och tryck på rätt bild</h3></header>
+    <div data-widget="listenpick" data-set="S" data-task="s2-ord2"></div>
+  </section>
+
+  <section class="task" data-task="s2-art">
+    <header><h3>Un, una, unos eller unas?</h3></header>
+    <div class="say">
+    <p><span class="g-el">un</span> = en (han-ord). <span class="g-la">una</span> = en (hon-ord). <span class="g-el">unos</span> = några (han-ord). <span class="g-la">unas</span> = några (hon-ord).</p>
+    <p>Byxor, jeans och skor står i plural, alltså flera, på spanska: <span class="g-el">unos</span> pantalones, <span class="g-el">unos</span> zapatos.</p>
+    </div>
+    <div data-widget="sort" data-set="unos" data-task="s2-art"></div>
+  </section>
+
+  <section class="task" data-task="s2-ord3">
+    <header><h3>Ordtrappan steg 3: memory</h3></header>
+    <div data-widget="memory" data-set="ropa" data-task="s2-ord3"></div>
+  </section>
+
+  <section class="task" data-task="s2-adj">
+    <header><h3>Klädkammaren: färgen ska passa plagget</h3></header>
+    <div class="say">
+    <p>På spanska kommer färgen <b>efter</b> plagget: una camiseta roja, en röd t-shirt.</p>
+    <p>Färger som slutar på <b>-o</b> ändrar sig: roj<b>o</b>, roj<b>a</b>, roj<b>os</b>, roj<b>as</b>. Färger som slutar på något annat, som verde och azul, får bara <b>-s</b> eller <b>-es</b> när det är flera. Rosa, naranja och lila ändrar sig inte alls.</p>
+    </div>
+    <p>Välj ett plagg och en färg och se vad som händer med ändelsen.</p>
+    <div data-widget="closet"></div>
+    <h3>Testa dig själv</h3>
+    <div data-widget="mcq" data-set="adj" data-task="s2-adj"></div>
+  </section>
+
+  <section class="task" data-task="s2-ord4">
+    <header><h3>Ordtrappan steg 4: bygg ordet</h3></header>
+    <p>Lyssna, och tryck fram bokstäverna i rätt ordning. Spanska stavas som det låter!</p>
+    <div data-widget="spell" data-set="S" data-task="s2-ord4"></div>
+  </section>
+
+  <section class="task" data-task="s2-gusta">
+    <header><h3>Me gusta – jag gillar</h3></header>
+    <div class="say">
+    <p><b>Me gusta</b> betyder jag gillar. <b>Te gusta</b> betyder du gillar. <b>No me gusta</b> betyder jag gillar inte. <b>Me gusta más</b> betyder jag gillar mest.</p>
+    <p>Gillar du <b>en</b> sak säger du <b>gusta</b>: me gusta el helado. Gillar du <b>flera</b> saker säger du <b>gustan</b>: me gustan los zapatos.</p>
+    <div class="trick">Knep: slutar saken på -s är det oftast <b>gustan</b>. Men se upp: la ropa betyder kläderna, men det är ett ord i singular. Därför heter det me gusta la ropa.</div>
+    </div>
+    <div data-widget="sort" data-set="gusta"></div>
+    <h3>Bygg meningar</h3>
+    <div data-widget="build" data-set="G" data-task="s2-gusta"></div>
+  </section>
+
+  <section class="task" data-task="s2-num">
+    <header><h3>Talen 20–49</h3></header>
+    <div class="say">
+    <p>21 till 29 skrivs i ett enda ord: veinti-uno, veinti-dós, veinti-trés. Från 30 skriver man med <b>y</b>, och: treinta y uno, cuarenta y dos.</p>
+    </div>
+    <div data-widget="phrases" data-set="num49"></div>
+    <h3>Lyssna och tryck – och tvärtom</h3>
+    <div data-widget="numpick" data-task="s2-num"></div>
+  </section>
+
+  <section class="task" data-task="s2-ord5">
+    <header><h3>Ordtrappan steg 5: säg det själv</h3></header>
+    <p>Du ser ordet på svenska. Säg det högt på spanska, och kolla sedan. Vill du kan du skriva också – accenter behövs inte.</p>
+    <div data-widget="sayit" data-set="S" data-task="s2-ord5"></div>
+  </section>
+
+  <section class="task" data-task="s2-abc">
+    <header><h3>Alfabetet</h3></header>
+    <div data-widget="phrases" data-set="abc"></div>
+    <h3>Stava ditt namn på spanska</h3>
+    <div data-widget="spellname" data-task="s2-abc"></div>
+  </section>
+
+  <section class="task" data-task="s2-tienda">
+    <header><h3>Tala: En la tienda de ropa</h3></header>
+    <p>Du är i en klädaffär i Spanien. Expediten pratar, och du väljer vad du ska svara. Säg svaret högt innan du trycker! Lyssna noga på priset.</p>
+    <div data-widget="tienda" data-task="s2-tienda"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="socorro">Jag är klar med 2A</button></div>
 </section>
 
 <!-- ======================= 1A EN LA PLAYA ======================= -->
@@ -600,37 +713,53 @@ ul.plain li{margin:.2rem 0}
 const NUM=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte'];
 
 const PLAN=[
- ['p01','Du kan redan spanska! – gratisorden','start','s-gratis'],
- ['p02','Hälsningsfraser och ”Vad svarar man?”','playa','a-fras'],
- ['p03','Ordkort: på stranden och i staden','playa','a-ord'],
- ['p04','Lyssna och tryck på rätt bild','playa','a-hor'],
- ['p05','Siffrorna 0–10','playa','a-num'],
- ['p06','Uttal: så låter spanskan','playa','a-uttal'],
- ['p07','Orden i 1B','ciudad','b-fras'],
- ['p08','Siffrorna 11–20','ciudad','b-num'],
- ['p09','La familia – familjen','ciudad','b-fam'],
- ['p10','Tener och estar','ciudad','b-tener'],
- ['p11','Un eller una?','ciudad','b-un'],
- ['p12','Bygg meningar','ciudad','b-bygg'],
- ['p13','Orden i 1C','cafe','c-fras'],
- ['p14','Länder och språk','cafe','c-land'],
- ['p15','Personliga pronomen','cafe','c-pron'],
- ['p16','Verbmaskinen: ar-verb','cafe','c-ar'],
- ['p17','Ser – att vara','cafe','c-ser'],
- ['p18','El eller la?','cafe','c-el'],
- ['p19','Den spansktalande världen och huvudstäderna','mundo','m-las'],
- ['p20','Mafalda','mundo','m-maf'],
- ['p21','Quiz om den spansktalande världen','mundo','m-quiz'],
- ['p22','Este/esta soy yo – bygg din presentation','redov','r-tala1'],
- ['p23','Este/esta soy yo – öva att säga den','redov','r-tala1'],
- ['p24','En el quiosco – rollspel','redov','r-tala2'],
- ['p25','Läsa: ¡Hola desde el campamento!','redov','r-las'],
- ['p26','Höra: La familia de Lucas','redov','r-hor'],
- ['p27','Skriva: Una visita a España','redov','r-skriv'],
- ['p28','Frågeord och memory med orden','ord','o-fraga'],
- ['p29','Repetition: kiosken och din presentation en gång till','redov','r-tala2']
+ ["t01", "2A: Fraserna från ¡Socorro!", "socorro", "s2-fras"],
+ ["t02", "2A: Ordtrappan steg 1 – titta och lyssna", "socorro", "s2-ord1"],
+ ["t03", "2A: Ordtrappan steg 2 – lyssna och tryck", "socorro", "s2-ord2"],
+ ["t04", "2A: Un, una, unos eller unas?", "socorro", "s2-art"],
+ ["t05", "2A: Ordtrappan steg 3 – memory", "socorro", "s2-ord3"],
+ ["t06", "2A: Klädkammaren – färgen ska passa plagget", "socorro", "s2-adj"],
+ ["t07", "2A: Ordtrappan steg 4 – bygg ordet", "socorro", "s2-ord4"],
+ ["t08", "2A: Me gusta och me gustan", "socorro", "s2-gusta"],
+ ["t09", "2A: Talen 20–49", "socorro", "s2-num"],
+ ["t10", "2A: Ordtrappan steg 5 – säg det själv", "socorro", "s2-ord5"],
+ ["t11", "2A: Alfabetet och stava ditt namn", "socorro", "s2-abc"],
+ ["t12", "2A: En la tienda de ropa – rollspel", "socorro", "s2-tienda"],
+ ["t13", "2A: Repetition – klädaffären och ordtrappan steg 5 igen", "socorro", "s2-tienda"],
+ ['p01','Steg 6: Du kan redan spanska! – gratisorden','start','s-gratis'],
+ ['p02','Steg 6: Hälsningsfraser och ”Vad svarar man?”','playa','a-fras'],
+ ['p03','Steg 6: Ordkort: på stranden och i staden','playa','a-ord'],
+ ['p04','Steg 6: Lyssna och tryck på rätt bild','playa','a-hor'],
+ ['p05','Steg 6: Siffrorna 0–10','playa','a-num'],
+ ['p06','Steg 6: Uttal: så låter spanskan','playa','a-uttal'],
+ ['p07','Steg 6: Orden i 1B','ciudad','b-fras'],
+ ['p08','Steg 6: Siffrorna 11–20','ciudad','b-num'],
+ ['p09','Steg 6: La familia – familjen','ciudad','b-fam'],
+ ['p10','Steg 6: Tener och estar','ciudad','b-tener'],
+ ['p11','Steg 6: Un eller una?','ciudad','b-un'],
+ ['p12','Steg 6: Bygg meningar','ciudad','b-bygg'],
+ ['p13','Steg 6: Orden i 1C','cafe','c-fras'],
+ ['p14','Steg 6: Länder och språk','cafe','c-land'],
+ ['p15','Steg 6: Personliga pronomen','cafe','c-pron'],
+ ['p16','Steg 6: Verbmaskinen: ar-verb','cafe','c-ar'],
+ ['p17','Steg 6: Ser – att vara','cafe','c-ser'],
+ ['p18','Steg 6: El eller la?','cafe','c-el'],
+ ['p19','Steg 6: Den spansktalande världen och huvudstäderna','mundo','m-las'],
+ ['p20','Steg 6: Mafalda','mundo','m-maf'],
+ ['p21','Steg 6: Quiz om den spansktalande världen','mundo','m-quiz'],
+ ['p22','Steg 6: Este/esta soy yo – bygg din presentation','redov','r-tala1'],
+ ['p23','Steg 6: Este/esta soy yo – öva att säga den','redov','r-tala1'],
+ ['p24','Steg 6: En el quiosco – rollspel','redov','r-tala2'],
+ ['p25','Steg 6: Läsa: ¡Hola desde el campamento!','redov','r-las'],
+ ['p26','Steg 6: Höra: La familia de Lucas','redov','r-hor'],
+ ['p27','Steg 6: Skriva: Una visita a España','redov','r-skriv'],
+ ['p28','Steg 6: Frågeord och memory med orden','ord','o-fraga'],
+ ['p29','Steg 6: Repetition: kiosken och din presentation en gång till','redov','r-tala2']
 ];
 const CHECK=[
+ ['c6','Steg 7: Handla kläder och använda namnen på kläder och färger','socorro'],
+ ['c7','Steg 7: Använda verbet gustar','socorro'],
+ ['c8','Steg 7: Räkna till 49 (upp till 101 kommer senare)','socorro'],
  ['c1','Använda namnen på länder och språk','cafe'],
  ['c2','Presentera mig själv, min familj och någon annan','redov'],
  ['c3','Använda regelbundna ar-verb i presens','cafe'],
@@ -765,6 +894,59 @@ const COUNTRIES=[
  ['🇩🇴','República Dominicana','Santo Domingo','Baseboll är landets stora sport.'],
  ['🇬🇶','Guinea Ecuatorial','Malabo','Det enda landet i Afrika där spanska är officiellt språk.']
 ];
+/* ================= Steg 7: 2A ================= */
+WORDS.S=[["la camiseta", "t-shirten", "👕"], ["la camisa", "skjortan", "👔"], ["los pantalones", "byxorna", "👖"], ["los vaqueros", "jeansen", "👖"], ["los pantalones cortos", "kortbyxorna", "🩳"], ["la falda", "kjolen", "👗"], ["el vestido", "klänningen", "👗"], ["la chaqueta", "jackan", "🧥"], ["el suéter", "tröjan", "🧶"], ["la gorra", "kepsen", "🧢"], ["el gorro", "mössan", "❄️"], ["los zapatos", "skorna", "👞"], ["las zapatillas", "gympaskorna", "👟"], ["el top", "linnet", "🎽"], ["la ropa", "kläderna", "👚"], ["la bolsa", "påsen", "🛍️"], ["el probador", "provrummet", "🚪"], ["el perrito", "hundvalpen", "🐶"], ["el helado", "glassen", "🍦"], ["el policía", "polisen", "👮"], ["el ladrón", "tjuven", "🦹"], ["la dependienta", "expediten (kvinna)", "🧑‍💼"], ["rojo", "röd", "#D83A34"], ["azul", "blå", "#2F6FD0"], ["verde", "grön", "#3E9A4E"], ["amarillo", "gul", "#F2D23C"], ["negro", "svart", "#111111"], ["blanco", "vit", "#FFFFFF"], ["gris", "grå", "#9A9A9A"], ["naranja", "orange", "#EE7A2E"], ["marrón", "brun", "#7A4A26"], ["lila", "lila", "#8A5FA8"], ["rosa", "rosa", "#D9408C"]];
+PHR.socorro=[["¡Socorro!", "Hjälp!", "🆘"], ["¡Mira, Juan!", "Titta, Juan!", "👀"], ["¿Te gusta?", "Gillar du det?", "🤔"], ["Verde es tu color favorito.", "Grön är din favoritfärg.", "#3E9A4E"], ["Es mi color favorito.", "Det är min favoritfärg.", "💚"], ["Pero también me gusta el rojo.", "Men jag gillar också rött.", "#D83A34"], ["¿En serio?", "Seriöst?", "😮"], ["Es un poco infantil.", "Det är lite barnsligt.", "🧸"], ["No pasa nada.", "Det gör inget.", "🙂"], ["A ver…", "Få se…", "🔍"], ["Quizás.", "Kanske.", "🤷"], ["El probador está allí.", "Provrummet är där.", "🚪"], ["¿Quieres un helado?", "Vill du ha en glass?", "🍦"], ["Quiero un helado de chocolate.", "Jag vill ha en chokladglass.", "🍫"], ["¡Buena idea!", "Bra idé!", "💡"], ["mi bolsa con la ropa", "min påse med kläderna", "🛍️"], ["Pero allí hay un policía.", "Men där finns en polis.", "👮"], ["¡El ladrón!", "Tjuven!", "🦹"], ["Toma.", "Varsågod.", "🤲"], ["Gracias y hasta luego, chicos.", "Tack och hej då, ungdomar.", "👋"]];
+PHR.num49=[["veinte", "20", ""], ["veintiuno", "21", ""], ["veintidós", "22", ""], ["veintitrés", "23", ""], ["veinticuatro", "24", ""], ["veinticinco", "25", ""], ["veintiséis", "26", ""], ["veintisiete", "27", ""], ["veintiocho", "28", ""], ["veintinueve", "29", ""], ["treinta", "30", ""], ["treinta y uno", "31", ""], ["treinta y dos", "32", ""], ["treinta y cinco", "35", ""], ["treinta y ocho", "38", ""], ["cuarenta", "40", ""], ["cuarenta y uno", "41", ""], ["cuarenta y cuatro", "44", ""], ["cuarenta y seis", "46", ""], ["cuarenta y nueve", "49", ""]];
+PHR.abc=[["a", "A", ""], ["be", "B", ""], ["ce", "C", ""], ["de", "D", ""], ["e", "E", ""], ["efe", "F", ""], ["ge", "G", ""], ["hache", "H", ""], ["i", "I", ""], ["jota", "J", ""], ["ka", "K", ""], ["ele", "L", ""], ["eme", "M", ""], ["ene", "N", ""], ["eñe", "Ñ", ""], ["o", "O", ""], ["pe", "P", ""], ["cu", "Q", ""], ["erre", "R", ""], ["ese", "S", ""], ["te", "T", ""], ["u", "U", ""], ["uve", "V", ""], ["uve doble", "W", ""], ["equis", "X", ""], ["i griega", "Y", ""], ["zeta", "Z", ""]];
+const ABCMAP=Object.fromEntries([["a", "A", ""], ["be", "B", ""], ["ce", "C", ""], ["de", "D", ""], ["e", "E", ""], ["efe", "F", ""], ["ge", "G", ""], ["hache", "H", ""], ["i", "I", ""], ["jota", "J", ""], ["ka", "K", ""], ["ele", "L", ""], ["eme", "M", ""], ["ene", "N", ""], ["eñe", "Ñ", ""], ["o", "O", ""], ["pe", "P", ""], ["cu", "Q", ""], ["erre", "R", ""], ["ese", "S", ""], ["te", "T", ""], ["u", "U", ""], ["uve", "V", ""], ["uve doble", "W", ""], ["equis", "X", ""], ["i griega", "Y", ""], ["zeta", "Z", ""]].map(([n,l])=>[l,n]));
+function numEs(n){const U=NUM;if(n<=20)return U[n];const V={21:'veintiuno',22:'veintidós',23:'veintitrés',24:'veinticuatro',25:'veinticinco',26:'veintiséis',27:'veintisiete',28:'veintiocho',29:'veintinueve'};if(n<30)return V[n];
+  const T={3:'treinta',4:'cuarenta',5:'cincuenta',6:'sesenta',7:'setenta',8:'ochenta',9:'noventa'};if(n===100)return 'cien';if(n===101)return 'ciento uno';const t=Math.floor(n/10),u=n%10;return T[t]+(u?' y '+U[u]:'');}
+SORT.unos={buckets:['un','una','unos','unas'],items:[['top',0],['vestido',0],['gorro',0],['suéter',0],['camisa',1],['falda',1],['camiseta',1],['gorra',1],['chaqueta',1],['vaqueros',2],['pantalones cortos',2],['pantalones',2],['zapatos',2],['gorras',3],['zapatillas',3],['camisetas',3],['faldas',3]]};
+SORT.gusta={buckets:['me gusta (en sak)','me gustan (flera saker)'],items:[['… el rojo',0],['… la camiseta blanca',0],['… la música',0],['… el perrito',0],['… el helado de chocolate',0],['… la ropa',0],['… los zapatos verdes',1],['… las camisas amarillas',1],['… los pantalones cortos',1],['… las zapatillas blancas',1],['… los vaqueros',1],['… los perros',1]]};
+BUILD.G=[
+ [['Me','gusta','el','perrito.'],'Jag gillar hundvalpen.'],
+ [['Te','gusta','la','ropa.'],'Du gillar kläder.'],
+ [['¿Qué','color','te','gusta','más?'],'Vilken färg gillar du mest?'],
+ [['Me','gusta','más','el','rojo.'],'Jag gillar mest rött.'],
+ [['Me','gustan','los','zapatos','verdes.'],'Jag gillar de gröna skorna.'],
+ [['Te','gustan','las','camisas','amarillas.'],'Du gillar de gula skjortorna.'],
+ [['No','me','gusta','la','camisa','blanca.'],'Jag gillar inte den vita skjortan.'],
+ [['No','te','gusta','la','gorra','gris.'],'Du gillar inte den grå kepsen.']
+];
+MCQ.adj=[
+ ['una camiseta ___ (röd)',['roja','rojo','rojos','rojas'],0,'Camiseta är ett hon-ord i singular, så det blir roja.'],
+ ['unos zapatos ___ (svarta)',['negros','negro','negras','negra'],0,'Zapatos är han-ord i plural: negros.'],
+ ['unas faldas ___ (vita)',['blancas','blanco','blancos','blanca'],0,'Faldas är hon-ord i plural: blancas.'],
+ ['un vestido ___ (gul)',['amarillo','amarilla','amarillos','amarillas'],0,'Vestido är ett han-ord i singular: amarillo.'],
+ ['unos pantalones ___ (gröna)',['verdes','verde','verdos','verdas'],0,'Verde slutar inte på -o. I plural får den bara -s: verdes.'],
+ ['una chaqueta ___ (blå)',['azul','azula','azulo','azules'],0,'Azul ändrar sig inte för hon-ord. Bara i plural: azules.'],
+ ['unas zapatillas ___ (grå)',['grises','gris','grisas','grisos'],0,'Gris får -es i plural: grises.'],
+ ['un top de color ___',['rosa','roso','rosos','rosas'],0,'Rosa ändrar sig inte. Man säger ofta de color rosa.'],
+ ['una camisa ___ (vit)',['blanca','blanco','blancas','blancos'],0,'Camisa är ett hon-ord i singular: blanca.'],
+ ['unos vaqueros ___ (blå)',['azules','azul','azulos','azulas'],0,'Vaqueros är plural, så azul blir azules.']
+];
+const CLOSET_ITEMS=[['un vestido','en klänning','👗','m',0],['un suéter','en tröja','🧶','m',0],['un top','ett linne','🎽','m',0],['una camiseta','en t-shirt','👕','f',0],['una falda','en kjol','👗','f',0],['una chaqueta','en jacka','🧥','f',0],['una gorra','en keps','🧢','f',0],['unos zapatos','ett par skor','👞','m',1],['unos pantalones','ett par byxor','👖','m',1],['unos vaqueros','ett par jeans','👖','m',1],['unas zapatillas','ett par gympaskor','👟','f',1],['unas camisetas','några t-shirtar','👕','f',1]];
+const CLOSET_COLORS=[['rojo','röd','o','#D83A34'],['negro','svart','o','#111111'],['blanco','vit','o','#FFFFFF'],['amarillo','gul','o','#F2D23C'],['verde','grön','e','#3E9A4E'],['azul','blå','c','#2F6FD0'],['gris','grå','c','#9A9A9A'],['marrón','brun','n','#7A4A26'],['rosa','rosa','i','#D9408C'],['naranja','orange','i','#EE7A2E'],['lila','lila','i','#8A5FA8']];
+function agree(c,g,pl){const [w,,t]=c;if(t==='i')return [w,''];
+  if(t==='o'){const st=w.slice(0,-1);return [st,(g==='f'?'a':'o')+(pl?'s':'')];}
+  if(t==='e')return [w,pl?'s':''];
+  if(t==='n')return pl?['marron','es']:[w,''];
+  return [w,pl?'es':''];}
+const TIENDA_ITEMS=[['una camiseta','en t-shirt','f',0],['una falda','en kjol','f',0],['una chaqueta','en jacka','f',0],['un vestido','en klänning','m',0],['un suéter','en tröja','m',0],['unos pantalones cortos','ett par kortbyxor','m',1],['unos zapatos','ett par skor','m',1],['unas zapatillas','ett par gympaskor','f',1]];
+COUNTRIES.push(
+ ['🏛️','Barcelona','España','Kyrkan Sagrada Família har byggts sedan 1882 och är fortfarande inte helt klar!'],
+ ['💃','Sevilla','España','Här är flamencon extra stark. Det är en dans med klappningar, gitarr och sång.'],
+ ['🥘','Valencia','España','Paellans hemstad – en risrätt som kokas i en stor, platt panna.'],
+ ['🏰','Granada','España','Här ligger Alhambra, ett palats som morerna byggde för mer än 700 år sedan.'],
+ ['🎨','Málaga','España','Konstnären Pablo Picasso föddes här.'],
+ ['🌋','Islas Canarias','España','Teide på Teneriffa är en vulkan och Spaniens högsta berg.'],
+ ['🌮','Ciudad de México','México','En av världens största städer, byggd där aztekernas huvudstad låg.'],
+ ['🦙','Cusco','Perú','Inkarikets gamla huvudstad, högt uppe i Anderna.'],
+ ['🏘️','Cartagena','Colombia','Färgglada hus innanför en gammal stadsmur vid Karibiska havet.'],
+ ['🐧','Ushuaia','Argentina','En av världens sydligaste städer. Härifrån åker båtar till Antarktis.']
+);
+
 
 /* Läsa: egen text i stil med lärarens */
 const READER=`¡Hola! Me llamo Lucía y tengo trece años. Soy de Sevilla, una ciudad en el sur de España. Ahora estoy en un campamento de verano en la costa. Aquí hay chicos y chicas de muchos países: de Suecia, de Inglaterra, de Argentina y de México.
@@ -1006,13 +1188,15 @@ function renderPassport(){
   box.append(head,grid,pop);
 }
 
+/* ---------- Bild eller färgruta ---------- */
+function pic(em){const sp=document.createElement('span');if(em&&em[0]==='#'){const b=document.createElement('span');b.className='sw';b.style.background=em;sp.appendChild(b);}else sp.textContent=em||'🔊';return sp;}
 /* ---------- Fraslista med uppläsning ---------- */
 W.phrases=(root,set)=>{
   if(PHR_TITLE[set])root.appendChild(el('h3',null,PHR_TITLE[set]));
   const box=el('div','phr');
   PHR[set].forEach(([es,sv,em])=>{const b=el('button');b.setAttribute('aria-pressed','false');
     b.innerHTML='<span class="ic"></span><span class="es"></span><span class="sv"></span>';
-    b.children[0].textContent=em||'🔊';b.children[1].textContent=es;b.children[2].textContent=sv;
+    b.children[0].appendChild(pic(em));b.children[1].textContent=es;b.children[2].textContent=sv;
     b.onclick=()=>speak(es.replace(/ – /g,'. '),b,'es');box.appendChild(b);});
   const all=el('button','btn','🔊 Lyssna på alla');
   all.onclick=()=>{let i=0;const list=PHR[set];const next=()=>{if(i>=list.length)return;const w=list[i++][0].replace(/ – /g,'. ');speak(w,null,'es',()=>setTimeout(next,700));};next();};
@@ -1042,7 +1226,7 @@ W.gratis=(root,task)=>{
 W.flash=(root,set,task)=>{
   const list=WORDS[set];let order=mix(list),i=0,flip=false,known=new Set();
   const card=el('button','flash'),row=el('div','row'),msg=el('p','msg');
-  const draw=()=>{const [es,sv,em]=order[i];card.innerHTML='';card.appendChild(el('span','em',em));
+  const draw=()=>{const [es,sv,em]=order[i];card.innerHTML='';const emw=el('span','em');emw.appendChild(pic(em));card.appendChild(emw);
     card.appendChild(el('span','w',flip?sv:es));card.appendChild(el('span','hint',flip?es:'Tryck för att vända'));
     msg.textContent=known.size+' av '+list.length+' ord kan du';};
   card.onclick=()=>{flip=!flip;draw();if(!flip)speak(order[i][0],null,'es');};
@@ -1063,7 +1247,7 @@ W.listenpick=(root,set,task)=>{
       if(i>=qs.length){root.appendChild(el('p','score',right+' av '+qs.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
       const t=qs[i];let first=true;root.appendChild(el('p','count',(i+1)+' av '+qs.length));
       const w=el('button','big-say','🔊 Lyssna igen');w.onclick=()=>speak(t[0],null,'es');root.appendChild(w);setTimeout(()=>speak(t[0],null,'es'),200);
-      const o=el('div','opts4');mix([t].concat(mix(list.filter(x=>x!==t)).slice(0,3))).forEach(x=>{const b=el('button');b.innerHTML='<span class="em"></span><span></span>';b.children[0].textContent=x[2];b.children[1].textContent=x[1];
+      const o=el('div','opts4');mix([t].concat(mix(list.filter(x=>x!==t&&x[2]!==t[2])).slice(0,3))).forEach(x=>{const b=el('button');b.innerHTML='<span class="em"></span><span></span>';b.children[0].appendChild(pic(x[2]));b.children[1].textContent=x[1];
         b.onclick=()=>{if(x===t){b.classList.add('right');b.children[1].textContent=x[0]+' – '+x[1];if(first)right++;$$('button',o).forEach(z=>z.disabled=true);setTimeout(()=>{i++;q();},1100);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
       root.appendChild(o);}
     q();}
@@ -1283,7 +1467,7 @@ W.postcard=(root,task)=>{
 };
 /* ---------- Memory ---------- */
 W.memory=(root,set,task)=>{
-  const src=(set==='ord'?WORDS.A.concat(PHR.B,PHR.familia,PHR.C).filter(x=>x[0].length<22):PHR[set]).map(t=>({a:t[0],b:(t[2]&&set!=='pronomen'?t[2]+' ':'')+t[1]}));
+  const src=set==='ropa'?WORDS.S.map(t=>({a:t[0],b:(t[2]&&t[2][0]!=='#'?t[2]+' ':'')+t[1]})):(set==='ord'?WORDS.A.concat(PHR.B,PHR.familia,PHR.C).filter(x=>x[0].length<22):PHR[set]).map(t=>({a:t[0],b:(t[2]&&set!=='pronomen'?t[2]+' ':'')+t[1]}));
   function round(){
     root.innerHTML='';const pairs=mix(src).slice(0,6);let open=[],got=0,lock=false,turns=0;
     const grid=el('div','mem'),msg=el('p','msg'),row=el('div','row'),nb=el('button','btn','Ny omgång'),cnt=el('span','count');nb.onclick=round;row.append(nb,cnt);
@@ -1302,6 +1486,112 @@ W.memory=(root,set,task)=>{
   round();
 };
 
+
+
+/* ================= Steg 7: nya övningar ================= */
+const norm=t=>t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[¡!¿?.,]/g,'').replace(/^(el|la|los|las|un|una|unos|unas)\s+/,'').trim();
+W.spell=(root,set,task)=>{
+  const list=WORDS[set].filter(x=>!x[0].includes(' ')||/^(el|la|los|las) \S+$/.test(x[0]));
+  function start(){const qs=mix(list).slice(0,8);let n=0;
+    function q(){root.innerHTML='';
+      if(n>=qs.length){root.appendChild(el('p','score','Alla ord klara! 🎉'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const [full,sv,em]=qs[n];const parts=full.split(' ');const art=parts.length>1?parts[0]+' ':'';const word=parts[parts.length-1];let step=0;
+      root.appendChild(el('p','count',(n+1)+' av '+qs.length));
+      const h=el('div','dressed');const bg=el('span','big');bg.appendChild(pic(em));h.appendChild(bg);h.appendChild(document.createTextNode(sv));root.appendChild(h);
+      const say=el('button','btn','🔊 Lyssna');say.onclick=()=>speak(full,null,'es');root.appendChild(say);setTimeout(()=>speak(full,null,'es'),200);
+      const slots=el('div','slots');if(art)slots.appendChild(Object.assign(el('span',null,art.trim()),{style:'background:var(--soft)'}));
+      const tiles=el('div','tiles'),msg=el('p','msg');
+      mix([...word].map((ch,k)=>[ch,k])).forEach(([ch])=>{const b=el('button',null,ch);
+        b.onclick=()=>{if(word[step]===ch){slots.appendChild(el('span',null,ch));b.remove();step++;
+          if(step===word.length){msg.textContent='¡Perfecto! '+full;speak(full,null,'es');setTimeout(()=>{n++;q();},1500);}}
+          else{shake(b);msg.textContent='Inte riktigt. Lyssna igen – vilket ljud kommer nu?';}};tiles.appendChild(b);});
+      root.append(slots,tiles,msg);}
+    q();}
+  start();
+};
+W.sayit=(root,set,task)=>{
+  const list=WORDS[set];
+  function start(){const qs=mix(list).slice(0,10);let n=0,ok=0;
+    function q(){root.innerHTML='';
+      if(n>=qs.length){root.appendChild(el('p','score',ok+' av '+qs.length+' kunde du'));root.appendChild(el('p',null,ok>=7?'Grymt! Du kan orden.':'Bra jobbat! Kör igen så sitter de snart.'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const [es,sv,em]=qs[n];root.appendChild(el('p','count',(n+1)+' av '+qs.length));
+      const h=el('div','dressed');const bg=el('span','big');bg.appendChild(pic(em));h.appendChild(bg);h.appendChild(document.createTextNode(sv));root.appendChild(h);
+      root.appendChild(el('p',null,'Säg det högt på spanska. Skriv också om du vill:'));
+      const inp=el('input','typein');inp.setAttribute('autocapitalize','off');inp.setAttribute('autocomplete','off');inp.setAttribute('spellcheck','false');root.appendChild(inp);
+      const show=el('button','btn primary','Visa svaret');const ans=el('p','ans');const row=el('div','row');row.hidden=true;
+      const yes=el('button','btn primary','Jag kunde ✓'),no=el('button','btn','Inte än');row.append(yes,no);
+      show.onclick=()=>{ans.textContent=es;speak(es,null,'es');show.hidden=true;row.hidden=false;
+        if(inp.value.trim()){const good=norm(inp.value)===norm(es);ans.textContent=es+(good?'  ✓ Rätt stavat!':'');}};
+      inp.onkeydown=e=>{if(e.key==='Enter')show.click();};
+      yes.onclick=()=>{ok++;n++;q();};no.onclick=()=>{n++;q();};
+      root.append(show,ans,row);}
+    q();}
+  start();
+};
+W.closet=root=>{
+  const box=el('div','closet');const si=el('select'),sc=el('select');
+  CLOSET_ITEMS.forEach((it,k)=>si.appendChild(new Option(it[0]+' – '+it[1],k)));CLOSET_COLORS.forEach((c,k)=>sc.appendChild(new Option(c[0]+' – '+c[1],k)));
+  const l1=el('label',null,'Plagg');l1.appendChild(si);const l2=el('label',null,'Färg (grundform)');l2.appendChild(sc);box.append(l1,l2);
+  const out=el('div','dressed'),why=el('p','msg');
+  const draw=()=>{const it=CLOSET_ITEMS[+si.value],c=CLOSET_COLORS[+sc.value];const [st,end]=agree(c,it[3],it[4]);
+    out.innerHTML='';const big=el('span','big');big.appendChild(pic(it[2]));const sw=el('span','sw');sw.style.background=c[3];sw.style.marginLeft='.4rem';big.appendChild(sw);out.appendChild(big);
+    out.appendChild(document.createTextNode(it[0]+' '+(c[2]==='i'?'de color ':'')+st));if(end)out.appendChild(el('span','end',end));
+    const g=it[3]==='f'?'hon-ord':'han-ord',pl=it[4]?'plural':'singular';
+    why.textContent={o:'Färgen slutar på -o, så den ändrar sig efter plagget: '+g+' i '+pl+'.',e:it[4]?'Verde får bara -s i plural.':'Verde ändrar sig inte i singular.',c:it[4]?c[0]+' får -es i plural.':c[0]+' ändrar sig inte i singular.',n:it[4]?'Marrón blir marrones i plural (och tappar accenten).':'Marrón ändrar sig inte i singular.',i:c[0]+' ändrar sig aldrig. Man säger ofta de color '+c[0]+'.'}[c[2]];};
+  const sayb=el('button','btn','🔊 Lyssna');sayb.onclick=()=>speak(out.textContent,sayb,'es');
+  si.onchange=draw;sc.onchange=draw;root.append(box,out,why,sayb);draw();
+};
+W.numpick=(root,task)=>{
+  function start(){let n=0,right=0;const N=10;
+    function q(){root.innerHTML='';
+      if(n>=N){root.appendChild(el('p','score',right+' av '+N+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const x=20+Math.floor(Math.random()*30);const listen=n%2===0;let first=true;
+      root.appendChild(el('p','count',(n+1)+' av '+N));
+      const near=[x+10,x-10,(x%10)*10+Math.floor(x/10),x+1,x-1].filter(v=>v>=20&&v<=49&&v!==x);const opts=mix([x].concat(mix([...new Set(near)]).slice(0,3)));
+      if(listen){const w=el('button','big-say','🔊 Lyssna igen');w.onclick=()=>speak(numEs(x),null,'es');root.appendChild(w);setTimeout(()=>speak(numEs(x),null,'es'),200);root.appendChild(el('p',null,'Vilket tal hörde du?'));}
+      else{root.appendChild(el('p','dressed',String(x)));root.appendChild(el('p',null,'Hur skriver man talet på spanska?'));}
+      const o=el('div','opts4');opts.forEach(v=>{const b=el('button',null,listen?String(v):numEs(v));
+        b.onclick=()=>{if(v===x){b.classList.add('right');if(first)right++;speak(numEs(x),null,'es');$$('button',o).forEach(z=>z.disabled=true);setTimeout(()=>{n++;q();},1300);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      root.appendChild(o);}
+    q();}
+  root.innerHTML='';const s=el('button','btn primary','Starta ▶');s.onclick=start;root.appendChild(s);
+};
+W.spellname=(root,task)=>{
+  const inp=el('input','typein');inp.placeholder='Nikol';inp.value=S.present&&S.present.name||'';
+  const out=el('div','slots'),b=el('button','btn primary','🔊 Stava');
+  const draw=()=>{out.innerHTML='';[...(inp.value||'Nikol').toUpperCase()].forEach(ch=>{if(ABCMAP[ch])out.appendChild(el('span',null,ch));});};
+  b.onclick=()=>{const letters=[...(inp.value||'Nikol').toUpperCase()].filter(ch=>ABCMAP[ch]);let i=0;const nx=()=>{if(i>=letters.length){complete(task);return;}const sp=out.children[i];if(sp)sp.style.background='var(--c)';speak(ABCMAP[letters[i++]],null,'es',()=>setTimeout(nx,350));};draw();nx();};
+  inp.oninput=draw;root.append(el('p',null,'Skriv ditt namn, eller en kompis namn, och lyssna på hur det stavas på spanska. Säg bokstäverna efter!'),inp,out,b);draw();
+  root.appendChild(el('div','trick','I redovisningen kan någon fråga ¿Cómo se escribe? – hur stavas det? Då svarar du genom att säga bokstäverna.'));
+};
+W.tienda=(root,task)=>{
+  const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+  function run(){
+    const it=TIENDA_ITEMS[Math.floor(Math.random()*TIENDA_ITEMS.length)];const cols=CLOSET_COLORS.filter(c=>c[2]!=='i');const col=cols[Math.floor(Math.random()*cols.length)];
+    const form=c=>{const [st,end]=agree(c,it[2],it[3]);return st+end;};
+    const wrongG=c=>{const [st,end]=agree(c,it[2]==='f'?'m':'f',it[3]);return st+end;};const wrongN=c=>{const [st,end]=agree(c,it[2],!it[3]);return st+end;};
+    const price=20+Math.floor(Math.random()*30);const near=[...new Set([price+10,price-10,(price%10)*10+Math.floor(price/10)].filter(v=>v>=20&&v<=49&&v!==price))].slice(0,2);
+    const fC=form(col);const cand=[...new Set([wrongG(col),wrongN(col)].filter(x=>x!==fC))];
+    const steps=[
+      ['¡Hola! ¿Qué tal?','Hej! Hur är det?',[['Hola. Muy bien, gracias.','Hej. Mycket bra, tack.',1],['¡Socorro!','Hjälp!',0],['Tengo trece años.','Jag är tretton år.',0]]],
+      ['¿Qué quieres?','Vad vill du ha?',[['Quiero '+it[0]+', por favor.','Jag vill ha '+it[1]+', tack.',1],['Quiero un helado.','Jag vill ha en glass.',0],['No pasa nada.','Det gör inget.',0]]],
+      ['¿De qué color?','Vilken färg?',[[cap(fC)+', por favor.',col[1]+', tack.',1]].concat(cand.map(w=>[cap(w)+', por favor.','Lyssna på ändelsen…',0]))],
+      ['Mira, aquí está. El probador está allí.','Titta, här är den. Provrummet är där.',[['Gracias. ¿Cuánto cuesta?','Tack. Hur mycket kostar det?',1],['¡Mira, un perrito!','Titta, en hundvalp!',0],['Es un poco infantil.','Det är lite barnsligt.',0]]],
+      ['Son '+numEs(price)+' euros.','🔊 Lyssna på priset!',mix([[price+' euro. Vale, toma.','Okej, varsågod.',1]].concat(near.map(v=>[v+' euro. Vale, toma.','Okej, varsågod.',0])))],
+      ['Gracias. Aquí tienes tu bolsa. ¡Hasta luego!','Tack. Här är din påse. Vi ses!',[['¡Gracias! ¡Adiós!','Tack! Hej då!',1],['¿Te gusta?','Gillar du det?',0],['¡El ladrón!','Tjuven!',0]]]];
+    root.innerHTML='';const chat=el('div','chat'),wrap=el('div','mcq'),ob=el('div','opts'),msg=el('p','msg');wrap.appendChild(ob);root.append(chat,wrap,msg);let s=0;
+    const bub=(cls,es,sv,hideEs)=>{const b=el('div','bub '+cls);b.appendChild(document.createTextNode(hideEs?'🧑‍💼 ':es));b.appendChild(el('small',null,sv));chat.appendChild(b);b.scrollIntoView({block:'nearest'});return b;};
+    function step(){
+      if(s>=steps.length){msg.textContent='¡Perfecto! Du handlade '+it[1]+' i '+col[1]+'. 🎉';const r=el('button','btn primary','En gång till – nytt köp');r.onclick=run;ob.innerHTML='';ob.appendChild(r);complete(task);return;}
+      const [ves,vsv,ch]=steps[s];const hide=s===4;const bb=bub('v',(hide?'':'🧑‍💼 ')+ves,vsv,hide);speak(ves,null,'es');
+      if(hide){const again=el('button','say1','🔊 Igen');again.onclick=()=>speak(ves,null,'es');bb.appendChild(again);}
+      ob.innerHTML='';msg.textContent=s===2?'Vilken form av färgen passar '+it[0]+'?':'Vad svarar du? Säg det högt först!';
+      (s===4?ch:mix(ch)).forEach(([es,sv,ok])=>{const b=el('button');b.innerHTML='<b></b><br><small></small>';b.querySelector('b').textContent=es;b.querySelector('small').textContent=sv;
+        b.onclick=()=>{if(ok){if(hide)bb.firstChild.textContent='🧑‍💼 '+ves;bub('y',es,sv);speak(es,null,'es');s++;ob.innerHTML='';setTimeout(step,1600);}
+          else{shake(b);msg.textContent=s===2?'Titta på plagget: är det ett han- eller hon-ord, en eller flera?':s===4?'Lyssna igen på priset.':'Det passar inte riktigt här.';}};ob.appendChild(b);});}
+    step();}
+  root.innerHTML='';const b=el('button','btn primary','Gå in i affären ▶');b.onclick=run;root.appendChild(b);
+};
 
 /* ================= Flytta framsteg ================= */
 (function(){
