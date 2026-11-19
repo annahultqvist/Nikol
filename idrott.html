@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikols prov i idrott och hälsa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EAF1F4; --paper:#FFFFFF; --ink:#17324A; --soft:#4D6275; --line:#CFDCE3;
+  --start:#4D6275; --kart:#2F6FB3; --vatten:#0F8A8A; --hall:#3B8F57; --glob:#C77421; --mal:#7650B0; --skriv:#C23F57; --begr:#5A6B7D; --prov:#9A6B12;
+  --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+    --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+    --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+  --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+  --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.125rem;line-height:1.75;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:48rem;margin:0 auto;padding:0 1rem 5rem}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .3rem}
+h2{font-size:1.5rem;line-height:1.3;margin:0 0 .5rem;color:var(--c)}
+h3{font-size:1.15rem;line-height:1.35;margin:1.1rem 0 .3rem}
+p{margin:.35rem 0 .85rem}
+ul.plain{margin:.3rem 0 .9rem;padding-left:1.2rem}
+ul.plain li{margin:.2rem 0}
+
+/* ---------- Header: gradnät behind the overall progress ---------- */
+.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
+.hero svg.grid{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero .wrap{position:relative;display:flex;align-items:center;gap:1.2rem;padding-top:1.4rem;padding-bottom:1.2rem}
+.ring{flex:none;width:6.5rem;height:6.5rem;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero p{margin:0;color:var(--soft)}
+
+/* ---------- Tab bar ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+.tabs .wrap{display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.tab{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.35rem .7rem;cursor:pointer;min-height:44px;line-height:1.2;text-align:left}
+.tab .t{font-weight:500;font-size:.98rem;white-space:nowrap}
+.tab .bar{width:100%;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--c);width:0}
+.tab .pc{font-size:.8rem;color:var(--soft)}
+.tab[aria-selected="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--paper))}
+.tab.done .t::after{content:" ✓";color:var(--ok)}
+
+/* ---------- Panels and tasks ---------- */
+.panel{padding-top:1.2rem}
+.panel[hidden]{display:none}
+.intro{background:var(--paper);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;border-top:8px solid var(--c)}
+.task{background:var(--paper);border-radius:14px;padding:1rem 1.2rem 1.1rem;margin:0 0 1rem;border-left:8px solid var(--c);transition:background .3s}
+.task.is-done{border-left-color:var(--ok)}
+.task>header{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.4rem}
+.task>header h3{margin:0;flex:1;font-size:1.2rem}
+.tick{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.2rem .8rem;cursor:pointer;font-size:.92rem;min-height:40px;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kind{display:inline-block;font-size:.85rem;color:var(--soft);margin-bottom:.2rem}
+.listen{border:2px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:.15rem .8rem;cursor:pointer;font-size:.92rem;min-height:36px}
+.listen[aria-pressed="true"]{background:var(--c);color:#fff}
+.trick{background:color-mix(in srgb,var(--c) 11%,transparent);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.fact{border:2px dashed var(--c);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 1rem}
+.chain span{background:color-mix(in srgb,var(--c) 14%,transparent);border:2px solid var(--c);border-radius:8px;padding:.1rem .55rem;font-weight:500}
+.chain i{font-style:normal;color:var(--c);font-weight:700}
+.tabdone{display:flex;justify-content:center;margin:1.5rem 0}
+.bigbtn{border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.6rem 1.4rem;cursor:pointer;font-weight:500;min-height:48px}
+.bigbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,250%);visibility:hidden;background:var(--ink);color:var(--paper);padding:.7rem 1.2rem;border-radius:999px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center;font-weight:500}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* ---------- Generic exercise bits ---------- */
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.4rem .9rem;cursor:pointer;min-height:44px;font-size:1rem}
+.btn.primary{border-color:var(--c);background:var(--c);color:#fff}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.count{color:var(--soft);font-size:.95rem;margin-left:auto}
+.msg{font-weight:500;min-height:1.6rem;margin:.5rem 0 0}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{border:2px solid var(--c);background:var(--paper);border-radius:10px;padding:.4rem .8rem;cursor:grab;min-height:44px;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;line-height:1.35;font-size:1rem}
+.chip.sel{background:var(--c);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-60%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wrong{border-color:var(--bad)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.answer{display:flex;flex-wrap:wrap;gap:.4rem;min-height:3rem;padding:.5rem;border-radius:10px;border:2px dashed var(--line);margin:.6rem 0}
+.answer span{background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .7rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin:.8rem 0 .3rem}
+.bucket{border:2px dashed var(--c);border-radius:12px;padding:.5rem;min-height:6rem;cursor:pointer;background:color-mix(in srgb,var(--c) 6%,var(--paper))}
+.bucket h4{margin:0 0 .3rem;font-size:1.02rem;color:var(--c);text-align:center}
+.bucket .in{font-size:.9rem;background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .5rem;margin:.25rem 0;line-height:1.35}
+.picking .bucket{border-style:solid}
+.match{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:.6rem}
+.match>div{display:flex;flex-direction:column;gap:.5rem}
+.match button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.5rem .7rem;cursor:pointer;line-height:1.4;font-size:1rem}
+.match button.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,var(--paper))}
+.match button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--paper));cursor:default}
+.mcq .q{font-weight:500;font-size:1.15rem;margin:.3rem 0 .6rem}
+.mcq .opts{display:grid;gap:.5rem}
+.mcq .opts button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;line-height:1.4}
+.mcq .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.mcq .why{background:color-mix(in srgb,var(--ok) 10%,var(--paper));border-radius:10px;padding:.5rem .8rem;margin-top:.6rem}
+.score{font-size:1.4rem;font-weight:700;color:var(--c)}
+.qa{border-bottom:2px solid var(--line)}
+.qa:last-child{border-bottom:0}
+.qa>button{text-align:left;width:100%;background:none;border:0;padding:.65rem 0;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.qa>button::before{content:"＋";color:var(--soft);font-weight:700}
+.qa>button[aria-expanded="true"]::before{content:"－"}
+.qa .a{background:color-mix(in srgb,var(--c) 9%,var(--paper));border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem}
+.qa .a p{margin:.2rem 0 .5rem}
+.say1{border:2px solid var(--line);background:transparent;border-radius:999px;padding:.05rem .7rem;cursor:pointer;font-size:.9rem}
+.wk{margin:1.4rem 0 .1rem;color:var(--soft);font-size:1.02rem}
+
+/* label exercise */
+.figscroll{overflow-x:auto;border-radius:10px;background:#fff;border:2px solid var(--line)}
+.fig{position:relative;container-type:inline-size;width:100%;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone{position:absolute;border:2px dashed var(--c);border-radius:6px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.3cqw,16px);line-height:1.1;color:#17324A;cursor:pointer;padding:0 3px;text-align:center;font-weight:500}
+.zone.ok{border:2px solid #2E8B57;background:#E3F4EA;color:#1D5E3A}
+.zone.shown{border:2px solid #7D8B99;background:#EEF1F4;color:#4A5A6B}
+.picking .zone:not(.ok):not(.shown){border-style:solid;background:#E8F0FC}
+
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:.5rem;margin:.7rem 0}
+.card{min-height:5.2rem;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:.4rem;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.card.open{background:var(--paper);color:var(--ink)}
+.card.got{background:color-mix(in srgb,var(--ok) 15%,var(--paper));border-color:var(--ok);color:var(--ink);cursor:default}
+.card .num{font-size:1.6rem;font-weight:700}
+
+/* globala mål chips */
+.goal{display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;color:#fff;padding:.1rem .5rem;font-weight:500;font-size:.92rem;margin:.15rem .1rem}
+
+/* checklist */
+.check{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.check label{flex:1;cursor:pointer}
+.check a{color:var(--c);font-size:.92rem}
+.tabsum{display:grid;gap:.5rem;margin:.6rem 0}
+.tabsum button{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.5rem .8rem;cursor:pointer}
+.tabsum .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.tabsum .bar i{display:block;height:100%;background:var(--c)}
+
+/* writing workshop */
+.ladder{counter-reset:st;display:grid;gap:.4rem;margin:.6rem 0 1rem}
+.ladder div{counter-increment:st;display:flex;gap:.6rem;align-items:flex-start;background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.45rem .7rem}
+.ladder div::before{content:counter(st);flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;margin-top:.15rem}
+.choose{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .8rem}
+.choose button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.3rem .9rem;cursor:pointer;min-height:42px}
+.choose button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.wstep{border:2px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.7rem 0;background:var(--paper)}
+.wstep.filled{border-color:var(--ok)}
+.wstep h4{margin:0;font-size:1.05rem;display:flex;gap:.5rem;align-items:center}
+.wstep h4 .st{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.wstep.filled h4 .st{background:var(--ok)}
+.wstep .help{color:var(--soft);font-size:.98rem;margin:.2rem 0 .4rem}
+.wstep textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;line-height:1.6;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.5rem .7rem;resize:vertical}
+.wstep textarea:focus{border-color:var(--c);outline:none}
+.mini{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 0}
+.mini button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.1rem .7rem;cursor:pointer;font-size:.88rem;min-height:34px}
+.hintbox{background:var(--hl);border-radius:10px;padding:.5rem .8rem;margin:.5rem 0 0;font-size:.98rem}
+.wordbank{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:10;background:var(--paper);border:2px solid var(--c);border-radius:12px;padding:.5rem .7rem;margin:.8rem 0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wordbank summary{cursor:pointer;font-weight:500;color:var(--c)}
+.wordbank .mini button{border-color:var(--c)}
+.checker{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .8rem}
+.checker span{border:2px solid var(--line);border-radius:999px;padding:.05rem .65rem;font-size:.9rem;color:var(--soft)}
+.checker span.got{border-color:var(--ok);background:var(--ok);color:#fff}
+.factbank{border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--paper));border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:.6rem 0}
+.factbank ul{margin:.2rem 0;padding-left:1.1rem}
+.full{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line)}
+.wprog{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:.3rem 0 .2rem}
+.wprog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cheer{color:var(--ok);font-weight:500;min-height:1.5rem}
+.fyr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0 1rem}
+.fyr label{display:block;font-size:.9rem;color:var(--soft)}
+.fyr textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+@media (max-width:520px){.fyr{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+
+/* small visual widgets */
+.water{display:grid;gap:.6rem;margin:.6rem 0}
+.wbar{display:flex;height:3rem;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+.wbar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-size:.9rem;font-weight:500;transition:flex-grow .6s;white-space:nowrap;overflow:hidden}
+.earths{font-size:2.4rem;line-height:1.2;letter-spacing:.1rem;margin:.2rem 0}
+.term{border-left:6px solid var(--c);padding:.45rem .9rem;margin:.6rem 0;background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:0 10px 10px 0}
+.term h4{margin:0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:1.1rem}
+.term p{margin:.15rem 0}
+.badge{font-size:.78rem;font-weight:500;border-radius:999px;padding:0 .5rem;background:var(--c);color:#fff}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.6rem;margin:.5rem 0}
+.calc label{font-size:.92rem;color:var(--soft)}
+.calc select,.calc input{display:block;width:100%;font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.steps{background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.6rem .9rem;line-height:1.9}
+.toggle{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.toggle label{display:flex;gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:999px;padding:.2rem .8rem;cursor:pointer;min-height:40px;font-size:.95rem}
+.toggle input{accent-color:var(--c);width:1.1rem;height:1.1rem}
+.svgbox{border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#F4F8F1}
+.svgbox svg{display:block;width:100%;height:auto}
+
+.passcard{background:var(--paper);border-radius:16px;margin:0 0 1rem;overflow:hidden;border:3px solid var(--start)}
+.passcard .ph{background:var(--start);color:#fff;padding:.9rem 1.2rem}
+.passcard .ph h2{color:#fff;margin:0;font-size:1.35rem}
+.passcard .ph p{margin:.2rem 0 0;opacity:.9}
+.passcard .pb{padding:.6rem 1.2rem 1rem}
+.pstep{border-bottom:2px solid var(--line);padding:.7rem 0}
+.pstep:last-child{border-bottom:0}
+.pstep h3{margin:0 0 .3rem;font-size:1.08rem;display:flex;gap:.5rem;align-items:center}
+.pstep h3 .n{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--start);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.pstep textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1.02rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+.book{display:inline-block;background:var(--hl);border-radius:8px;padding:.1rem .6rem;font-weight:700}
+.guide{margin:.3rem 0 .4rem;padding-left:1.2rem}
+.plrow{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.plrow:last-child{border-bottom:0}
+.plrow input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.plrow .t{flex:1}
+.plrow .m{display:block;font-size:.88rem;color:var(--soft)}
+.plrow.cur{background:color-mix(in srgb,var(--start) 8%,transparent);border-radius:8px}
+
+:root{--skador:#C23F57;--anat:#2F6FB3;--fraga:#9A6B12;--provc:#7650B0;--bonus:#3B8F57}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--skador:#F0798F;--anat:#6FA7E6;--fraga:#E0B04A;--provc:#AE8CEB;--bonus:#6CC88A}}
+:root[data-theme="dark"]{--skador:#F0798F;--anat:#6FA7E6;--fraga:#E0B04A;--provc:#AE8CEB;--bonus:#6CC88A}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" style="position:relative;z-index:2;display:inline-block;margin:.6rem 0 0 1rem;color:var(--ink);font-weight:500;text-decoration:none">← Alla ämnen</a>
+  <svg class="grid" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--line)" stroke-width="1.5">
+      <path d="M0 40 Q400 10 800 40M0 100 Q400 80 800 100M0 160 Q400 150 800 160"/>
+      <path d="M100 0 Q70 100 100 200M250 0 Q235 100 250 200M400 0 V200M550 0 Q565 100 550 200M700 0 Q730 100 700 200"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="ring" aria-label="Hur mycket som är klart">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--line)" stroke-width="3.2"/><circle id="ringArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 100"/></svg>
+      <b id="ringPc">0 %</b>
+    </div>
+    <div>
+      <h1>Idrott och hälsa</h1>
+      <p>Idrottsskador och anatomi. Bocka av varje uppgift när du är klar.</p>
+    </div>
+  </div>
+</div>
+<nav class="tabs" aria-label="Flikar"><div class="wrap" id="tabbar" role="tablist"></div></nav>
+
+<main class="wrap">
+
+<!-- ======================= START ======================= -->
+<section class="panel" id="p-start" data-color="start" data-title="Start">
+  <div class="intro">
+    <h2>Provet i idrott och hälsa</h2>
+    <p>Provet handlar om <b>idrottsskador</b> och <b>anatomi</b>. Det står i lärarens två checklistor. Allt annat här är bonus.</p>
+    <p>Gör ett pass i taget. Tryck på <b>Gå dit</b>, gör uppgifterna och bocka av. Procenten visar hur mycket du har gjort.</p>
+  </div>
+
+  <section class="task" data-task="s-plan">
+    <header><h3>Plan för helgen och två kvällar</h3></header>
+    <p>Varje pass tar ungefär 20 minuter. Ta en paus mellan passen!</p>
+    <div id="planList"></div>
+  </section>
+
+  <section class="task" data-task="s-check">
+    <header><h3>Lärarens checklista – det här ska du kunna</h3></header>
+    <p>Bocka i när du kan förklara det för någon annan.</p>
+    <div id="checkList"></div>
+  </section>
+
+  <details class="intro" id="moveBox" style="--c:var(--start)">
+    <summary><b>Flytta dina framsteg till en annan enhet</b></summary>
+    <p>Har du pluggat på en annan dator eller iPad? Spara framstegen som en fil där, skicka filen hit och hämta in den.</p>
+    <h3>1. Spara framstegen på den enhet du har pluggat på</h3>
+    <div class="row"><button class="btn primary" id="mvDown">Ladda ner framstegsfil</button><button class="btn" id="mvCopy">Kopiera som text</button></div>
+    <h3>2. Hämta in dem på den nya enheten</h3>
+    <div class="row"><label class="btn" style="display:inline-flex;align-items:center">Välj framstegsfil<input type="file" id="mvFile" accept=".json,application/json,text/plain" hidden></label></div>
+    <p class="count">Eller klistra in texten här:</p>
+    <textarea id="mvText" style="width:100%;min-height:4rem;font:inherit;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem"></textarea>
+    <div class="row"><button class="btn" id="mvPaste">Hämta in texten</button></div>
+    <p class="msg" id="mvMsg" aria-live="polite"></p>
+  </details>
+
+  <div class="intro" style="--c:var(--start)">
+    <h2>Hur långt har du kommit?</h2>
+    <div class="tabsum" id="tabSummary"></div>
+  </div>
+</section>
+
+<!-- ======================= SKADOR ======================= -->
+<section class="panel" id="p-skador" data-color="skador" data-title="Idrottsskador" hidden>
+  <div class="intro"><h2>Idrottsskador 🩹</h2><p>Vilka skador finns, hur behandlar man dem och hur förebygger man dem?</p></div>
+
+  <section class="task" data-task="u-las1">
+    <header><h3>Läs: Akuta skador och överbelastningsskador</h3></header>
+    <span class="kind">Pass 1 · Läs eller lyssna</span>
+    <div class="say">
+    <p>En <b>akut skada</b> händer <b>plötsligt</b>, ofta på grund av yttre våld. Exempel: en stukning, en vridning av knät, en lårkaka, en muskelbristning eller ett benbrott.</p>
+    <p>En <b>överbelastningsskada</b> kommer <b>gradvis</b>, under lång tid. Den uppstår när man tränar fel, för hårt eller ändrar sin träning för snabbt, så att kroppen inte hinner vila. Exempel: benhinneinflammation, stressfraktur i foten och musarm.</p>
+    <div class="trick"><b>Minnesknep:</b> Akut = <b>aj, nu!</b> Överbelastning = <b>för mycket, för länge</b>.</div>
+    <h3>Benhinneinflammation</h3>
+    <p>Det gör ont längs <b>skenbenets insida och framsida</b>, vid och efter ansträngning. Det beror på överbelastning av musklerna i underbenet. Löpare drabbas ofta, till exempel när de byter underlag eller skor eller ökar träningen för snabbt.</p>
+    <p><b>Behandling:</b> aktiv vila, växelvis värme och kyla, massage och stretching av underbenets framsida. <b>Förebygg</b> genom att öka träningen gradvis, ha bra skor och variera underlaget.</p>
+    <h3>Fler begrepp</h3>
+    <p>En <b>mjukdelsskada</b> är en skada i muskler, senor eller ligament. En <b>skelettskada</b> är ett benbrott eller en spricka. <b>Dislokation</b> betyder att något går ur led, till exempel axeln.</p>
+    <h3>Riskfaktorer</h3>
+    <p><b>Individrelaterade:</b> ålder, trötthet, muskelsvaghet eller stelhet, kroppshållning, balans, tidigare skador och infektion. <b>Omgivningens:</b> underlag, väder, utrustning och regler.</p>
+    <h3>Så förebygger du skador</h3>
+    <p><b>Uppvärmning</b> höjer kroppstemperaturen och gör musklerna mer töjbara. <b>Styrketräning</b> är enligt forskningen det som förebygger muskelskador bäst. <b>Rätt teknik</b>, <b>rätt utrustning</b>, <b>allsidig och varierad träning</b>, att <b>öka gradvis</b>, <b>återhämtning</b> och gott <b>omdöme</b> (fair play) minskar också risken. Stretching förbättrar rörligheten, men skyddar inte direkt mot skador.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="u-akut">
+    <header><h3>Öva: Akut eller överbelastning?</h3></header>
+    <div data-widget="sort" data-set="akut" data-task="u-akut"></div>
+  </section>
+
+  <section class="task" data-task="u-risk">
+    <header><h3>Öva: Individ eller omgivning?</h3></header>
+    <div data-widget="sort" data-set="risk" data-task="u-risk"></div>
+  </section>
+
+  <section class="task" data-task="u-las2">
+    <header><h3>Läs: Stukning och PRICE</h3></header>
+    <span class="kind">Pass 2 · Läs eller lyssna</span>
+    <div class="say">
+    <p>Vid en <b>stukning</b> tänjs <b>ledbandet</b> ut eller går av. Små blodkärl går sönder och det blöder. Blödningen ger svullnad, och svullnaden ger tryck och smärta. Stukningar är vanligast i <b>fotleden</b>, och nästan alltid är det ledbanden på fotens utsida som skadas. Man kan stuka foten när man landar snett efter ett hopp eller kliver på någons fot.</p>
+    <h3>PRICE – så behandlar du en stukning direkt</h3>
+    <p><b>P – Protection, skydd:</b> sluta belasta och skydda skadan. Be domaren blåsa av.</p>
+    <p><b>R – Rest, vila:</b> när du är stilla minskar blodflödet och blödningen.</p>
+    <p><b>I – Ice, kyla:</b> lindrar mest smärtan. Lägg <b>aldrig</b> kylan direkt mot huden – du kan få köldskador. Lägg den mellan lagren av lindan.</p>
+    <p><b>C – Compression, tryck:</b> det <b>viktigaste</b> för att minska blödningen. Linda hårt i ungefär 10 minuter, sedan lite lösare.</p>
+    <p><b>E – Elevation, högläge:</b> minst <b>30 cm över hjärtat</b>, i minst 30 minuter.</p>
+    <h3>Efteråt</h3>
+    <p>Vila i ungefär 48 timmar och börja sedan använda foten så normalt som möjligt. <b>Halta inte</b> – det kan ge följdskador. Den bästa träningen är <b>balansplatta</b>, som stärker de små musklerna och ledbanden. Tejpa bara i början, annars blir foten aldrig stark och stukas om och om igen.</p>
+    <p><b>Rehabilitering</b> bygger upp kroppen igen och gör att skadan inte kommer tillbaka. Den kan vara tråkig, men är ofta den viktigaste träningen.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="u-price">
+    <header><h3>Öva: PRICE i rätt ordning, och quiz</h3></header>
+    <div data-widget="order" data-set="price" data-task="u-price"></div>
+    <h3>Quiz om stukningar</h3>
+    <div data-widget="mcq" data-set="price" data-task="u-price"></div>
+  </section>
+
+  <section class="task" data-task="u-las3">
+    <header><h3>Läs: Knät</h3></header>
+    <span class="kind">Pass 3 · Läs eller lyssna</span>
+    <div class="say">
+    <p>Knäskador är de vanligaste idrottsskadorna. I knät möts <b>lårbenet</b> och <b>skenbenet</b>. Alla delar måste fungera tillsammans:</p>
+    <p><b>Korsbanden:</b> det finns ett främre och ett bakre korsband inne i knät. De korsar varandra och håller underbenet på plats. Korsbandet skadas oftast när benet är <b>böjt</b> och man får en knuff eller tackling så att knät <b>vrids i sidled</b>. Det främre korsbandet skadas mycket oftare än det bakre.</p>
+    <p><b>Ledbanden:</b> det inre och det yttre ledbandet sitter på knäts sidor och håller det stabilt.</p>
+    <div class="trick"><b>Knep:</b> det är alltid bandet på <b>motsatt sida</b> som skadas. Tackling mot <b>insidan</b> av knät skadar det <b>yttre</b> ledbandet. Tackling mot <b>utsidan</b> skadar det <b>inre</b> ledbandet.</div>
+    <p><b>Meniskerna:</b> två stötdämpare av brosk mellan lårbenet och skenbenet. De gör knät stabilt och skadas ofta vid <b>vridningar</b>.</p>
+    <h3>Så förebygger du knäskador</h3>
+    <p>Träna allsidigt, och styrketräna benen om din idrott belastar knäna mycket. Välj skor med bra dämpning, särskilt på hårt underlag. Träna aldrig på ett knä som är skadat, gör ont eller är svullet.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="u-kna">
+    <header><h3>Öva: Sätt namn på knät</h3></header>
+    <div data-widget="label" data-set="kna" data-task="u-kna"></div>
+    <h3>Quiz om knät</h3>
+    <div data-widget="mcq" data-set="kna"></div>
+  </section>
+
+  <section class="task" data-task="u-las4">
+    <header><h3>Läs: Muskelskador, träningsvärk och sjukdom</h3></header>
+    <span class="kind">Pass 4 · Läs eller lyssna</span>
+    <div class="say">
+    <p>Muskelskador beror främst på <b>överbelastning</b> eller <b>direkt våld</b>.</p>
+    <p><b>Muskelsträckning:</b> muskelfibrerna sträcks ut för långt. Det gör ont, men man kan <b>delvis</b> använda muskeln.</p>
+    <p><b>Muskelbristning:</b> muskelfibrerna <b>slits av</b>. Det gör väldigt ont direkt, och man kan <b>inte</b> använda muskeln alls.</p>
+    <p><b>Lårkaka:</b> muskeln får en hård smäll, och det blir en blödning i muskeln. Vanligt i fotboll, handboll och hockey. Muskeln blir stel och öm en tid efteråt.</p>
+    <p><b>Behandling:</b> samma som vid stukning – tryckförband, högläge och kyla.</p>
+    <h3>Fem orsaker till muskelskador</h3>
+    <p>Muskeln är trött och utmattad. Man har inte värmt upp. Muskeln har blivit kall efter att man stått still länge. Man börjar träna för tidigt efter en skada. Muskeln får en hård smäll.</p>
+    <h3>Träningsvärk</h3>
+    <p>Träningsvärk beror på <b>små bristningar i muskelfibrerna</b>. Den kan sitta i upp till en vecka men är värst de första <b>48 timmarna</b>. Massage, rörlighetsträning och lätt träning hjälper läkningen. Man förebygger den med allsidig träning, rätt belastning, ordentlig uppvärmning och nedvarvning och töjning efteråt.</p>
+    <h3>Träna aldrig med feber</h3>
+    <p>Vid luftvägsinfektion, feber eller magsjuka ska du inte träna hårt. En infektion kan i sällsynta fall drabba <b>hjärtmuskeln</b>, och då kan överbelastning vara livsfarlig.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="u-muskel">
+    <header><h3>Öva: Vilken muskelskada?</h3></header>
+    <div data-widget="sort" data-set="muskel" data-task="u-muskel"></div>
+  </section>
+
+  <section class="task" data-task="u-mem">
+    <header><h3>Memory: skadebegreppen</h3></header>
+    <div data-widget="memory" data-set="skador" data-task="u-mem"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="skador">Jag är klar med Idrottsskador</button></div>
+</section>
+
+<!-- ======================= ANATOMI ======================= -->
+<section class="panel" id="p-anat" data-color="anat" data-title="Anatomi" hidden>
+  <div class="intro"><h2>Anatomi 🦴</h2><p>Anatomi är läran om hur kroppen är uppbyggd: skelett, leder och muskler.</p></div>
+
+  <section class="task" data-task="a-las1">
+    <header><h3>Läs: Skelettet och lederna</h3></header>
+    <span class="kind">Pass 5 · Läs eller lyssna</span>
+    <div class="say">
+    <p>Skelettet består av <b>206 ben</b>. Det har fem uppgifter:</p>
+    <p><b>1. Stomme:</b> skelettet gör att vi kan stå upp. <b>2. Fäste:</b> musklerna fäster på skelettet och kan röra det. <b>3. Skydd:</b> skallbenet skyddar hjärnan, och revbenen skyddar hjärtat och lungorna. <b>4. Lager:</b> skelettet lagrar mineraler som <b>kalcium</b>. Brist på kalcium kan ge benskörhet. <b>5. Fabrik:</b> i <b>benmärgen</b> bildas blodkroppar.</p>
+    <div class="trick"><b>Minnesknep:</b> <b>S</b>tomme, <b>F</b>äste, <b>S</b>kydd, <b>L</b>ager, <b>F</b>abrik – ”<b>S</b>tora <b>F</b>ina <b>S</b>kelett <b>L</b>ever <b>F</b>ritt”.</div>
+    <p>Det är bra för skelettet att röra på sig. Belastning gör benen starkare och tätare.</p>
+    <h3>Kort fakta</h3>
+    <p>Kroppens största ben är <b>lårbenet</b>, och största muskel är <b>stora sätesmuskeln</b>. Minsta benet är <b>stigbygeln</b> och minsta muskeln är stigbygelmuskeln – båda sitter i örat.</p>
+    <h3>Leder</h3>
+    <p>En led är där två ben möts. <b>Kulled</b> finns i axeln och höften – du kan röra armen åt alla håll. <b>Gångjärnsled</b> finns i knät, armbågen och fingrarna – den böjs som en dörr. <b>Vridled</b> finns i armbågen och gör att du kan vrida handen.</p>
+    <h3>Delar som hör till lederna</h3>
+    <p><b>Ledband</b> (ligament) håller benen i leden på plats. <b>Senor</b> fäster musklerna vid skelettet, till exempel akillessenan. <b>Ledbrosk</b> är hårt och halt och sitter längst ut på benen, så att de glider lätt mot varandra. <b>Menisken</b> gör knät stabilt. <b>Diskarna</b>, mellankotsskivorna, är stötdämpare mellan ryggkotorna.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="a-leder">
+    <header><h3>Öva: Vilken led?</h3></header>
+    <div data-widget="sort" data-set="leder" data-task="a-leder"></div>
+  </section>
+
+  <section class="task" data-task="a-las2">
+    <header><h3>Läs: Musklerna</h3></header>
+    <span class="kind">Pass 6 · Läs eller lyssna</span>
+    <div class="say">
+    <p>Musklerna är kroppens motorer. Det finns ungefär <b>600 muskler</b>. En rörelse sker när muskeln drar ihop sig. Inne i muskeln finns små trådar som heter <b>aktin</b> och <b>myosin</b>. De griper tag i varandra och drar ihop muskeln. Man får inte fler muskler av att träna, men musklerna blir <b>större</b> eftersom det bildas fler trådar.</p>
+    <p>Muskeln består av muskelceller. Blodkärl ger den syre och näring, och nerver gör att vi kan styra den.</p>
+    <h3>Tre sorters muskler</h3>
+    <p><b>Skelettmuskler</b> är <b>viljestyrda</b> – vi bestämmer själva över dem. De är snabba men inte så uthålliga. De gör att vi kan röra oss, prata, svälja och göra ansiktsuttryck.</p>
+    <p><b>Glatta muskler</b> finns i tarmar, magsäck, blodkärl och luftrör. De är långsamma men uthålliga och <b>inte viljestyrda</b>.</p>
+    <p><b>Hjärtmuskeln</b> pumpar ut blodet i kroppen. Den är både snabb och uthållig, men inte viljestyrd.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="a-typ">
+    <header><h3>Öva: Vilken sorts muskel?</h3></header>
+    <div data-widget="sort" data-set="muskeltyp" data-task="a-typ"></div>
+  </section>
+
+  <section class="task" data-task="a-valj">
+    <header><h3>Välj dina 6 muskler och 8 ben</h3></header>
+    <p>Enligt checklistan ska du välja 6 muskler och 8 ben att lära dig. Läraren har strukit över några muskler på checklistan – välj inte dem. Välj gärna de du tycker är lättast. Bildövningarna nedanför visar sedan bara dina val.</p>
+    <div data-widget="pick"></div>
+  </section>
+
+  <section class="task" data-task="a-mina">
+    <header><h3>Mina ben och muskler – var sitter de?</h3></header>
+    <div data-widget="mine"></div>
+  </section>
+
+  <section class="task" data-task="a-ben">
+    <header><h3>Öva: Sätt namn på skelettet</h3></header>
+    <div data-widget="label" data-set="ben" data-task="a-ben"></div>
+  </section>
+
+  <section class="task" data-task="a-musk">
+    <header><h3>Öva: Sätt namn på musklerna</h3></header>
+    <div data-widget="label" data-set="muskler" data-task="a-musk"></div>
+  </section>
+
+  <section class="task" data-task="a-quiz">
+    <header><h3>Quiz och memory: anatomi</h3></header>
+    <div data-widget="mcq" data-set="anat" data-task="a-quiz"></div>
+    <h3>Memory</h3>
+    <div data-widget="memory" data-set="anat"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="anat">Jag är klar med Anatomi</button></div>
+</section>
+
+<!-- ======================= FRÅGOR ======================= -->
+<section class="panel" id="p-fragor" data-color="fraga" data-title="Skrivträning" hidden>
+  <div class="intro">
+    <h2>Skrivträning ✍️</h2>
+    <p>Här är lärarens instuderingsfrågor. Skriv ditt svar och tryck <b>Kolla</b>. Då ser du vilka viktiga ord du fick med, och ett exempelsvar. Tryck sedan <b>Skriv igen</b> och försök utan att titta – så sitter det till slut!</p>
+    <p>Det är okej att svara högt i stället, eller att diktera med mikrofonen på tangentbordet.</p>
+  </div>
+  <section class="task" data-task="f-skador">
+    <header><h3>Instuderingsfrågor: idrottsskador</h3></header>
+    <div data-widget="writeq" data-set="skador" data-task="f-skador"></div>
+  </section>
+  <section class="task" data-task="f-anat">
+    <header><h3>Instuderingsfrågor: anatomi</h3></header>
+    <div data-widget="writeq" data-set="anat" data-task="f-anat"></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="fragor">Jag är klar med Skrivträningen</button></div>
+</section>
+
+<!-- ======================= PROV ======================= -->
+<section class="panel" id="p-prov" data-color="provc" data-title="Övningsprov" hidden>
+  <div class="intro"><h2>Övningsprov 📝</h2><p>20 blandade frågor om skador och anatomi. Du får procent i slutet. Gör det gärna två gånger!</p></div>
+  <section class="task" data-task="p-mcq">
+    <header><h3>Övningsprovet</h3></header>
+    <div data-widget="mcq" data-set="prov" data-task="p-mcq"></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="prov">Jag är klar med Övningsprovet</button></div>
+</section>
+
+<!-- ======================= BONUS ======================= -->
+<section class="panel" id="p-bonus" data-color="bonus" data-title="Bonus" hidden>
+  <div class="intro"><h2>Bonus 🌲</h2><p>Det här ingår troligen inte i provet, men är bra att kunna inför andra uppgifter.</p></div>
+  <section class="task" data-task="b-trana">
+    <header><h3>Läs: Träningsplanering</h3></header>
+    <div class="say">
+    <p>Börja med ett <b>mål</b> enligt SMART-modellen: specifikt, mätbart och tidsbestämt. Till exempel att springa 60 meter på 11 sekunder om två månader.</p>
+    <p><b>Träningsprinciperna:</b> <b>individualisering</b> – anpassa efter dig själv. <b>Överbelastning</b> – kroppen måste utsättas för mer än den är van vid. <b>Progression</b> – öka gradvis. <b>Reversibilitet</b> – slutar du träna försvinner effekten. <b>Specificitet</b> – träna det du vill bli bättre på. <b>Variation</b> – variera för att undvika skador och tristess.</p>
+    <p><b>Intensitet</b> är hur hårt du tränar, <b>volym</b> hur mycket och <b>tid</b> hur länge. Inom styrketräning är <b>reps</b> antal repetitioner och <b>set</b> antal omgångar, till exempel 3 × 8.</p>
+    </div>
+  </section>
+  <section class="task" data-task="b-frilu">
+    <header><h3>Läs: Friluftsliv och orientering</h3></header>
+    <div class="say">
+    <p><b>Allemansrätten:</b> inte störa – inte förstöra. Du får vandra, tälta ett dygn och plocka bär och svamp, men inte på någons tomt och inte fridlysta växter. Hundar ska vara kopplade 1 mars–20 augusti. Inga motorfordon i terrängen.</p>
+    <p><b>Flerlagerprincipen:</b> lager 1, underställ av ull eller polyester, håller dig torr – aldrig bomull närmast kroppen. Lager 2, fleece eller ull, värmer. Lager 3 skyddar mot vind och regn. Förstärkningslagret, till exempel en dunjacka, tar du på vid pauser.</p>
+    <p><b>Orientering:</b> passa kartan så att norr på kartan pekar mot norr i verkligheten. <b>Tumgreppet</b> betyder att du håller tummen där du är och flyttar den när du rör dig. <b>Ledstänger</b> är sådant som är lätt att följa, som stigar, bäckar och stenmurar. Kartans färger: <b>grönt</b> är tät skog som är svår att ta sig fram i, <b>vitt</b> är lättlöpt skog, <b>gult</b> är öppen mark och <b>blått</b> är vatten.</p>
+    </div>
+  </section>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+
+const PLAN=[
+ ['i01','Lördag pass 1: Akuta skador och överbelastningsskador','skador','u-las1'],
+ ['i02','Lördag pass 2: Stukning och PRICE','skador','u-las2'],
+ ['i03','Lördag pass 3: Knät','skador','u-las3'],
+ ['i04','Söndag pass 4: Muskelskador, träningsvärk och sjukdom','skador','u-las4'],
+ ['i05','Söndag pass 5: Skelett och leder','anat','a-las1'],
+ ['i06','Söndag pass 6: Muskler – och välj dina 6 muskler och 8 ben','anat','a-las2'],
+ ['i07','Kväll 1: Skrivträning med lärarens instuderingsfrågor','fragor','f-skador'],
+ ['i08','Kväll 2: Övningsprovet','prov','p-mcq']
+];
+const CHECK=[
+ ['c1','Jag kan nämna minst 2 olika typer av skador, hur de uppkommer och hur de förebyggs','skador'],
+ ['c2','Jag vet hur man förebygger benhinneinflammation och vad som orsakar smärtan','skador'],
+ ['c3','Jag vet hur man behandlar en stukad fot på rätt sätt','skador'],
+ ['c4','Jag vet vad en överbelastningsskada är och hur den uppkommer','skador'],
+ ['c5','Jag vet hur man förebygger överbelastningsskador','skador'],
+ ['c6','Jag vet hur träning kan förebygga skador, framför allt i knäna','skador'],
+ ['c7','Jag vet hur knät ser ut inuti: ledband, korsband och menisk','skador'],
+ ['c8','Jag kan nämna minst 3 sätt som en muskel kan skadas på','skador'],
+ ['c9','Jag vet vad träningsvärk är, hur den uppkommer och hur man lindrar den','skador'],
+ ['c10','Jag kan skillnaden mellan muskelbristning och muskelsträckning','skador'],
+ ['c11','Anatomi: jag kan mina 6 muskler och 8 ben','anat'],
+ ['c12','Anatomi: skelettets fem uppgifter, lederna och de tre sorternas muskler','anat']
+];
+
+const SORT={
+ akut:{buckets:['Akut skada','Överbelastningsskada'],items:[
+  ['Stukning av foten',0],['Lårkaka',0],['Benbrott',0],['Muskelbristning',0],['Axeln går ur led',0],['Vridning av knät',0],
+  ['Benhinneinflammation',1],['Stressfraktur i foten',1],['Musarm',1],['Ont i fötterna efter veckor på hårt golv',1],['Kommer gradvis under lång tid',1],['Händer plötsligt, ofta yttre våld',0]]},
+ risk:{buckets:['Individrelaterad faktor','Omgivningens faktor'],items:[
+  ['Trötthet',0],['Tidigare skador',0],['Muskelsvaghet eller stelhet',0],['Dålig balans',0],['Infektion i kroppen',0],['Ålder',0],['Kroppshållning',0],
+  ['Ojämn gräsmatta',1],['Halt golv',1],['Regn och snö',1],['Dålig utrustning',1],['Regler som inte följs',1]]},
+ muskel:{buckets:['Sträckning','Bristning','Lårkaka','Träningsvärk'],items:[
+  ['Muskelfibrerna sträcks ut för långt',0],['Gör ont, men man kan delvis använda muskeln',0],
+  ['Muskelfibrerna slits av',1],['Mycket stark smärta direkt – kan inte använda muskeln alls',1],
+  ['En hård smäll ger en blödning i muskeln',2],['Vanligt i fotboll, handboll och hockey',2],
+  ['Små bristningar i muskelfibrerna efter träning',3],['Är som värst de första 48 timmarna',3],['Lindras av massage och lätt träning',3]]},
+ muskeltyp:{buckets:['Skelettmuskler','Glatta muskler','Hjärtmuskeln'],items:[
+  ['Viljestyrda – vi bestämmer själva',0],['Snabba men inte så uthålliga',0],['Gör att vi kan gå, prata och svälja',0],
+  ['Finns i tarmar, magsäck och blodkärl',1],['Finns i luftrören',1],['Långsamma men uthålliga',1],
+  ['Pumpar blodet ut i kroppen',2],['Både snabb och uthållig',2]]},
+ leder:{buckets:['Kulled','Gångjärnsled','Vridled'],items:[
+  ['Axeln',0],['Höften',0],['Knät',1],['Fingrarna',1],['Armbågen när du böjer armen',1],['Armbågen när du vrider handen',2]]}
+};
+const ORDER={
+ price:['P – Protection: skydda skadan, stoppa spelet','R – Rest: vila, belasta inte','I – Ice: kyla, aldrig direkt mot huden','C – Compression: tryck med linda – viktigast!','E – Elevation: högläge, minst 30 cm över hjärtat']
+};
+const MATCH={
+ begrepp:[
+  ['Mjukdelsskada','Skada i muskler, senor eller ligament'],
+  ['Skelettskada','Benbrott eller spricka i ett ben'],
+  ['Dislokation','När något går ur led, till exempel axeln'],
+  ['Ligament','Starka band som håller ihop benen i en led – kallas också ledband'],
+  ['Korsband','Två band inne i knät som håller underbenet på plats'],
+  ['Menisk','Stötdämpare av brosk i knät'],
+  ['Rehabilitering','Träning som bygger upp kroppen igen efter en skada'],
+  ['Förebygga','Att göra något innan, så att skadan inte händer'],
+  ['Omdöme','Att anpassa sig så att ingen skadas – fair play'],
+  ['Allsidig träning','Att träna hela kroppen och på olika sätt']
+ ],
+ anat:[
+  ['Anatomi','Läran om hur kroppen är uppbyggd'],
+  ['Sena','Fäster muskeln vid skelettet, till exempel akillessenan'],
+  ['Ledband','Håller benen i leden på plats'],
+  ['Ledbrosk','Hårt och halt lager längst ut på benen i lederna'],
+  ['Menisk','Gör knät stabilare när du springer, hoppar och går'],
+  ['Diskar','Mellankotsskivor – stötdämpare mellan ryggkotorna'],
+  ['Benmärg','Här bildas blodkropparna'],
+  ['Aktin och myosin','Små trådar i muskeln som griper tag i varandra'],
+  ['Kalcium','Mineral som lagras i skelettet']
+ ]
+};
+const MEM={
+ skador:MATCH.begrepp.slice(0,8),
+ anat:MATCH.anat
+};
+
+const MCQ={
+ price:[
+  ['Vilken del av PRICE är viktigast för att stoppa blödningen?',['Tryck (Compression)','Kyla (Ice)','Vila (Rest)','Skydd (Protection)'],0,'Ju hårdare tryck, desto mindre blödning. Kylan är mest smärtlindring.'],
+  ['Varför får kylpåsen aldrig ligga direkt mot huden?',['Man kan få köldskador','Den smälter för fort','Det blir blött','Den gör att blödningen ökar'],0,'Lägg den mellan lagren av lindan.'],
+  ['Hur högt ska foten ligga vid högläge?',['Minst 30 cm över hjärtat','I samma höjd som hjärtat','10 cm över golvet','Under hjärtat'],0,'Ju högre, desto bättre – och minst 30 minuter direkt efter skadan.'],
+  ['Hur ska lindan sitta?',['Hårt i ca 10 minuter, sedan lite lösare','Löst hela tiden','Hårt i ett dygn','Bara på kvällen'],0,'Hårt först när blödningen är störst, sedan lösare så att blodet inte stryps helt.'],
+  ['Vilken är den bästa träningen efter en stukad fot?',['Balansplatta','Långlöpning direkt','Att halta försiktigt','Att tejpa foten i flera månader'],0,'Balansplattan stärker de små musklerna och ledbanden runt fotleden.'],
+  ['Varför ska man inte halta efter en stukning?',['Det kan ge följdskador på andra delar av kroppen','Det ser konstigt ut','Foten blir kall','Det gör inget alls'],0,'Efter ca 48 timmars vila ska man försöka använda foten så normalt som möjligt.'],
+  ['Var får man oftast stukningar?',['I fotleden','I nacken','I magen','I örat'],0,'Nästan alla fotstukningar drabbar ledbanden på utsidan av foten.'],
+  ['Vad händer vid en stukning?',['Ledbandet tänjs ut eller går av, och det blöder','En muskel slits av','Ett ben går av','Senan blir inflammerad'],0,'Blödningen ger svullnad, tryck och smärta.']],
+ kna:[
+  ['Du får en tackling mot INSIDAN av knät. Vilket ledband skadas?',['Det yttre ledbandet','Det inre ledbandet','Främre korsbandet','Menisken'],0,'Knät trycks utåt, så bandet på motsatt sida – utsidan – sträcks.'],
+  ['Du får en tackling mot UTSIDAN av knät. Vilket ledband skadas?',['Det inre ledbandet','Det yttre ledbandet','Bakre korsbandet','Akillessenan'],0,'Knät trycks inåt, så bandet på insidan sträcks.'],
+  ['Hur skadas korsbandet oftast?',['Benet är böjt och man får en knuff eller tackling så att knät vrids i sidled','Man springer långsamt','Man sitter still för länge','Man stretchar för mycket'],0,'Det främre korsbandet skadas mycket oftare än det bakre.'],
+  ['Vad gör menisken?',['Fungerar som stötdämpare och gör knät stabilt','Fäster muskeln vid benet','Bildar blodkroppar','Pumpar blod'],0,'Meniskerna skadas ofta vid vridningar.'],
+  ['Vad gör korsbanden?',['Håller underbenet på plats så att knät blir stabilt','Böjer knät','Skyddar knät framtill','Gör knät mjukt'],0,'Det finns ett främre och ett bakre korsband.'],
+  ['Hur förebygger man knäskador?',['Allsidig träning och styrketräning för benen','Att bara träna en sport','Att träna på ett svullet knä','Att ha skor utan dämpning'],0,'Välj också skor med bra dämpning på hårt underlag.']],
+ anat:[
+  ['Hur många ben har en vuxen människa?',['206','106','600','26'],0,'Musklerna är cirka 600.'],
+  ['Vilket är kroppens största ben?',['Lårbenet','Skenbenet','Ryggraden','Skallbenet'],0,'Kroppens minsta ben är stigbygeln i örat.'],
+  ['Vilken är kroppens största muskel?',['Stora sätesmuskeln','Främre lårmuskeln','Hjärtat','Breda ryggmuskeln'],0,'Minsta muskeln är stigbygelmuskeln i örat.'],
+  ['Var bildas blodkropparna?',['I benmärgen','I musklerna','I lederna','I huden'],0,'Det är skelettets uppgift som fabrik.'],
+  ['Vilket mineral lagras i skelettet?',['Kalcium','Järn','Salt','Socker'],0,'Brist på kalcium kan ge benskörhet.'],
+  ['Vad skyddar revbenen?',['Hjärtat och lungorna','Hjärnan','Magsäcken','Knät'],0,'Skallbenet skyddar hjärnan.'],
+  ['Vilken sorts led finns i axeln?',['Kulled','Gångjärnsled','Vridled','Ingen led'],0,'Kulled finns i axeln och höften.'],
+  ['Vad heter trådarna i muskeln som drar ihop den?',['Aktin och myosin','Ligament och senor','Diskar och menisker','Kalcium och järn'],0,'När man tränar bildas fler trådar, och muskeln blir större.'],
+  ['Vad är bra för skelettet?',['Att röra på sig och belasta det','Att sitta stilla','Att undvika hopp','Att aldrig springa'],0,'Belastning gör benen starkare och tätare.']],
+ prov:[
+  ['Vad är en överbelastningsskada?',['En skada som kommer gradvis när man belastar för mycket utan vila','En skada som händer plötsligt','En smitta','Ett benbrott vid en olycka'],0,'Exempel: benhinneinflammation och stressfraktur.'],
+  ['Vilket är ett exempel på en akut skada?',['Stukning','Benhinneinflammation','Musarm','Stressfraktur'],0,'Akuta skador händer plötsligt.'],
+  ['Var gör det ont vid benhinneinflammation?',['Längs skenbenets insida och framsida','I axeln','I ryggen','I handleden'],0,'Det beror på överbelastning av musklerna i underbenet.'],
+  ['Vad kan ge benhinneinflammation?',['Att byta underlag, skor eller öka träningen för snabbt','Att vila för mycket','Att simma','Att stretcha'],0,'Den drabbar ofta löpare.'],
+  ['Vad står C för i PRICE?',['Compression – tryck','Cold – kyla','Care – omsorg','Calm – lugn'],0,'Tryck är den viktigaste åtgärden.'],
+  ['Vilken träningsform förebygger muskelskador bäst enligt forskningen?',['Styrketräning','Stretching','Vila','Simning'],0,'Stretching förbättrar rörligheten men skyddar inte direkt mot skador.'],
+  ['Vad är skillnaden mellan sträckning och bristning?',['Vid bristning slits fibrerna av, vid sträckning sträcks de ut','Det är samma sak','Sträckning gör mer ont','Bristning sitter i benet'],0,'Vid bristning kan man inte använda muskeln alls.'],
+  ['Vad är en lårkaka?',['En blödning i muskeln efter en hård smäll','En bakelse','En överbelastningsskada','Ett benbrott'],0,'Muskeln blir stel och öm en tid efteråt.'],
+  ['Vad orsakar träningsvärk?',['Små bristningar i muskelfibrerna','Mjölksyra som stannar i en vecka','Brist på vatten','Ett benbrott'],0,'Den är som värst de första 48 timmarna.'],
+  ['Varför ska man inte träna hårt med feber?',['Infektionen kan drabba hjärtmuskeln','Man blir för varm','Man blir trött i benen','Det är inget problem'],0,'I sällsynta fall kan det vara livsfarligt.'],
+  ['Varför är rehab viktigt efter en skada?',['Det bygger upp musklerna och minskar risken att skadan kommer tillbaka','Det är roligt','Det behövs inte','Man blir snabbare direkt'],0,'Rehab kan vara tråkig men är ofta den viktigaste träningen.'],
+  ['Vad är en omgivningsfaktor som ökar skaderisken?',['Halt golv','Trötthet','Tidigare skada','Muskelsvaghet'],0,'De andra är individrelaterade faktorer.'],
+  ['Vad gör uppvärmningen?',['Höjer kroppstemperaturen och gör musklerna mer töjbara','Gör en trött','Ger träningsvärk','Kyler kroppen'],0,'En ordentlig uppvärmning tar 10–20 minuter.'],
+  ['Vad gör en sena?',['Fäster muskeln vid skelettet','Håller ihop två ben','Bildar blod','Stötdämpar i knät'],0,'Exempel: akillessenan.'],
+  ['Vad gör ledband (ligament)?',['Håller benen i leden på plats','Fäster muskeln vid benet','Pumpar blod','Skyddar hjärnan'],0,'Vid en stukning tänjs ledbandet ut.'],
+  ['Vilka är skelettets fem uppgifter?',['Stomme, fäste, skydd, lager och fabrik','Andas, äta, sova, gå, tänka','Böja, sträcka, vrida, lyfta, hoppa','Värma, kyla, torka, fukta, rena'],0,'Fabrik betyder att blodkroppar bildas i benmärgen.'],
+  ['Vilken sorts muskel är hjärtat?',['Hjärtmuskel – snabb och uthållig, inte viljestyrd','Skelettmuskel','Glatt muskel','Ingen muskel'],0,'Det finns tre sorters muskler.'],
+  ['Vilken led finns i knät?',['Gångjärnsled','Kulled','Vridled','Ingen led'],0,'Gångjärnsleder finns också i armbågen och fingrarna.'],
+  ['Vad är diskar?',['Stötdämpare mellan ryggkotorna','Muskler i ryggen','Blodkroppar','Ben i örat'],0,'De kallas också mellankotsskivor.'],
+  ['Vad är menisken?',['En stötdämpare av brosk i knät','En sena i foten','En muskel i låret','Ett ben i armen'],0,'Meniskerna skadas ofta vid vridningar av knät.']]
+};
+
+/* Skrivträning: [fråga, exempelsvar, [nyckelord att få med]] */
+const WQ={
+ skador:[
+  ['Vad är skillnaden mellan en akut skada och en överbelastningsskada? Ge två exempel på vardera.','En akut skada händer plötsligt, ofta på grund av yttre våld, till exempel en stukning eller en lårkaka. En överbelastningsskada kommer gradvis under lång tid när man belastar en kroppsdel för mycket utan tillräcklig vila, till exempel benhinneinflammation eller en stressfraktur.',[['plötsligt',['plötslig']],['gradvis',['gradvis','lång tid','längre tid']],['akut exempel',['stukning','lårkaka','benbrott','bristning']],['överbelastning exempel',['benhinne','stressfraktur','musarm']]]],
+  ['Förklara begreppen mjukdelsskada, skelettskada, dislokation och ligament.','En mjukdelsskada är en skada i muskler, senor eller ligament. En skelettskada är ett benbrott eller en spricka i ett ben. Dislokation betyder att något går ur led, till exempel axeln. Ligament är starka band som håller ihop benen i lederna.',[['muskler/senor',['muskel','sen']],['benbrott',['benbrott','spricka','bryt']],['ur led',['ur led']],['håller ihop',['håller ihop','håller ben']]]],
+  ['Vad är benhinneinflammation, hur uppkommer den och hur behandlas den?','Benhinneinflammation ger ömhet och smärta längs skenbenets insida och framsida. Den beror på överbelastning av musklerna i underbenet, till exempel när en löpare byter underlag eller skor eller ökar träningen för snabbt. Man behandlar den med aktiv vila, växelvis värme och kyla, massage och stretching av underbenets framsida.',[['skenbenet',['skenben']],['överbelastning',['överbelast']],['orsak',['underlag','skor','öka']],['behandling',['vila','massage','stretch','kyla','värme']]]],
+  ['Nämn och förklara minst fyra sätt att förebygga idrottsskador.','Uppvärmning höjer kroppstemperaturen och gör musklerna mer töjbara. Styrketräning gör musklerna starkare så att de tål mer. Rätt teknik gör att kroppen inte belastas fel. Rätt utrustning, till exempel skor med dämpning, skyddar kroppen. Återhämtning ger kroppen tid att vila mellan passen. Allsidig träning gör att man inte överbelastar en enda del.',[['uppvärmning',['uppvärm']],['styrka',['styrk']],['teknik',['teknik']],['utrustning',['utrustning','skor','skydd']],['återhämtning',['återhämt','vila']]]],
+  ['Varför är styrketräning särskilt bra för att förebygga muskelskador?','Forskning visar att styrketräning ger störst skadeförebyggande effekt. Begränsad styrka i en muskel är en riskfaktor, och en starkare muskel tål mer belastning. Man måste också tänka på rätt belastning och vila.',[['starkare',['stark']],['tål mer',['tål','belastning']],['forskning',['forskning','störst']]]],
+  ['Ge två exempel på skadeförebyggande övningar och vilka skador de minskar.','Träning på balansplatta stärker de små musklerna och ledbanden runt fotleden och minskar risken för stukningar. Knäböj och utfall med rätt teknik stärker musklerna runt knät och minskar risken för knäskador.',[['balansplatta',['balans']],['fotled/stukning',['fotled','stukning']],['benövning',['knäböj','utfall','styrk']],['knä',['knä']]]],
+  ['Vilka individrelaterade riskfaktorer och omgivningsfaktorer kan öka skaderisken?','Individrelaterade faktorer är till exempel trötthet, tidigare skador, muskelsvaghet eller stelhet, dålig balans och infektion. Omgivningens faktorer är till exempel underlaget, som ett halt golv eller en ojämn gräsmatta, vädret, utrustningen och reglerna.',[['trötthet',['trött']],['tidigare skada',['tidigare']],['underlag',['underlag','golv','gräs']],['väder/utrustning',['väder','utrustning','regler']]]],
+  ['Vad står PRICE för, och vad innebär varje steg?','P står för protection, skydd: skydda skadan och stoppa spelet. R står för rest, vila: belasta inte. I står för ice, kyla: kylan lindrar smärtan men får aldrig ligga direkt mot huden. C står för compression, tryck: linda hårt, det är det viktigaste för att minska blödningen. E står för elevation, högläge: minst 30 cm över hjärtat.',[['skydd',['skydd']],['vila',['vila']],['kyla',['kyl']],['tryck',['tryck']],['högläge',['högläge','högt']]]],
+  ['Vad innebär en stukning, och hur behandlar du den?','Vid en stukning tänjs ledbandet ut eller går av. Blodkärl går sönder och det blöder, vilket ger svullnad och smärta. Det vanligaste är att stuka foten. Man behandlar den med PRICE: skydd, vila, kyla, hårt tryck med linda och högläge minst 30 cm över hjärtat. Efter ungefär 48 timmar ska man börja använda foten normalt och träna på balansplatta.',[['ledband',['ledband']],['blödning',['blöd','svull']],['PRICE',['price','tryck','högläge']],['balansplatta',['balans']]]],
+  ['Vad är skillnaden mellan en muskelsträckning och en muskelbristning?','Vid en muskelsträckning sträcks muskelfibrerna ut för långt. Det gör ont, men man kan delvis använda muskeln. Vid en muskelbristning slits muskelfibrerna av. Det gör väldigt ont direkt och man kan inte använda muskeln alls.',[['sträcks ut',['sträck']],['slits av',['slits','av']],['delvis',['delvis']],['inte alls',['inte alls','kan inte']]]],
+  ['Vad är en lårkaka, och hur uppstår den?','En lårkaka är en blödning i muskeln som uppstår när muskeln får en hård smäll, till exempel en knä i låret i fotboll eller handboll. Muskeln blir stel och öm en tid efteråt.',[['smäll',['smäll','slag']],['blödning',['blöd']],['stel/öm',['stel','öm']]]],
+  ['Nämn fem orsaker till att en muskel skadas.','Muskeln är utmattad och trött. Man har inte värmt upp. Muskeln har blivit kall efter att man stått stilla länge. Man börjar träna för tidigt efter en skada. Muskeln får en hård smäll.',[['trött',['trött','utmatt']],['uppvärmning',['uppvärm']],['kall',['kall','kyl']],['för tidigt',['för tidigt','tidigt']],['smäll',['smäll','våld']]]],
+  ['Vad beror träningsvärk på, och hur lindrar och förebygger man den?','Träningsvärk beror på små bristningar i muskelfibrerna. Den är värst de första 48 timmarna. Massage, rörlighetsträning och lätt träning hjälper läkningen. Man förebygger den med allsidig träning med rätt belastning, ordentlig uppvärmning och nedvarvning och töjning efteråt.',[['små bristningar',['bristning']],['48 timmar',['48']],['lindra',['massage','lätt träning','rörlighet']],['förebygga',['uppvärm','nedvarv','töj','allsidig']]]],
+  ['Hur är knät uppbyggt inuti?','I knät möts lårbenet och skenbenet. Det främre och det bakre korsbandet håller underbenet på plats. Det inre och det yttre ledbandet håller knät stabilt i sidled. Meniskerna är stötdämpare av brosk mellan benen.',[['korsband',['korsband']],['ledband',['ledband']],['menisk',['menisk']],['lårben/skenben',['lårben','skenben']]]],
+  ['Hur skadas korsbandet oftast?','Korsbandet skadas oftast när benet är böjt och man får en knuff eller tackling så att knät vrids i sidled.',[['böjt',['böj']],['tackling/knuff',['tackl','knuff']],['vrids',['vrid']]]],
+  ['Du får en tackling mot insidan av knät. Vilket ledband skadas? Och om tacklingen kommer mot utsidan?','Kommer tacklingen mot insidan skadas det yttre ledbandet. Kommer den mot utsidan skadas det inre ledbandet. Det är alltid bandet på motsatt sida som sträcks.',[['yttre',['yttre']],['inre',['inre']],['motsatt sida',['motsatt']]]],
+  ['Varför är balansplatta bra efter en fotstukning, och varför ska man inte halta eller tejpa foten för länge?','Balansplattan stärker de små musklerna och ledbanden runt fotleden. Tejpar man för länge blir foten aldrig stark, och den kan stukas om och om igen. Haltar man kan man få följdskador på andra delar av kroppen.',[['stärker',['stärk']],['tejpa',['tejp']],['halta/följdskador',['halt','följdskad']]]],
+  ['Varför är rehabilitering så viktig efter en skada?','Rehabiliteringsträningen bygger upp musklerna igen och stärker ledbanden, så att man slipper få samma skada igen. Den kan vara tråkig men är ofta den viktigaste träningen.',[['bygger upp',['bygg','stärk']],['samma skada igen',['igen','tillbaka']]]],
+  ['Varför ska du inte idrotta eller träna hårt när du har feber eller en infektion?','Träning ställer stora krav på kroppen. En infektion kan i sällsynta fall drabba hjärtmuskeln, och då kan överbelastning vara livsfarlig.',[['hjärtmuskeln',['hjärt']],['farligt',['farlig','livsfar']]]]
+ ],
+ anat:[
+  ['Vilka fem uppgifter har skelettet?','Stomme: skelettet gör att vi kan stå upp. Fäste: musklerna fäster på skelettet. Skydd: skallbenet skyddar hjärnan och revbenen hjärtat och lungorna. Lager: kalcium lagras i skelettet. Fabrik: blodkroppar bildas i benmärgen.',[['stomme',['stomme']],['fäste',['fäste']],['skydd',['skydd']],['lager',['lager']],['fabrik',['fabrik','benmärg']]]],
+  ['Hur många ben finns det i kroppen? Nämn tre typer av leder och var de finns.','Det finns 206 ben. Kulleder finns i axeln och höften. Gångjärnsleder finns i knät, armbågen och fingrarna. Vridleden finns i armbågen.',[['206',['206']],['kulled',['kulled']],['gångjärnsled',['gångjärn']],['vridled',['vridled']]]],
+  ['Vilka tre sorters muskler finns det?','Skelettmuskler är viljestyrda, snabba men inte så uthålliga. Glatta muskler finns i tarmar, blodkärl, luftrör och mage, är långsamma men uthålliga och inte viljestyrda. Hjärtmuskeln är snabb och uthållig men inte viljestyrd.',[['skelettmuskler',['skelettmusk']],['glatta',['glatt']],['hjärtmuskel',['hjärtmusk']],['viljestyrd',['viljestyrd']]]],
+  ['Hur drar en muskel ihop sig, och varför blir den större av träning?','Små trådar i muskeln som heter aktin och myosin griper tag i varandra och drar ihop sig. Man får inte fler muskler av att träna, men muskeln blir större eftersom det bildas fler trådar.',[['aktin',['aktin']],['myosin',['myosin']],['fler trådar',['fler']]]],
+  ['Vad gör senor, ledband, ledbrosk, menisk och diskar?','Senor fäster musklerna vid skelettet. Ledband håller benen i lederna på plats. Ledbrosk är hårt och halt och gör att benen glider lätt mot varandra. Menisken gör knät stabilt. Diskarna är stötdämpare mellan ryggkotorna.',[['senor',['sen']],['ledband',['ledband']],['ledbrosk',['brosk']],['menisk',['menisk']],['diskar',['disk']]]]
+ ]
+};
+
+/* Ben och muskler att välja bland: [namn, var och vad] */
+const BONES=[['Skallbenet','Skyddar hjärnan.'],['Nyckelbenet','Går från bröstbenet ut till axeln.'],['Bröstbenet','Mitt fram på bröstkorgen. Revbenen fäster här.'],['Revbenen','Bildar bröstkorgen och skyddar hjärtat och lungorna.'],['Ryggraden','Kotor från nacken ner till bäckenet. Skyddar ryggmärgen.'],['Överarmsbenet','Från axeln till armbågen.'],['Strålbenet','I underarmen, på tumsidan.'],['Armbågsbenet','I underarmen, på lillfingersidan.'],['Bäckenet','Håller upp kroppen och skyddar organen i magen.'],['Lårbenet','Kroppens största ben, från höften till knät.'],['Knäskålen','Sitter framför knäleden och skyddar den.'],['Skenbenet','Det stora benet på underbenets framsida.'],['Vadbenet','Det smala benet på underbenets utsida.']];
+const MUSCLES=[['Deltamuskeln','Sitter på axeln. Lyfter armen.'],['Stora bröstmuskeln','Sitter på bröstet. Används i armhävningar.'],['Biceps','Tvåhövdade överarmsmuskeln, på framsidan av överarmen. Böjer armen.'],['Raka bukmuskeln','Magens framsida, ”sixpack”. Böjer bålen framåt.'],['Sneda bukmuskeln','På magens sidor. Vrider bålen.'],['Främre lårmuskeln','Lårets framsida. Sträcker knät.'],['Kappmuskeln','Nacken och övre ryggen. Lyfter axlarna.'],['Breda ryggmuskeln','Ryggens sidor. Drar armarna nedåt, som i chins.'],['Triceps','Trehövdade överarmsmuskeln, på baksidan av överarmen. Sträcker armen.'],['Stora sätesmuskeln','Rumpan – kroppens största muskel. Sträcker höften.'],['Bakre lårmuskeln','Lårets baksida. Böjer knät.'],['Vadmuskeln','Baksidan av underbenet. Gör att du kan gå upp på tå.']];
+
+/* ---------- Egenritade bilder ---------- */
+const LABEL={
+ kna:{w:560,h:520,minw:520,svg:(()=>{
+   let s='<svg viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg" font-family="Lexend,sans-serif"><rect width="560" height="520" fill="#F7F5F2"/>';
+   s+='<path d="M245 0 H315 V160 Q370 175 382 205 Q385 238 345 240 Q320 228 300 232 Q280 226 260 232 Q240 228 215 240 Q175 238 178 205 Q190 175 245 160 Z" fill="#EADFC9" stroke="#8A7B60" stroke-width="2"/>';
+   s+='<path d="M180 262 Q280 248 380 262 Q385 290 350 300 Q330 330 325 380 V520 H240 V380 Q235 330 210 300 Q178 290 180 262 Z" fill="#EADFC9" stroke="#8A7B60" stroke-width="2"/>';
+   s+='<path d="M160 300 Q150 290 165 278 Q182 280 182 300 V520 H165 Z" fill="#EADFC9" stroke="#8A7B60" stroke-width="2"/>';
+   s+='<path d="M186 246 Q220 238 262 247 Q238 256 190 256 Z" fill="#7EB7E0" stroke="#3E7FAF" stroke-width="2"/><path d="M298 247 Q340 238 374 246 Q370 256 322 256 Z" fill="#7EB7E0" stroke="#3E7FAF" stroke-width="2"/>';
+   s+='<line x1="262" y1="212" x2="300" y2="256" stroke="#D2463C" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="212" x2="262" y2="256" stroke="#B0306E" stroke-width="10" stroke-linecap="round"/>';
+   s+='<line x1="181" y1="196" x2="170" y2="285" stroke="#E08A1E" stroke-width="12" stroke-linecap="round"/><line x1="380" y1="196" x2="372" y2="300" stroke="#E08A1E" stroke-width="12" stroke-linecap="round"/>';
+   s+='<text x="20" y="508" font-size="15" fill="#6A5B52">← Utsida</text><text x="455" y="508" font-size="15" fill="#6A5B52">Insida →</text>';
+   const L=[[150,40,280,60],[150,140,296,218],[150,250,190,250],[150,330,172,250],[150,430,172,420],[410,140,266,218],[410,250,370,250],[410,330,377,270],[410,430,282,440]];
+   L.forEach(([x,y,px,py])=>{s+=`<line x1="${x}" y1="${y}" x2="${px}" y2="${py}" stroke="#6A5B52" stroke-width="1.5"/>`;});
+   return s+'</svg>';})(),
+  zones:[['Lårbenet',0,22,150,36],['Bakre korsbandet',0,122,150,36],['Menisken',0,232,150,36],['Yttre ledbandet',0,312,150,36],['Vadbenet',0,412,150,36],['Främre korsbandet',410,122,150,36],['Menisken',410,232,150,36],['Inre ledbandet',410,312,150,36],['Skenbenet',410,412,150,36]]},
+ ben:{w:560,h:640,minw:480,mine:'bones',svg:(()=>{
+   let s='<svg viewBox="0 0 560 640" xmlns="http://www.w3.org/2000/svg"><rect width="560" height="640" fill="#F7F5F2"/><g fill="#F3ECDD" stroke="#8A7B60" stroke-width="3" stroke-linecap="round">';
+   s+='<ellipse cx="280" cy="52" rx="36" ry="42"/><path d="M258 88 Q280 104 302 88"/>';
+   s+='<line x1="280" y1="112" x2="212" y2="106"/><line x1="280" y1="112" x2="348" y2="106"/>';
+   for(let i=0;i<6;i++){const y=130+i*16;s+=`<path d="M272 ${y} Q235 ${y+4} 228 ${y+22}" fill="none"/><path d="M288 ${y} Q325 ${y+4} 332 ${y+22}" fill="none"/>`;}
+   s+='<rect x="272" y="114" width="16" height="84" rx="6"/>';
+   for(let i=0;i<6;i++){s+=`<rect x="272" y="${210+i*14}" width="16" height="10" rx="3"/>`;}
+   s+='<path d="M232 300 Q280 280 328 300 Q338 340 300 352 L280 340 L260 352 Q222 340 232 300 Z"/>';
+   s+='<line x1="208" y1="110" x2="190" y2="240"/><line x1="352" y1="110" x2="370" y2="240"/>';
+   s+='<line x1="184" y1="246" x2="172" y2="362"/><line x1="196" y1="246" x2="190" y2="364"/><line x1="376" y1="246" x2="388" y2="362"/><line x1="364" y1="246" x2="370" y2="364"/>';
+   s+='<ellipse cx="180" cy="384" rx="11" ry="18"/><ellipse cx="380" cy="384" rx="11" ry="18"/>';
+   s+='<line x1="250" y1="346" x2="240" y2="486"/><line x1="310" y1="346" x2="320" y2="486"/>';
+   s+='<circle cx="240" cy="496" r="10"/><circle cx="320" cy="496" r="10"/>';
+   s+='<line x1="242" y1="510" x2="244" y2="612"/><line x1="228" y1="512" x2="230" y2="610"/><line x1="318" y1="510" x2="316" y2="612"/><line x1="332" y1="512" x2="330" y2="610"/>';
+   s+='<ellipse cx="236" cy="624" rx="16" ry="7"/><ellipse cx="324" cy="624" rx="16" ry="7"/></g>';
+   const L=[[150,40,244,50],[150,98,230,108],[150,165,236,160],[150,245,176,300],[150,325,240,318],[150,405,244,420],[150,560,230,560],[410,135,280,150],[410,200,358,170],[410,245,280,240],[410,325,390,320],[410,405,372,320],[410,495,330,496],[410,575,318,580]];
+   return s+'</svg>';})(),
+  lines:true,
+  zones:[['Skallbenet',0,22,150,36],['Nyckelbenet',0,80,150,36],['Revbenen',0,147,150,36],['Strålbenet',0,227,150,36],['Bäckenet',0,307,150,36],['Lårbenet',0,387,150,36],['Vadbenet',0,542,150,36],['Bröstbenet',410,117,150,36],['Överarmsbenet',410,182,150,36],['Ryggraden',410,227,150,36],['Armbågsbenet',410,307,150,36],['Knäskålen',410,477,150,36],['Skenbenet',410,557,150,36]],
+  leaders:[[150,40,244,50],[150,98,230,108],[150,165,234,160],[150,245,178,300],[150,325,238,318],[150,405,245,420],[150,560,230,560],[410,135,288,150],[410,200,360,170],[410,245,288,250],[410,325,368,320],[410,495,330,496],[410,575,318,575]]},
+ muskler:{w:700,h:540,minw:640,mine:'muscles',svg:(()=>{
+   const body=(cx)=>`<g fill="#E9E4DD" stroke="#9A8F84" stroke-width="2"><circle cx="${cx}" cy="50" r="30"/><rect x="${cx-55}" y="88" width="110" height="160" rx="30"/><rect x="${cx-88}" y="96" width="30" height="170" rx="15"/><rect x="${cx+58}" y="96" width="30" height="170" rx="15"/><rect x="${cx-48}" y="240" width="96" height="60" rx="20"/><rect x="${cx-46}" y="280" width="40" height="230" rx="18"/><rect x="${cx+6}" y="280" width="40" height="230" rx="18"/></g>`;
+   const e=(x,y,rx,ry,c)=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${c}" opacity=".85"/>`;
+   let s='<svg viewBox="0 0 700 540" xmlns="http://www.w3.org/2000/svg" font-family="Lexend,sans-serif"><rect width="700" height="540" fill="#F7F5F2"/>';
+   s+=body(220)+body(480);
+   s+='<text x="220" y="532" text-anchor="middle" font-size="14" fill="#6A5B52">Framsida</text><text x="480" y="532" text-anchor="middle" font-size="14" fill="#6A5B52">Baksida</text>';
+   const F=220,B=480;
+   s+=e(F-62,108,22,16,'#E07A5F')+e(F+62,108,22,16,'#E07A5F');
+   s+=e(F-24,128,24,18,'#D2463C')+e(F+24,128,24,18,'#D2463C');
+   s+=e(F-73,170,12,30,'#C77421')+e(F+73,170,12,30,'#C77421');
+   s+=`<rect x="${F-14}" y="155" width="28" height="80" rx="8" fill="#B0306E" opacity=".85"/>`;
+   s+=e(F-38,200,12,30,'#7650B0')+e(F+38,200,12,30,'#7650B0');
+   s+=e(F-26,340,17,55,'#2F6FB3')+e(F+26,340,17,55,'#2F6FB3');
+   s+=`<path d="M${B-50} 100 L${B} 88 L${B+50} 100 L${B} 160 Z" fill="#3B8F57" opacity=".85"/>`;
+   s+=e(B-34,175,20,45,'#0F8A8A')+e(B+34,175,20,45,'#0F8A8A');
+   s+=e(B-73,170,12,30,'#C77421')+e(B+73,170,12,30,'#9A6B12');
+   s+=e(B-22,268,24,22,'#D2463C')+e(B+22,268,24,22,'#D2463C');
+   s+=e(B-26,345,16,45,'#2F6FB3')+e(B+26,345,16,45,'#2F6FB3');
+   s+=e(B-26,440,14,35,'#7650B0')+e(B+26,440,14,35,'#7650B0');
+   return s+'</svg>';})(),
+  leaders:[[115,60,158,108],[115,125,196,128],[115,190,147,175],[115,255,206,210],[115,320,182,205],[115,390,194,340],[585,60,480,110],[585,125,446,175],[585,190,553,175],[585,255,502,268],[585,320,506,345],[585,390,506,440]],
+  zones:[['Deltamuskeln',0,42,115,36],['Stora bröstmuskeln',0,107,115,36],['Biceps',0,172,115,36],['Raka bukmuskeln',0,237,115,36],['Sneda bukmuskeln',0,302,115,36],['Främre lårmuskeln',0,372,115,36],['Kappmuskeln',585,42,115,36],['Breda ryggmuskeln',585,107,115,36],['Triceps',585,172,115,36],['Stora sätesmuskeln',585,237,115,36],['Bakre lårmuskeln',585,302,115,36],['Vadmuskeln',585,372,115,36]]}
+};
+/* ================= Lagring och framsteg ================= */
+const KEY='idrott-nikol-v1';
+let S={done:{},plan:{},check:{},tabdone:{},wq:{},mine:{bones:[],muscles:[]},tab:'start'};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const mix=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+
+const panels=$$('.panel');
+function tabPct(p){const t=$$('.task',p);if(!t.length)return 0;return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+function allPct(){const t=$$('.task');return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function refresh(){
+  $$('.task').forEach(t=>{const d=!!S.done[t.dataset.task];t.classList.toggle('is-done',d);const b=$('.tick',t);if(b){b.setAttribute('aria-pressed',String(d));b.textContent=d?'Klar ✓':'Klar';}});
+  panels.forEach(p=>{const id=p.id.slice(2),pc=tabPct(p),tb=$('#tab-'+id);
+    if(tb){$('.bar i',tb).style.width=pc+'%';$('.pc',tb).textContent=pc+' %';tb.classList.toggle('done',pc===100||!!S.tabdone[id]);}
+    const db=$('[data-tabdone="'+id+'"]');if(db)db.setAttribute('aria-pressed',String(!!S.tabdone[id]));});
+  const pc=allPct();$('#ringPc').textContent=pc+' %';$('#ringArc').setAttribute('stroke-dasharray',pc+' 100');$('#ringArc').style.opacity=pc?1:0;
+  const sum=$('#tabSummary');sum.innerHTML='';
+  panels.filter(p=>p.id!=='p-start').forEach(p=>{const id=p.id.slice(2),pc=tabPct(p);
+    const b=el('button');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+    b.innerHTML='<span></span><b></b><span class="bar"><i></i></span>';
+    b.children[0].textContent=p.dataset.title+((pc===100||S.tabdone[id])?' ✓':'');b.children[1].textContent=pc+' %';b.querySelector('i').style.width=pc+'%';
+    b.onclick=()=>show(id);sum.appendChild(b);});
+}
+function setDone(id,val,quiet){
+  const was=!!S.done[id];S.done[id]=val;save();refresh();
+  if(val&&!was&&!quiet){const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');
+    const pc=tabPct(p);toast(pc===100?'Fliken '+p.dataset.title+' är 100 % klar! 🎉':'Bra jobbat! '+p.dataset.title+' är nu '+pc+' % klar.');}
+}
+const complete=id=>{if(id&&!S.done[id])setDone(id,true);};
+
+/* ================= Flikar ================= */
+const bar=$('#tabbar');
+panels.forEach(p=>{
+  const id=p.id.slice(2);p.style.setProperty('--c','var(--'+p.dataset.color+')');
+  const b=el('button','tab');b.id='tab-'+id;b.setAttribute('role','tab');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+  b.innerHTML='<span class="t"></span><span class="bar"><i></i></span><span class="pc"></span>';$('.t',b).textContent=p.dataset.title;
+  b.onclick=()=>show(id);bar.appendChild(b);
+});
+function show(id){
+  panels.forEach(p=>p.hidden=p.id!=='p-'+id);
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.id==='tab-'+id)));
+  S.tab=id;save();stopSpeak();
+  const tb=$('#tab-'+id);tb.scrollIntoView({block:'nearest',inline:'center'});
+  window.scrollTo({top:0});
+}
+$$('[data-tabdone]').forEach(b=>b.onclick=()=>{const id=b.dataset.tabdone;S.tabdone[id]=!S.tabdone[id];save();refresh();if(S.tabdone[id])toast('Snyggt! Fliken är avbockad ✓');});
+
+/* ================= Uppgifter: klar-knapp och uppläsning ================= */
+let speakBtn=null;
+function stopSpeak(){if('speechSynthesis' in window)speechSynthesis.cancel();if(speakBtn)speakBtn.setAttribute('aria-pressed','false');speakBtn=null;}
+function speak(text,btn){
+  if(!('speechSynthesis' in window))return;
+  const same=btn&&speakBtn===btn;stopSpeak();if(same)return;
+  const u=new SpeechSynthesisUtterance(text);u.lang='sv-SE';u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^sv/i.test(v.lang||''));if(v)u.voice=v;
+  if(btn){speakBtn=btn;btn.setAttribute('aria-pressed','true');u.onend=()=>{if(speakBtn===btn)stopSpeak();};}
+  speechSynthesis.speak(u);
+}
+$$('.task').forEach(t=>{
+  const h=$('header',t);
+  const say=$('.say',t);
+  if(say&&'speechSynthesis' in window){const l=el('button','listen','🔊 Lyssna');l.setAttribute('aria-pressed','false');l.onclick=()=>speak(say.innerText.replace(/→/g,', sedan '),l);h.insertBefore(l,h.children[1]||null);}
+  const b=el('button','tick','Klar');b.setAttribute('aria-pressed','false');b.onclick=()=>setDone(t.dataset.task,!S.done[t.dataset.task]);h.appendChild(b);
+});
+
+/* ================= Start: plan och checklista ================= */
+function checkRow(list,store,task,root){
+  root.innerHTML='';
+  list.forEach(([id,txt,tab,goto])=>{
+    const r=el('div','check');const i=el('input');i.type='checkbox';i.id='cb-'+id;i.checked=!!S[store][id];
+    const l=el('label',null,txt);l.htmlFor=i.id;const a=el('button','say1','Gå dit');a.style.setProperty('--c','var(--'+tab+')');a.onclick=()=>{show(tab);if(goto){const t=document.querySelector('section.task[data-task="'+goto+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),50);}};
+    i.onchange=()=>{S[store][id]=i.checked;save();const all=list.every(x=>S[store][x[0]]);if(all)complete(task);else if(S.done[task])setDone(task,false,true);};
+    r.append(i,l,a);root.appendChild(r);
+  });
+}
+checkRow(CHECK,'check','s-check',$('#checkList'));
+
+/* ================= Gemensamt: dra eller trycka ================= */
+function dragTap(chip,onDrop,onTap,targetSel){
+  let sx,sy,ghost=null,moved=false;
+  chip.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;moved=false;try{chip.setPointerCapture(e.pointerId);}catch(_){}});
+  chip.addEventListener('pointermove',e=>{if(sx===undefined)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>7){ghost=chip.cloneNode(true);ghost.classList.add('ghost','sel');document.body.appendChild(ghost);moved=true;}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
+  chip.addEventListener('pointerup',e=>{if(ghost){const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest(targetSel);ghost.remove();ghost=null;if(z)onDrop(z);}sx=undefined;});
+  chip.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null;}sx=undefined;});
+  chip.addEventListener('click',()=>{if(moved){moved=false;return;}onTap();});
+}
+function shake(x){x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong');setTimeout(()=>x.classList.remove('wrong'),400);}
+
+/* ================= Widgets ================= */
+const W={};
+
+W.sort=(root,set,task)=>{
+  const d=SORT[set];
+  function render(){
+    root.innerHTML='';let sel=null,done=0;
+    root.innerHTML='<p>Dra varje kort till rätt låda, eller tryck på kortet och sedan på lådan.</p>';
+    const pool=el('div','pool'),bk=el('div','buckets'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=render;row.append(rs,cnt);
+    const upd=()=>{cnt.textContent=done+' av '+d.items.length+' rätt';if(done===d.items.length){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');root.classList.toggle('picking',!!sel);};
+    const put=(c,b)=>{if(+c.dataset.k===+b.dataset.k){const x=el('div','in',c.textContent);b.appendChild(x);c.remove();done++;if(sel===c){sel=null;root.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};
+    d.buckets.forEach((n,k)=>{const b=el('div','bucket');b.dataset.k=k;b.appendChild(el('h4',null,n));b.onclick=e=>{if(sel&&!e.target.closest('.in'))put(sel,b);};bk.appendChild(b);});
+    mix(d.items).forEach(([t,k])=>{const c=el('button','chip',t);c.dataset.k=k;dragTap(c,b=>put(c,b),()=>pick(c),'.bucket');pool.appendChild(c);});
+    root.append(pool,bk,msg,row);upd();
+  }
+  render();
+};
+
+W.order=(root,set,task)=>{
+  const seq=ORDER[set];
+  function render(){
+    root.innerHTML='<p>Tryck på stegen i rätt ordning.</p>';
+    const ans=el('div','answer'),pool=el('div','pool'),msg=el('p','msg'),rs=el('button','btn','Börja om');let step=0;
+    rs.onclick=render;
+    mix(seq).forEach(w=>{const b=el('button','chip',w);b.style.cursor='pointer';
+      b.onclick=()=>{if(w===seq[step]){ans.appendChild(el('span',null,(step+1)+'. '+w));b.remove();step++;msg.textContent=step===seq.length?'Helt rätt! 🎉':'Bra! Vad kommer sedan?';if(step===seq.length)complete(task);}
+        else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};pool.appendChild(b);});
+    root.append(ans,pool,msg,rs);
+  }
+  render();
+};
+
+W.match=(root,set,task)=>{
+  const all=MATCH[set];let left;
+  function start(){left=mix(all);round();}
+  function round(){
+    root.innerHTML='<p>Tryck på ett ord till vänster och sedan på rätt förklaring.</p>';
+    const g=el('div','match'),L=el('div'),R=el('div'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=start;row.append(rs,cnt);
+    const set5=left.slice(0,5);let pick=null,n=set5.length;
+    cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+    set5.forEach(p=>{const b=el('button',null,p[0]);b.dataset.k=p[0];b.onclick=()=>{if(b.classList.contains('done'))return;if(pick)pick.classList.remove('sel');pick=b;b.classList.add('sel');};L.appendChild(b);});
+    mix(set5).forEach(p=>{const b=el('button',null,p[1]);b.dataset.k=p[0];b.onclick=()=>{if(!pick||b.classList.contains('done'))return;
+      if(pick.dataset.k===b.dataset.k){pick.classList.replace('sel','done');b.classList.add('done');pick=null;n--;left=left.filter(x=>x[0]!==b.dataset.k);cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+        if(n===0){if(left.length){msg.textContent='Alla rätt! Fler kommer…';setTimeout(round,900);}else{msg.textContent='Du har parat ihop allihop! 🎉';complete(task);}}else msg.textContent='Rätt! ✔';}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};R.appendChild(b);});
+    g.append(L,R);root.append(g,msg,row);
+  }
+  start();
+};
+
+W.mcq=(root,set,task)=>{
+  const Q=MCQ[set];
+  function start(){
+    const qs=mix(Q);let i=0,right=0;
+    function q(){
+      root.innerHTML='';const box=el('div','mcq');
+      if(i>=qs.length){const pc=Math.round(100*right/qs.length);
+        box.appendChild(el('p','score',pc+' % rätt på första försöket'));
+        box.appendChild(el('p',null,pc>=80?'Riktigt bra! Du kan det här.':pc>=50?'Bra jobbat! Gör om quizet så sitter det ännu bättre.':'Bra att du övar. Läs texterna igen och prova en gång till.'));
+        const r=el('button','btn primary','Gör om');r.onclick=start;box.appendChild(r);root.appendChild(box);complete(task);return;}
+      const [t,opts,ans,why]=qs[i];let first=true;
+      box.appendChild(el('p','count',(i+1)+' av '+qs.length));box.appendChild(el('p','q',t));
+      const o=el('div','opts');const order=mix(opts.map((x,k)=>k));
+      order.forEach(k=>{const b=el('button',null,opts[k]);b.onclick=()=>{
+        if(k===ans){b.classList.add('right');$$('button',o).forEach(z=>z.disabled=true);if(first)right++;
+          box.appendChild(el('div','why','Rätt! '+why));const n=el('button','btn primary',i+1<qs.length?'Nästa fråga':'Se resultatet');n.style.marginTop='.6rem';n.onclick=()=>{i++;q();};box.appendChild(n);n.focus();}
+        else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);root.appendChild(box);
+    }
+    q();
+  }
+  start();
+};
+
+W.qa=(root,set)=>{
+  QA[set].forEach(([q,ans])=>{
+    const d=el('div','qa'),b=el('button',null,q),a=el('div','a');a.hidden=true;b.setAttribute('aria-expanded','false');
+    ans.forEach(t=>a.appendChild(el('p',null,t)));
+    const s=el('button','say1','🔊 Lyssna');s.onclick=()=>speak(q+'. '+ans.join(' '),s);a.appendChild(s);
+    b.onclick=()=>{a.hidden=!a.hidden;b.setAttribute('aria-expanded',String(!a.hidden));};
+    d.append(b,a);root.appendChild(d);
+  });
+};
+
+/* ---------- Dra namn till rätt ruta ---------- */
+W.label=(root,set,task)=>{
+  const d=LABEL[set];
+  function render(){
+    let Z=d.zones;if(d.mine){const sel=(S.mine&&S.mine[d.mine])||[];if(sel.length)Z=Z.filter(z=>sel.includes(z[0]));}
+    root.innerHTML='<p>Dra ordet till rätt ruta, eller tryck på ordet och sedan på rutan.</p>';
+    const sc=el('div','figscroll'),fig=el('div','fig');fig.style.maxWidth=d.w+'px';if(d.minw)fig.style.minWidth=d.minw+'px';let svg=d.svg;if(d.leaders)svg=svg.replace('</svg>',Z.map(z=>{const [x,y,px,py]=d.leaders[d.zones.indexOf(z)];return `<line x1="${x}" y1="${y}" x2="${px}" y2="${py}" stroke="#6A5B52" stroke-width="1.5"/>`;}).join('')+'</svg>');fig.innerHTML=svg;sc.appendChild(fig);
+    const pool=el('div','pool'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om'),sh=el('button','btn','Visa svaren');
+    let sel=null,done=0;const n=Z.length;
+    const upd=()=>{cnt.textContent=done+' av '+n+' rätt';if(done===n){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');fig.classList.toggle('picking',!!sel);};
+    const put=(c,z)=>{if(z.classList.contains('ok')||z.classList.contains('shown'))return;
+      if(c.dataset.a===z.dataset.a){z.textContent=c.dataset.a;z.classList.add('ok');c.remove();done++;if(sel===c){sel=null;fig.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(z);msg.textContent='Inte där. Försök igen.';}};
+    Z.forEach(([a,x,y,w,h])=>{const z=el('div','zone');z.dataset.a=a;Object.assign(z.style,{left:x/d.w*100+'%',top:y/d.h*100+'%',width:w/d.w*100+'%',height:h/d.h*100+'%'});z.onclick=()=>{if(sel)put(sel,z);};fig.appendChild(z);});
+    mix(Z.map(z=>z[0])).forEach(a=>{const c=el('button','chip',a);c.dataset.a=a;dragTap(c,z=>put(c,z),()=>pick(c),'.zone');pool.appendChild(c);});
+    rs.onclick=render;sh.onclick=()=>{$$('.zone:not(.ok)',fig).forEach(z=>{z.textContent=z.dataset.a;z.classList.add('shown');});pool.innerHTML='';msg.textContent='Här är svaren. Tryck på Börja om och prova själv.';};
+    row.append(rs,sh,cnt);if(d.mine&&Z.length<d.zones.length)root.appendChild(el('p','count','Visar bara dina valda ('+Z.length+' st). Ändra i ”Välj dina 6 muskler och 8 ben”.'));root.append(sc,pool,msg,row);upd();
+  }
+  render();if(d.mine)window.addEventListener('mine',render);
+};
+
+/* ---------- Memory ---------- */
+W.memory=(root,set,task)=>{
+  const src=MEM[set].map(t=>({a:t[0],b:t[1]}));
+  function round(){
+    root.innerHTML='';const pairs=mix(src).slice(0,6);let open=[],got=0,lock=false,turns=0;
+    const grid=el('div','mem'),msg=el('p','msg'),row=el('div','row'),nb=el('button','btn','Ny omgång'),cnt=el('span','count');nb.onclick=round;row.append(nb,cnt);
+    const cards=mix(pairs.flatMap((p,k)=>[{k,t:p.a,num:set==='goals',col:p.col},{k,t:p.b}]));
+    cards.forEach(c=>{const b=el('button','card');b.innerHTML='?';b.setAttribute('aria-label','Kort');
+      b.onclick=()=>{if(lock||b.classList.contains('open')||b.classList.contains('got'))return;
+        b.classList.add('open');b.innerHTML='';const s=el('span',c.num?'num':null,c.t);b.appendChild(s);if(c.col){b.style.borderColor=c.col;s.style.color=c.col;}open.push([b,c]);
+        if(open.length===2){turns++;const [x,y]=open;
+          if(x[1].k===y[1].k){x[0].classList.add('got');y[0].classList.add('got');open=[];got++;msg.textContent='Ett par! ✔';
+            if(got===pairs.length){msg.textContent='Alla par på '+turns+' försök! 🎉';complete(task);}}
+          else{lock=true;setTimeout(()=>{open.forEach(([z])=>{z.classList.remove('open');z.innerHTML='?';z.style.borderColor='';});open=[];lock=false;},1300);}
+          cnt.textContent=turns+' försök';}};
+      grid.appendChild(b);});
+    root.append(grid,msg,row);
+  }
+  round();
+};
+
+
+/* ---------- Skrivträning ---------- */
+W.writeq=(root,set,task)=>{
+  S.wq=S.wq||{};const st=S.wq[set]=S.wq[set]||{};const list=WQ[set];
+  const prog=el('p','count');root.appendChild(prog);
+  const upd=()=>{const n=list.filter((_,i)=>st[i]&&st[i].n>0).length;prog.textContent=n+' av '+list.length+' frågor besvarade';if(n===list.length)complete(task);};
+  list.forEach(([q,model,keys],i)=>{
+    const rec=st[i]=st[i]||{n:0,t:''};
+    const box=el('div','wstep');const h=el('h4');h.innerHTML='<span class="st">'+(i+1)+'</span>';h.appendChild(document.createTextNode(q));box.appendChild(h);
+    const info=el('p','count',rec.n?('Försök gjorda: '+rec.n):'');box.appendChild(info);
+    const ta=el('textarea');ta.value=rec.t||'';ta.placeholder='Skriv ditt svar här.';ta.oninput=()=>{rec.t=ta.value;save();};box.appendChild(ta);
+    const mini=el('div','mini');const lb=el('button',null,'🔊 Läs frågan'),ck=el('button',null,'Kolla'),ag=el('button',null,'Skriv igen'),oral=el('button',null,'Jag svarade högt – visa svaret');
+    const out=el('div');out.hidden=true;
+    const chips=el('div','checker');const mdl=el('div','hintbox');
+    out.append(el('p','help','Viktiga ord att få med – de blir gröna när du har dem:'),chips,mdl);
+    const show=()=>{const t=ta.value.toLowerCase();chips.innerHTML='';let got=0;
+      keys.forEach(([w,stems])=>{const g=stems.some(s=>t.includes(s));if(g)got++;const c=el('span',g?'got':null,w);chips.appendChild(c);});
+      mdl.textContent='Exempelsvar: '+model;out.hidden=false;
+      rec.n++;save();info.textContent='Försök gjorda: '+rec.n+(ta.value.trim()?' – du fick med '+got+' av '+keys.length+' viktiga ord':'');upd();};
+    ck.onclick=show;oral.onclick=show;
+    ag.onclick=()=>{ta.value='';rec.t='';save();out.hidden=true;ta.focus();};
+    lb.onclick=()=>speak(q,lb);
+    mini.append(lb,ck,ag,oral);box.append(mini,out);root.appendChild(box);
+  });
+  upd();
+};
+
+/* ---------- Välj ben och muskler ---------- */
+W.pick=root=>{
+  S.mine=S.mine||{bones:[],muscles:[]};
+  const groups=[['bones','Mina 8 ben',BONES,8],['muscles','Mina 6 muskler',MUSCLES,6]];
+  const draw=()=>{root.innerHTML='';
+    groups.forEach(([k,title,list,max])=>{
+      const sel=S.mine[k];root.appendChild(el('h3',null,title+' – '+sel.length+' av '+max+' valda'));
+      const box=el('div','choose');
+      list.forEach(([n])=>{const b=el('button',null,n);b.setAttribute('aria-pressed',String(sel.includes(n)));
+        b.onclick=()=>{if(sel.includes(n))sel.splice(sel.indexOf(n),1);else if(sel.length<max)sel.push(n);else{toast('Du har redan valt '+max+'. Ta bort ett först.');return;}
+          save();draw();window.dispatchEvent(new Event('mine'));
+          if(S.mine.bones.length===8&&S.mine.muscles.length===6)complete('a-valj');};
+        box.appendChild(b);});
+      root.appendChild(box);});
+  };
+  draw();
+};
+W.mine=(root)=>{
+  const draw=()=>{root.innerHTML='';S.mine=S.mine||{bones:[],muscles:[]};
+    if(!S.mine.bones.length&&!S.mine.muscles.length){root.appendChild(el('p',null,'Välj dina ben och muskler först, i uppgiften ovanför.'));return;}
+    [['bones','Ben',BONES],['muscles','Muskler',MUSCLES]].forEach(([k,t,list])=>{
+      if(!S.mine[k].length)return;root.appendChild(el('h3',null,t));
+      list.filter(x=>S.mine[k].includes(x[0])).forEach(([n,d])=>{const c=el('div','term');const h=el('h4',null,n);const s=el('button','say1','🔊');s.onclick=()=>speak(n+'. '+d,s);h.appendChild(s);c.append(h,el('p',null,d));root.appendChild(c);});});
+    root.appendChild(el('div','trick','Tips: peka på din egen kropp där benet eller muskeln sitter, och säg namnet högt.'));
+  };
+  draw();window.addEventListener('mine',draw);
+};
+/* ================= Flytta framsteg ================= */
+(function(){
+  const NAME='idrott';const msg=$('#mvMsg');
+  const pack=()=>JSON.stringify({app:KEY,saved:new Date().toISOString(),data:S});
+  $('#mvDown').onclick=()=>{try{const b=new Blob([pack()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nikol-'+NAME+'-framsteg.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);msg.textContent='Filen är nedladdad. Skicka den till den nya enheten, till exempel med AirDrop eller mejl.';}catch(e){msg.textContent='Det gick inte att ladda ner. Prova ”Kopiera som text” i stället.';}};
+  $('#mvCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pack());msg.textContent='Texten är kopierad. Skicka den till dig själv och klistra in den på den nya enheten.';}catch(e){$('#mvText').value=pack();msg.textContent='Markera texten i rutan nedanför och kopiera den själv.';}};
+  const load=txt=>{try{const o=JSON.parse(txt);if(!o||o.app!==KEY||typeof o.data!=='object')throw 0;
+      if(!confirm('Vill du ersätta framstegen på den här enheten med de sparade från '+new Date(o.saved).toLocaleDateString('sv-SE')+'?'))return;
+      S=Object.assign(S,o.data);save();msg.textContent='Klart! Sidan laddas om.';setTimeout(()=>location.reload(),600);}
+    catch(e){msg.textContent='Det där ser inte ut som en framstegsfil för '+NAME+'. Kontrollera att du valde rätt fil.';}};
+  $('#mvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>load(r.result);r.readAsText(f);};
+  $('#mvPaste').onclick=()=>load($('#mvText').value.trim());
+})();
+
+
+/* ================= Starta ================= */
+checkRow(PLAN,'plan','s-plan',$('#planList'));
+checkRow(CHECK,'check','s-check',$('#checkList'));
+$$('[data-widget]').forEach(r=>{const f=W[r.dataset.widget];if(!f)return;const a=r.dataset.set;f(r,a||r.dataset.task,a?r.dataset.task:undefined);});
+refresh();
+show(panels.some(p=>p.id==='p-'+S.tab)?S.tab:'start');
+</script></body></html>
