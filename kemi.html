@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikols kemiprov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EAF1F4; --paper:#FFFFFF; --ink:#17324A; --soft:#4D6275; --line:#CFDCE3;
+  --start:#4D6275; --kart:#2F6FB3; --vatten:#0F8A8A; --hall:#3B8F57; --glob:#C77421; --mal:#7650B0; --skriv:#C23F57; --begr:#5A6B7D; --prov:#9A6B12;
+  --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+    --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+    --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+  --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+  --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.125rem;line-height:1.75;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:48rem;margin:0 auto;padding:0 1rem 5rem}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .3rem}
+h2{font-size:1.5rem;line-height:1.3;margin:0 0 .5rem;color:var(--c)}
+h3{font-size:1.15rem;line-height:1.35;margin:1.1rem 0 .3rem}
+p{margin:.35rem 0 .85rem}
+ul.plain{margin:.3rem 0 .9rem;padding-left:1.2rem}
+ul.plain li{margin:.2rem 0}
+
+/* ---------- Header: gradnät behind the overall progress ---------- */
+.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
+.hero svg.grid{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero .wrap{position:relative;display:flex;align-items:center;gap:1.2rem;padding-top:1.4rem;padding-bottom:1.2rem}
+.ring{flex:none;width:6.5rem;height:6.5rem;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero p{margin:0;color:var(--soft)}
+
+/* ---------- Tab bar ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+.tabs .wrap{display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.tab{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.35rem .7rem;cursor:pointer;min-height:44px;line-height:1.2;text-align:left}
+.tab .t{font-weight:500;font-size:.98rem;white-space:nowrap}
+.tab .bar{width:100%;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--c);width:0}
+.tab .pc{font-size:.8rem;color:var(--soft)}
+.tab[aria-selected="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--paper))}
+.tab.done .t::after{content:" ✓";color:var(--ok)}
+
+/* ---------- Panels and tasks ---------- */
+.panel{padding-top:1.2rem}
+.panel[hidden]{display:none}
+.intro{background:var(--paper);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;border-top:8px solid var(--c)}
+.task{background:var(--paper);border-radius:14px;padding:1rem 1.2rem 1.1rem;margin:0 0 1rem;border-left:8px solid var(--c);transition:background .3s}
+.task.is-done{border-left-color:var(--ok)}
+.task>header{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.4rem}
+.task>header h3{margin:0;flex:1;font-size:1.2rem}
+.tick{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.2rem .8rem;cursor:pointer;font-size:.92rem;min-height:40px;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kind{display:inline-block;font-size:.85rem;color:var(--soft);margin-bottom:.2rem}
+.listen{border:2px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:.15rem .8rem;cursor:pointer;font-size:.92rem;min-height:36px}
+.listen[aria-pressed="true"]{background:var(--c);color:#fff}
+.trick{background:color-mix(in srgb,var(--c) 11%,transparent);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.fact{border:2px dashed var(--c);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 1rem}
+.chain span{background:color-mix(in srgb,var(--c) 14%,transparent);border:2px solid var(--c);border-radius:8px;padding:.1rem .55rem;font-weight:500}
+.chain i{font-style:normal;color:var(--c);font-weight:700}
+.tabdone{display:flex;justify-content:center;margin:1.5rem 0}
+.bigbtn{border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.6rem 1.4rem;cursor:pointer;font-weight:500;min-height:48px}
+.bigbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,250%);visibility:hidden;background:var(--ink);color:var(--paper);padding:.7rem 1.2rem;border-radius:999px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center;font-weight:500}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* ---------- Generic exercise bits ---------- */
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.4rem .9rem;cursor:pointer;min-height:44px;font-size:1rem}
+.btn.primary{border-color:var(--c);background:var(--c);color:#fff}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.count{color:var(--soft);font-size:.95rem;margin-left:auto}
+.msg{font-weight:500;min-height:1.6rem;margin:.5rem 0 0}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{border:2px solid var(--c);background:var(--paper);border-radius:10px;padding:.4rem .8rem;cursor:grab;min-height:44px;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;line-height:1.35;font-size:1rem}
+.chip.sel{background:var(--c);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-60%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wrong{border-color:var(--bad)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.answer{display:flex;flex-wrap:wrap;gap:.4rem;min-height:3rem;padding:.5rem;border-radius:10px;border:2px dashed var(--line);margin:.6rem 0}
+.answer span{background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .7rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin:.8rem 0 .3rem}
+.bucket{border:2px dashed var(--c);border-radius:12px;padding:.5rem;min-height:6rem;cursor:pointer;background:color-mix(in srgb,var(--c) 6%,var(--paper))}
+.bucket h4{margin:0 0 .3rem;font-size:1.02rem;color:var(--c);text-align:center}
+.bucket .in{font-size:.9rem;background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .5rem;margin:.25rem 0;line-height:1.35}
+.picking .bucket{border-style:solid}
+.match{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:.6rem}
+.match>div{display:flex;flex-direction:column;gap:.5rem}
+.match button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.5rem .7rem;cursor:pointer;line-height:1.4;font-size:1rem}
+.match button.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,var(--paper))}
+.match button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--paper));cursor:default}
+.mcq .q{font-weight:500;font-size:1.15rem;margin:.3rem 0 .6rem}
+.mcq .opts{display:grid;gap:.5rem}
+.mcq .opts button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;line-height:1.4}
+.mcq .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.mcq .why{background:color-mix(in srgb,var(--ok) 10%,var(--paper));border-radius:10px;padding:.5rem .8rem;margin-top:.6rem}
+.score{font-size:1.4rem;font-weight:700;color:var(--c)}
+.qa{border-bottom:2px solid var(--line)}
+.qa:last-child{border-bottom:0}
+.qa>button{text-align:left;width:100%;background:none;border:0;padding:.65rem 0;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.qa>button::before{content:"＋";color:var(--soft);font-weight:700}
+.qa>button[aria-expanded="true"]::before{content:"－"}
+.qa .a{background:color-mix(in srgb,var(--c) 9%,var(--paper));border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem}
+.qa .a p{margin:.2rem 0 .5rem}
+.say1{border:2px solid var(--line);background:transparent;border-radius:999px;padding:.05rem .7rem;cursor:pointer;font-size:.9rem}
+.wk{margin:1.4rem 0 .1rem;color:var(--soft);font-size:1.02rem}
+
+/* label exercise */
+.figscroll{overflow-x:auto;border-radius:10px;background:#fff;border:2px solid var(--line)}
+.fig{position:relative;container-type:inline-size;width:100%;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone{position:absolute;border:2px dashed var(--c);border-radius:6px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.3cqw,16px);line-height:1.1;color:#17324A;cursor:pointer;padding:0 3px;text-align:center;font-weight:500}
+.zone.ok{border:2px solid #2E8B57;background:#E3F4EA;color:#1D5E3A}
+.zone.shown{border:2px solid #7D8B99;background:#EEF1F4;color:#4A5A6B}
+.picking .zone:not(.ok):not(.shown){border-style:solid;background:#E8F0FC}
+
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:.5rem;margin:.7rem 0}
+.card{min-height:5.2rem;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:.4rem;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.card.open{background:var(--paper);color:var(--ink)}
+.card.got{background:color-mix(in srgb,var(--ok) 15%,var(--paper));border-color:var(--ok);color:var(--ink);cursor:default}
+.card .num{font-size:1.6rem;font-weight:700}
+
+/* globala mål chips */
+.goal{display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;color:#fff;padding:.1rem .5rem;font-weight:500;font-size:.92rem;margin:.15rem .1rem}
+
+/* checklist */
+.check{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.check label{flex:1;cursor:pointer}
+.check a{color:var(--c);font-size:.92rem}
+.tabsum{display:grid;gap:.5rem;margin:.6rem 0}
+.tabsum button{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.5rem .8rem;cursor:pointer}
+.tabsum .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.tabsum .bar i{display:block;height:100%;background:var(--c)}
+
+/* writing workshop */
+.ladder{counter-reset:st;display:grid;gap:.4rem;margin:.6rem 0 1rem}
+.ladder div{counter-increment:st;display:flex;gap:.6rem;align-items:flex-start;background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.45rem .7rem}
+.ladder div::before{content:counter(st);flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;margin-top:.15rem}
+.choose{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .8rem}
+.choose button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.3rem .9rem;cursor:pointer;min-height:42px}
+.choose button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.wstep{border:2px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.7rem 0;background:var(--paper)}
+.wstep.filled{border-color:var(--ok)}
+.wstep h4{margin:0;font-size:1.05rem;display:flex;gap:.5rem;align-items:center}
+.wstep h4 .st{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.wstep.filled h4 .st{background:var(--ok)}
+.wstep .help{color:var(--soft);font-size:.98rem;margin:.2rem 0 .4rem}
+.wstep textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;line-height:1.6;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.5rem .7rem;resize:vertical}
+.wstep textarea:focus{border-color:var(--c);outline:none}
+.mini{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 0}
+.mini button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.1rem .7rem;cursor:pointer;font-size:.88rem;min-height:34px}
+.hintbox{background:var(--hl);border-radius:10px;padding:.5rem .8rem;margin:.5rem 0 0;font-size:.98rem}
+.wordbank{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:10;background:var(--paper);border:2px solid var(--c);border-radius:12px;padding:.5rem .7rem;margin:.8rem 0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wordbank summary{cursor:pointer;font-weight:500;color:var(--c)}
+.wordbank .mini button{border-color:var(--c)}
+.checker{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .8rem}
+.checker span{border:2px solid var(--line);border-radius:999px;padding:.05rem .65rem;font-size:.9rem;color:var(--soft)}
+.checker span.got{border-color:var(--ok);background:var(--ok);color:#fff}
+.factbank{border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--paper));border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:.6rem 0}
+.factbank ul{margin:.2rem 0;padding-left:1.1rem}
+.full{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line)}
+.wprog{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:.3rem 0 .2rem}
+.wprog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cheer{color:var(--ok);font-weight:500;min-height:1.5rem}
+.fyr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0 1rem}
+.fyr label{display:block;font-size:.9rem;color:var(--soft)}
+.fyr textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+@media (max-width:520px){.fyr{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+
+/* small visual widgets */
+.water{display:grid;gap:.6rem;margin:.6rem 0}
+.wbar{display:flex;height:3rem;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+.wbar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-size:.9rem;font-weight:500;transition:flex-grow .6s;white-space:nowrap;overflow:hidden}
+.earths{font-size:2.4rem;line-height:1.2;letter-spacing:.1rem;margin:.2rem 0}
+.term{border-left:6px solid var(--c);padding:.45rem .9rem;margin:.6rem 0;background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:0 10px 10px 0}
+.term h4{margin:0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:1.1rem}
+.term p{margin:.15rem 0}
+.badge{font-size:.78rem;font-weight:500;border-radius:999px;padding:0 .5rem;background:var(--c);color:#fff}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.6rem;margin:.5rem 0}
+.calc label{font-size:.92rem;color:var(--soft)}
+.calc select,.calc input{display:block;width:100%;font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.steps{background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.6rem .9rem;line-height:1.9}
+.toggle{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.toggle label{display:flex;gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:999px;padding:.2rem .8rem;cursor:pointer;min-height:40px;font-size:.95rem}
+.toggle input{accent-color:var(--c);width:1.1rem;height:1.1rem}
+.svgbox{border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#F4F8F1}
+.svgbox svg{display:block;width:100%;height:auto}
+
+.passcard{background:var(--paper);border-radius:16px;margin:0 0 1rem;overflow:hidden;border:3px solid var(--start)}
+.passcard .ph{background:var(--start);color:#fff;padding:.9rem 1.2rem}
+.passcard .ph h2{color:#fff;margin:0;font-size:1.35rem}
+.passcard .ph p{margin:.2rem 0 0;opacity:.9}
+.passcard .pb{padding:.6rem 1.2rem 1rem}
+.pstep{border-bottom:2px solid var(--line);padding:.7rem 0}
+.pstep:last-child{border-bottom:0}
+.pstep h3{margin:0 0 .3rem;font-size:1.08rem;display:flex;gap:.5rem;align-items:center}
+.pstep h3 .n{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--start);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.pstep textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1.02rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+.book{display:inline-block;background:var(--hl);border-radius:8px;padding:.1rem .6rem;font-weight:700}
+.guide{margin:.3rem 0 .4rem;padding-left:1.2rem}
+.plrow{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.plrow:last-child{border-bottom:0}
+.plrow input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.plrow .t{flex:1}
+.plrow .m{display:block;font-size:.88rem;color:var(--soft)}
+.plrow.cur{background:color-mix(in srgb,var(--start) 8%,transparent);border-radius:8px}
+
+:root{--materia:#C2327A;--atomc:#2F6FB3;--molc:#7650B0;--kvave:#3B8F57;--sep:#B5452B;--fraga:#9A6B12;--provc:#5A5A9A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--materia:#F07AB0;--atomc:#6FA7E6;--molc:#AE8CEB;--kvave:#6CC88A;--sep:#F08A6C;--fraga:#E0B04A;--provc:#A9A9E8}}
+:root[data-theme="dark"]{--materia:#F07AB0;--atomc:#6FA7E6;--molc:#AE8CEB;--kvave:#6CC88A;--sep:#F08A6C;--fraga:#E0B04A;--provc:#A9A9E8}
+[hidden]{display:none!important}
+.sum{background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:12px;padding:.5rem 1rem;margin:.5rem 0 1rem;line-height:1.75}
+.sum p{margin:.5rem 0}
+.hzgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;margin:.6rem 0}
+.hz{display:grid;justify-items:center;text-align:center;gap:.2rem;padding:.5rem;border:2px solid var(--line);border-radius:12px;background:var(--paper)}
+.hz svg{width:84px;height:84px}.hz span{font-size:.9rem;color:var(--soft)}
+.hzbig{display:flex;justify-content:center;margin:.4rem 0}.hzbig svg{width:150px;height:150px}
+.simbox{display:grid;gap:.5rem}.simbox .row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.atomctl{display:grid;gap:.4rem;margin:.5rem 0}.ctlrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.ctlname{min-width:9.5rem;font-weight:700}.ctlname.cp{color:#E0452F}.ctlname.cn{color:var(--soft)}.ctlname.ce{color:#2F5BD8}
+.ctlv{min-width:2rem;text-align:center;font-size:1.3rem}
+.atomwrap{display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:1rem;align-items:start}
+.atomsvg svg{width:100%;height:auto;border-radius:12px}
+.atomname{font-size:1.4rem;font-weight:700;margin:.2rem 0 .5rem}
+@media (max-width:640px){.atomwrap{grid-template-columns:1fr}}
+.ptgrid{display:grid;grid-template-columns:repeat(18,minmax(30px,1fr));gap:3px;min-width:590px}
+.ptc{border:1px solid rgba(0,0,0,.25);border-radius:6px;padding:.2rem 0;min-height:46px;display:grid;place-items:center;cursor:pointer;color:#1E1A18;font:inherit}
+.ptc small{font-size:.65rem}.ptc b{font-size:1rem}.ptc.empty{visibility:hidden}.ptc.ok{outline:4px solid var(--ok)}
+.pth{text-align:center;font-size:.75rem;color:var(--soft)}
+.ptleg{display:flex;flex-wrap:wrap;gap:.3rem;margin:.5rem 0}.ptleg span{padding:.15rem .5rem;border-radius:6px;font-size:.85rem;color:#1E1A18}
+.ptinfo{border:2px solid var(--line);border-radius:12px;padding:.6rem .9rem;margin:.5rem 0}
+.phbar{display:grid;grid-template-columns:repeat(15,1fr);border-radius:8px;overflow:hidden;margin:.4rem 0}.phbar span{text-align:center;color:#fff;font-weight:700;padding:.3rem 0;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.check{padding:.2rem 0}
+.opts4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;margin:.5rem 0}
+.opts4 button{font:inherit;font-size:1.05rem;padding:.7rem .8rem;min-height:52px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.opts4 button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:.25rem .8rem;align-items:baseline}
+.facts span{color:var(--soft)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" style="position:relative;z-index:2;display:inline-block;margin:.6rem 0 0 1rem;color:var(--ink);font-weight:500;text-decoration:none">← Alla ämnen</a>
+  <svg class="grid" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--line)" stroke-width="1.5">
+      <path d="M0 40 Q400 10 800 40M0 100 Q400 80 800 100M0 160 Q400 150 800 160"/>
+      <path d="M100 0 Q70 100 100 200M250 0 Q235 100 250 200M400 0 V200M550 0 Q565 100 550 200M700 0 Q730 100 700 200"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="ring" aria-label="Hur mycket som är klart">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--line)" stroke-width="3.2"/><circle id="ringArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 100"/></svg>
+      <b id="ringPc">0 %</b>
+    </div>
+    <div>
+      <h1>Kemi: kemins grunder</h1>
+      <p>Nikols plugg inför kemiprovet. Bocka av varje uppgift när du är klar.</p>
+    </div>
+  </div>
+</div>
+<nav class="tabs" aria-label="Flikar"><div class="wrap" id="tabbar" role="tablist"></div></nav>
+
+<main class="wrap">
+
+<!-- ======================= START ======================= -->
+<section class="panel" id="p-start" data-color="start" data-title="Start">
+  <div class="intro">
+    <h2>Kemiprovet – vecka 49</h2>
+    <p>Provet handlar om <b>kemins grunder</b>: säkerhet, materia och faser, atomer, periodiska systemet, molekyler och bindningar, vattnet och kvävets kretslopp.</p>
+    <p>Gör ett pass i taget. Läs sidorna i <b>Kemi 7–9</b>, läs sammanfattningen här och gör övningarna. Quizen i <b>Kemi Direkt</b> på Classroom är bra extraträning efter varje pass.</p>
+  </div>
+  <section class="task" data-task="s-plan">
+    <header><h3>Plan – ett pass i taget</h3></header>
+    <p>Varje pass tar ungefär 20 minuter. Gör nästa pass som inte är avbockat.</p>
+    <div id="planList"></div>
+  </section>
+  <section class="task" data-task="s-check">
+    <header><h3>Det här ska du kunna</h3></header>
+    <p>Bocka i när du kan förklara det för någon annan.</p>
+    <div id="checkList"></div>
+  </section>
+  <details class="intro" id="moveBox" style="--c:var(--start)">
+    <summary><b>Flytta dina framsteg till en annan enhet</b></summary>
+    <p>Har du pluggat på en annan dator eller iPad? Spara framstegen som en fil där, skicka filen hit och hämta in den.</p>
+    <h3>1. Spara framstegen på den enhet du har pluggat på</h3>
+    <div class="row"><button class="btn primary" id="mvDown">Ladda ner framstegsfil</button><button class="btn" id="mvCopy">Kopiera som text</button></div>
+    <h3>2. Hämta in dem på den nya enheten</h3>
+    <div class="row"><label class="btn" style="display:inline-flex;align-items:center">Välj framstegsfil<input type="file" id="mvFile" accept=".json,application/json,text/plain" hidden></label></div>
+    <p class="count">Eller klistra in texten här:</p>
+    <textarea id="mvText" style="width:100%;min-height:4rem;font:inherit;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem"></textarea>
+    <div class="row"><button class="btn" id="mvPaste">Hämta in texten</button></div>
+    <p class="msg" id="mvMsg" aria-live="polite"></p>
+  </details>
+
+  <div class="intro" style="--c:var(--start)">
+    <h2>Hur långt har du kommit?</h2>
+    <div class="tabsum" id="tabSummary"></div>
+  </div>
+</section>
+
+<!-- ======================= MATERIA ======================= -->
+<section class="panel" id="p-materia" data-color="materia" data-title="Säkerhet och faser" hidden>
+  <div class="intro"><h2>Säkerhet, materia och faser 🧪</h2><p>Bok: s. 69–72 och 79–84.</p></div>
+
+  <section class="task" data-task="m-sak">
+    <header><h3>Sammanfattning: säkerhet i labbet (s. 69–72)</h3></header>
+    <div class="sum">
+    <p>Det är <b>du själv</b> som har ansvaret för att allt sker säkert i labbet. Där finns värmekällor som kan ge brännskador, och kemikalier som kan vara giftiga eller frätande.</p>
+    <p><b>Skyddsutrustning:</b> labbrock, skyddsglasögon och handskar. De skyddar hud, ögon och kläder.</p>
+    <p><b>För att få labba</b> ska du ha gått en säkerhetskurs, ha ”körkort” för gasolbrännaren, följa säkerhetsreglerna och komma i tid. Kommer du för sent kan du missa viktig information och bli en säkerhetsrisk.</p>
+    <p><b>Farosymboler</b> är märken som talar om på vilket sätt ett kemiskt ämne är farligt.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="m-haz">
+    <header><h3>Farosymbolerna</h3></header>
+    <div data-widget="hazards" data-task="m-haz"></div>
+  </section>
+
+  <section class="task" data-task="m-fas">
+    <header><h3>Sammanfattning: materia och faser (s. 79–81)</h3></header>
+    <div class="sum">
+    <p><b>Materia</b> är allt som har massa, alltså kan vägas, och tar plats. Din mobil, vattnet och luften är materia. All materia består av partiklar: <b>atomer, molekyler eller joner</b>.</p>
+    <p>Materia finns i tre <b>faser</b>, som också kallas <b>aggregationstillstånd</b>:</p>
+    <p><b>Fast form (s)</b>: partiklarna har bestämda platser och vibrerar. <b>Flytande form (l)</b>: partiklarna rör sig runt varandra. <b>Gasform (g)</b>: partiklarna studsar omkring som pingisbollar, och bindningarna mellan dem är brutna.</p>
+    <div class="trick"><b>Minnesknep:</b> s = solid (fast), l = liquid (flytande), g = gas.</div>
+    <p>Ju varmare ett ämne är, desto mer rör sig partiklarna. Vid <b>absoluta nollpunkten</b>, −273 °C, står de helt stilla. Det kan inte bli kallare än så.</p>
+    <p>Två saker avgör vilken fas ett ämne har: <b>temperatur och tryck</b>. På Mount Everest är trycket lägre, och där kokar vatten redan vid cirka 70 °C.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="m-over">
+    <header><h3>Sammanfattning: fasövergångar (s. 82–84)</h3></header>
+    <div class="sum">
+    <p><b>Smältning</b>: fast → flytande, vid smältpunkten (vatten 0 °C). <b>Stelning</b>: flytande → fast, vid fryspunkten (också 0 °C). <b>Förångning</b>: flytande → gas, vid kokpunkten (vatten 100 °C). <b>Kondensation</b>: gas → flytande. <b>Sublimering</b>: fast → gas direkt. <b>Desublimering</b>: gas → fast direkt, till exempel rimfrost.</p>
+    <p>En fasövergång är <b>ingen kemisk reaktion</b>. Inga nya ämnen bildas – is och vatten är båda H₂O. Det är en fysikalisk förändring.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="m-sim">
+    <header><h3>Partikelsimulatorn: värm och kyl vatten</h3></header>
+    <p>Dra i reglaget eller tryck på knapparna. Se hur partiklarna rör sig i is, vatten och vattenånga.</p>
+    <div data-widget="phasesim" data-task="m-sim"></div>
+    <div class="fact">Testa också Ptable: dra i temperaturreglaget högst upp och se vilka grundämnen som är fasta, flytande och gasformiga.</div>
+    <div data-widget="link" data-set="ptable"></div>
+  </section>
+
+  <section class="task" data-task="m-faser">
+    <header><h3>Sätt namn på fasövergångarna</h3></header>
+    <div data-widget="label" data-set="faser" data-task="m-faser"></div>
+    <h3>Para ihop begreppen</h3>
+    <div data-widget="match" data-set="fas"></div>
+  </section>
+
+  <section class="task" data-task="m-fysk">
+    <header><h3>Fasövergång eller kemisk reaktion?</h3></header>
+    <div data-widget="sort" data-set="fysk" data-task="m-fysk"></div>
+  </section>
+
+  <section class="task" data-task="m-quiz">
+    <header><h3>Quiz: faser och fasövergångar</h3></header>
+    <div data-widget="mcq" data-set="fas" data-task="m-quiz"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="materia">Jag är klar med Säkerhet och faser</button></div>
+</section>
+
+<!-- ======================= ATOMER ======================= -->
+<section class="panel" id="p-atom" data-color="atomc" data-title="Atomer och periodiska systemet" hidden>
+  <div class="intro"><h2>Atomer och periodiska systemet ⚛️</h2><p>Bok: s. 87–106.</p></div>
+
+  <section class="task" data-task="a-atom">
+    <header><h3>Sammanfattning: atomens uppbyggnad (s. 87–91)</h3></header>
+    <div class="sum">
+    <p>Ordet atom betyder ”odelbar”, men idag vet vi att atomen består av mindre delar:</p>
+    <p><b>Protoner</b> är positivt laddade (+) och finns i atomkärnan. <b>Neutroner</b> saknar laddning (0) och finns också i kärnan. <b>Elektroner</b> är negativt laddade (−) och rör sig runt kärnan i <b>elektronskal</b>, som heter K, L, M och så vidare.</p>
+    <p>Nästan hela atomens massa finns i kärnan, men det mesta av atomen är tomrum. I en atom är det alltid <b>lika många elektroner som protoner</b>, så atomen är neutral.</p>
+    <p>Elektronerna i det <b>yttersta skalet</b> kallas <b>valenselektroner</b>. Ett <b>grundämne</b> består av en enda sorts atomer, och antalet protoner bestämmer vilket grundämne det är. Atommodellen med skal kommer från <b>Niels Bohr</b>.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="a-delar">
+    <header><h3>Sätt ut atomens delar</h3></header>
+    <div data-widget="label" data-set="atomdel" data-task="a-delar"></div>
+  </section>
+
+  <section class="task" data-task="a-bygg">
+    <header><h3>Sammanfattning och bygg själv: joner och isotoper (s. 92–95)</h3></header>
+    <div class="sum">
+    <p>En <b>jon</b> är en laddad partikel. Den bildas när en atom ger bort eller tar upp elektroner. Ger atomen bort elektroner blir jonen <b>positiv</b>, tar den upp elektroner blir den <b>negativ</b>.</p>
+    <p>Atomer ”vill” ha <b>ädelgasstruktur</b>, alltså fullt yttersta skal med åtta valenselektroner (helium har två). Natrium ger bort sin enda valenselektron och blir <b>Na⁺</b>. Klor tar upp en elektron och blir <b>Cl⁻</b>. Tillsammans bildar de jonföreningen koksalt, <b>NaCl</b>.</p>
+    <p><b>Isotoper</b> är atomer av samma grundämne med samma antal protoner men <b>olika många neutroner</b>.</p>
+    </div>
+    <h3>Atombyggaren</h3>
+    <p>Lägg till och ta bort protoner, neutroner och elektroner. Klara uppdragen nedanför!</p>
+    <div data-widget="atombuild" data-task="a-bygg"></div>
+    <h3>Bygg också i PhET</h3>
+    <p>Bygg några atomer och joner i PhET:s spel. Prova sedan läget ”Spel” där du får poäng.</p>
+    <div data-widget="link" data-set="atom"></div>
+  </section>
+
+  <section class="task" data-task="a-nacl">
+    <header><h3>Så bildas koksalt – i rätt ordning</h3></header>
+    <div data-widget="order" data-set="naCl" data-task="a-nacl"></div>
+  </section>
+
+  <section class="task" data-task="a-part">
+    <header><h3>Atom, molekyl eller jon?</h3></header>
+    <div data-widget="sort" data-set="partikel" data-task="a-part"></div>
+    <h3>Quiz: atomer och joner</h3>
+    <div data-widget="mcq" data-set="atom"></div>
+  </section>
+
+  <section class="task" data-task="a-ps">
+    <header><h3>Sammanfattning: periodiska systemet (s. 97–102)</h3></header>
+    <div class="sum">
+    <p>Periodiska systemet är en tabell över alla grundämnen, sorterade efter stigande <b>atomnummer</b> – antalet protoner.</p>
+    <p>De vågräta raderna heter <b>perioder</b> (7 st). Ämnen i samma period har <b>lika många elektronskal</b>. De lodräta kolumnerna heter <b>grupper</b> (1–18). Ämnen i samma grupp har <b>liknande egenskaper</b>.</p>
+    <p>Grupp 1 har 1 valenselektron, grupp 2 har 2, grupp 13 har 3, grupp 14 har 4, och så vidare upp till grupp 17 med 7. Grupp 18 har fullt yttersta skal.</p>
+    <p><b>Grupp 1:</b> väte och <b>alkalimetallerna</b>, som är mjuka och reagerar häftigt med vatten. Väte är det lättaste och vanligaste grundämnet i universum. <b>Grupp 17: halogenerna</b> – ordet betyder saltbildare. <b>Grupp 18: ädelgaserna</b>, som är mycket stabila och nästan aldrig reagerar.</p>
+    </div>
+  </section>
+
+  <section class="task" data-task="a-tab">
+    <header><h3>Utforska periodiska systemet (grundämne 1–20)</h3></header>
+    <p>Tryck på ett grundämne för att se protoner, elektronskal och valenselektroner. Spela sedan ”Hitta grundämnet”.</p>
+    <div data-widget="ptab" data-task="a-tab"></div>
+  </section>
+
+  <section class="task" data-task="a-met">
+    <header><h3>Sammanfattning: metaller och Mendelejev (s. 103–106)</h3></header>
+    <div class="sum">
+    <p>De flesta grundämnen är <b>metaller</b>. Metaller glänser, leder värme och elektricitet bra, och går att gjuta och smida. <b>Icke-metaller</b> saknar minst en av de egenskaperna. <b>Halvmetaller</b> ligger på gränsen och påminner om båda. Grupperna 3–12 kallas <b>övergångsmetaller</b>.</p>
+    <p>Periodiska systemet skapades <b>1869</b> av ryssen <b>Dmitrij Mendelejev</b>. Han lämnade tomma platser för grundämnen som ännu inte var upptäckta.</p>
+    </div>
+    <div data-widget="sort" data-set="metall" data-task="a-met"></div>
+    <h3>Quiz: periodiska systemet</h3>
+    <div data-widget="mcq" data-set="ps"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="atom">Jag är klar med Atomer</button></div>
+</section>
+
+<!-- ======================= MOLEKYLER ======================= -->
+<section class="panel" id="p-mol" data-color="molc" data-title="Molekyler och bindningar" hidden>
+  <div class="intro"><h2>Molekyler och bindningar 🔗</h2><p>Bok: s. 109–121.</p></div>
+
+  <section class="task" data-task="o-mol">
+    <header><h3>Sammanfattning: molekyler (s. 109–113)</h3></header>
+    <div class="sum">
+    <p>En <b>molekyl</b> är minst två atomer som sitter ihop med <b>kovalenta bindningar</b>. I en kovalent bindning delar atomerna på ett <b>elektronpar</b>, två elektroner, därför kallas den också <b>elektronparbindning</b>.</p>
+    <p>Atomerna delar elektroner för att få <b>ädelgasstruktur</b>. I vattenmolekylen delar syre ett elektronpar med varje väteatom, så alla får fullt yttersta skal.</p>
+    <p>H₂ är en vätemolekyl med två väteatomer. 3H betyder tre väteatomer, och 3H₂ betyder tre vätemolekyler. Koldioxid, CO₂, ingår i kolets kretslopp: den byggs om i fotosyntesen och bildas i cellandningen.</p>
+    </div>
+    <h3>Bygg molekyler i PhET</h3>
+    <p>Välj ”Ensam” och bygg molekylerna i Samling 1: vatten, syrgas, vätgas, koldioxid och kvävgas.</p>
+    <div data-widget="link" data-set="mol"></div>
+    <h3>Vilken formel?</h3>
+    <div data-widget="molq" data-task="o-mol"></div>
+  </section>
+
+  <section class="task" data-task="o-bind">
+    <header><h3>Sammanfattning: kemiska bindningar (s. 117–121)</h3></header>
+    <div class="sum">
+    <p>En <b>kemisk bindning</b> är en dragningskraft mellan atomer. De tre vanligaste:</p>
+    <p><b>Jonbindning</b>: positiva och negativa joner dras till varandra, som i koksalt, NaCl. <b>Kovalent bindning</b>: atomer delar på elektronpar. Syrgas, O₂, har en dubbelbindning och kvävgas, N₂, en mycket stark trippelbindning. <b>Metallisk bindning</b>: i metaller rör sig valenselektronerna fritt mellan positiva metalljoner. Därför leder metaller ström bra.</p>
+    </div>
+    <div data-widget="sort" data-set="bind" data-task="o-bind"></div>
+  </section>
+
+  <section class="task" data-task="o-quiz">
+    <header><h3>Quiz: molekyler och bindningar</h3></header>
+    <div data-widget="mcq" data-set="mol" data-task="o-quiz"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="mol">Jag är klar med Molekyler</button></div>
+</section>
+
+<!-- ======================= VATTEN ======================= -->
+<section class="panel" id="p-vatten" data-color="vatten" data-title="Vattnet" hidden>
+  <div class="intro"><h2>Vattnet 💧</h2><p>Bok: s. 187–200.</p></div>
+
+  <section class="task" data-task="v-kret">
+    <header><h3>Sammanfattning: vatten och vattnets kretslopp (s. 187–190)</h3></header>
+    <div class="sum">
+    <p>Vatten, H₂O, är en kemisk förening av två väteatomer och en syreatom. Cirka <b>97 %</b> av jordens vatten är salt havsvatten och bara <b>3 %</b> är sötvatten. En människa består till cirka <b>60 %</b> av vatten. Vatten smälter vid 0 °C och kokar vid 100 °C.</p>
+    <p><b>Is flyter</b>, eftersom is har <b>lägre densitet</b> än flytande vatten – molekylerna ligger glesare i is. Därför fryser en sjö uppifrån och ner, och fiskarna klarar sig vid botten.</p>
+    <p><b>Vattnets kretslopp drivs av solen.</b> Vattnet avdunstar, kyls högt upp och kondenserar till moln. Det faller som regn och snö, tränger ner i marken till grundvattnet eller rinner i vattendrag till sjöar och hav. Växter avger vattenånga, det kallas <b>transpiration</b>.</p>
+    <p>Rent vatten innehåller också lite <b>vätejoner, H⁺</b>, och <b>hydroxidjoner, OH⁻</b>.</p>
+    </div>
+    <h3>Vattnets kretslopp – i rätt ordning</h3>
+    <div data-widget="order" data-set="vatten" data-task="v-kret"></div>
+  </section>
+
+  <section class="task" data-task="v-bild">
+    <header><h3>Sätt namn på vattnets kretslopp</h3></header>
+    <div data-widget="label" data-set="vatten" data-task="v-bild"></div>
+  </section>
+
+  <section class="task" data-task="v-los">
+    <header><h3>Sammanfattning: vatten som lösningsmedel (s. 193–200)</h3></header>
+    <div class="sum">
+    <p>En <b>lösning</b> är en blandning där man inte kan se olika delar. Det ämne det finns mest av kallas lösningsmedel.</p>
+    <p>Vattenmolekylen är en <b>dipol</b>, och därför kan vatten dra isär jonerna i ett salt, så att saltet löser sig. Vissa ämnen är <b>vattenlösliga</b>, andra <b>fettlösliga</b> och några löser sig inte alls. Olja flyter på vatten eftersom den inte blandar sig och har lägre densitet.</p>
+    <p><b>Tvål</b> innehåller <b>tensider</b>, som har ett vattenlösligt ”huvud” och en fettlöslig ”svans”. Svansarna fastnar i fet smuts och huvudena i vattnet, så smutsen sköljs bort.</p>
+    <p><b>Miljögifter</b> är fettlösliga och samlas i djurens fett, mest hos djuren högst upp i näringskedjan. I kroppen löser och transporterar vattnet näring och avfall, och växter tar upp vatten och <b>närsalter</b> genom rötterna.</p>
+    </div>
+    <div data-widget="sort" data-set="los" data-task="v-los"></div>
+    <h3>Så fungerar tvål – i rätt ordning</h3>
+    <div data-widget="order" data-set="tensid"></div>
+  </section>
+
+  <section class="task" data-task="v-quiz">
+    <header><h3>Quiz: vattnet</h3></header>
+    <div data-widget="mcq" data-set="vatten" data-task="v-quiz"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="vatten">Jag är klar med Vattnet</button></div>
+</section>
+
+<!-- ======================= KVÄVE ======================= -->
+<section class="panel" id="p-kvave" data-color="kvave" data-title="Kväve och försurning" hidden>
+  <div class="intro"><h2>Kvävets kretslopp och försurning 🌱</h2><p>Bok: s. 255–259.</p></div>
+
+  <section class="task" data-task="n-kret">
+    <header><h3>Sammanfattning: kvävets kretslopp (s. 255–259)</h3></header>
+    <div class="sum">
+    <p>Luften består till <b>78 % av kvävgas, N₂</b>, och 21 % syre. Alla organismer behöver kväve för att bygga <b>proteiner och DNA</b>, men vi kan inte ta kvävet direkt ur luften.</p>
+    <p><b>Från luft till mark:</b> kvävefixerande bakterier fångar luftens kväve. <b>Från mark till växter:</b> rötterna tar upp kvävet som ammonium- och nitratjoner. <b>Genom näringskedjan:</b> djur och människor får kväve när de äter. <b>Tillbaka till luften:</b> nedbrytare bryter ner döda växter och djur, och bakterier gör om kvävet till kvävgas igen.</p>
+    <p><b>Övergödning</b> är när det finns mer näringsämnen än naturen kan ta tillvara, till exempel från gödsel och bilavgaser. Då blir det algblomning, och när algerna bryts ner går syret åt – syrebrist och döda bottnar.</p>
+    </div>
+    <h3>Kvävets kretslopp – i rätt ordning</h3>
+    <div data-widget="order" data-set="kvave" data-task="n-kret"></div>
+  </section>
+
+  <section class="task" data-task="n-bild">
+    <header><h3>Sätt namn på kvävets kretslopp</h3></header>
+    <div data-widget="label" data-set="kvave" data-task="n-bild"></div>
+  </section>
+
+  <section class="task" data-task="n-overg">
+    <header><h3>Övergödning – i rätt ordning, och kväveformlerna</h3></header>
+    <div data-widget="order" data-set="overg" data-task="n-overg"></div>
+    <h3>Para ihop formel och namn</h3>
+    <div data-widget="match" data-set="kvave"></div>
+  </section>
+
+  <section class="task" data-task="n-ph">
+    <header><h3>Surt, basiskt och försurning</h3></header>
+    <div class="sum">
+    <p>Om en vätska är sur eller basisk beror på <b>vätejoner, H⁺</b>, och <b>hydroxidjoner, OH⁻</b>. Det mäts med <b>pH</b>: under 7 är surt, 7 är neutralt och över 7 är basiskt.</p>
+    <p>När bilar och fabriker förbränner bränsle bildas <b>kväveoxider</b>, NO och NO₂. I luften bildar de <b>surt regn</b>, som gör mark och sjöar sura. Vid extrem försurning släpps <b>giftiga metalljoner</b> ut i marken.</p>
+    </div>
+    <p>Dra i reglaget och prova pH under 7, exakt 7 och över 7.</p>
+    <div data-widget="phscale" data-task="n-ph"></div>
+    <div data-widget="sort" data-set="ph"></div>
+  </section>
+
+  <section class="task" data-task="n-quiz">
+    <header><h3>Quiz: kväve och försurning</h3></header>
+    <div data-widget="mcq" data-set="kvave" data-task="n-quiz"></div>
+  </section>
+
+  <div class="tabdone"><button class="bigbtn" data-tabdone="kvave">Jag är klar med Kväve och försurning</button></div>
+</section>
+
+<!-- ======================= SEPARERA ======================= -->
+<section class="panel" id="p-sep" data-color="sep" data-title="Rena ämnen och blandningar" hidden>
+  <div class="intro"><h2>Rena ämnen och separationsmetoder 🔬</h2><p>Det här tränar ni i Kemi Direkt och i labbuppgiften om separationsmetoder.</p></div>
+  <section class="task" data-task="s-sep">
+    <header><h3>Sammanfattning</h3></header>
+    <div class="sum">
+    <p>Ett <b>rent ämne</b> består av bara en sorts ämne: ett grundämne som guld, eller en kemisk förening som destillerat vatten. En <b>blandning</b> innehåller flera ämnen, till exempel luft, saltvatten eller saft. Kranvatten är en blandning, eftersom det finns lösta ämnen i det.</p>
+    <p>Blandningar kan separeras: <b>filtrering</b> skiljer fasta partiklar från vätska, <b>sedimentering</b> låter tunga partiklar sjunka till botten, <b>indunstning</b> låter vätskan avdunsta så att saltet blir kvar, och <b>destillation</b> kokar vätskan och samlar upp ångan som rent vatten.</p>
+    </div>
+    <div data-widget="sort" data-set="rent" data-task="s-sep"></div>
+  </section>
+  <section class="task" data-task="s-match">
+    <header><h3>Para ihop separationsmetoderna</h3></header>
+    <div data-widget="match" data-set="sep" data-task="s-match"></div>
+    <h3>Quiz</h3>
+    <div data-widget="mcq" data-set="sep"></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="sep">Jag är klar med Rena ämnen</button></div>
+</section>
+
+<!-- ======================= SKRIVTRÄNING ======================= -->
+<section class="panel" id="p-fragor" data-color="fraga" data-title="Skrivträning" hidden>
+  <div class="intro">
+    <h2>Skrivträning ✍️</h2>
+    <p>Här är lärarens frågor och bokens viktigaste instuderingsfrågor. Skriv ditt svar och tryck <b>Kolla</b> för att se vilka viktiga ord du fick med och ett exempelsvar. Tryck sedan <b>Skriv igen</b> och försök utan att titta.</p>
+  </div>
+  <section class="task" data-task="f-grund">
+    <header><h3>Instuderingsfrågor</h3></header>
+    <div data-widget="writeq" data-set="grund" data-task="f-grund"></div>
+  </section>
+  <section class="task" data-task="f-mem">
+    <header><h3>Memory med begreppen</h3></header>
+    <div data-widget="memory" data-set="begrepp" data-task="f-mem"></div>
+    <h3>Para ihop</h3>
+    <div data-widget="match" data-set="begrepp"></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="fragor">Jag är klar med Skrivträningen</button></div>
+</section>
+
+<!-- ======================= PROV ======================= -->
+<section class="panel" id="p-prov" data-color="provc" data-title="Övningsprov" hidden>
+  <div class="intro"><h2>Övningsprov 📝</h2><p>20 blandade frågor från hela området. Du får procent i slutet. Gör det gärna två gånger!</p></div>
+  <section class="task" data-task="p-prov">
+    <header><h3>Övningsprovet</h3></header>
+    <div data-widget="mcq" data-set="prov" data-task="p-prov"></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="prov">Jag är klar med Övningsprovet</button></div>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+
+const PLAN=[
+ ['k01','Pass 1: Labbsäkerhet och farosymboler – läs s. 69–72','materia','m-sak'],
+ ['k02','Pass 2: Materia och faser – läs s. 79–81','materia','m-fas'],
+ ['k03','Pass 3: Fasövergångar – läs s. 82–84, testa partikelsimulatorn och Ptable','materia','m-over'],
+ ['k04','Pass 4: Atomens uppbyggnad – läs s. 87–91','atom','a-atom'],
+ ['k05','Pass 5: Joner och isotoper – läs s. 92–95, bygg atomer här och i PhET','atom','a-bygg'],
+ ['k06','Pass 6: Periodiska systemet – läs s. 97–102','atom','a-ps'],
+ ['k07','Pass 7: Metaller, icke-metaller och Mendelejev – läs s. 103–106','atom','a-met'],
+ ['k08','Pass 8: Molekyler – läs s. 109–113, bygg molekyler i PhET','mol','o-mol'],
+ ['k09','Pass 9: Kemiska bindningar – läs s. 117–121','mol','o-bind'],
+ ['k10','Pass 10: Vattnets kretslopp – läs s. 187–190','vatten','v-kret'],
+ ['k11','Pass 11: Vatten som lösningsmedel – läs s. 193–200','vatten','v-los'],
+ ['k12','Pass 12: Kvävets kretslopp och övergödning – läs s. 255–259','kvave','n-kret'],
+ ['k13','Pass 13: Surt, basiskt och försurning','kvave','n-ph'],
+ ['k14','Pass 14: Rena ämnen, blandningar och separationsmetoder','sep','s-sep'],
+ ['k15','Pass 15: Skrivträning med lärarens frågor','fragor','f-grund'],
+ ['k16','Pass 16: Övningsprovet','prov','p-prov']
+];
+const CHECK=[
+ ['c1','Jag kan farosymbolerna och reglerna i labbet','materia'],
+ ['c2','Jag vet vad materia är och kan de tre faserna med beteckningarna (s), (l) och (g)','materia'],
+ ['c3','Jag kan alla fasövergångar och vad som händer med partiklarna','materia'],
+ ['c4','Jag kan atomens delar och deras laddningar','atom'],
+ ['c5','Jag vet vad ett grundämne, en jon och en isotop är','atom'],
+ ['c6','Jag kan läsa av periodiska systemet: grupper, perioder och valenselektroner','atom'],
+ ['c7','Jag vet vad en molekyl är och kan de tre typerna av kemisk bindning','mol'],
+ ['c8','Jag kan vattnets kretslopp och varför vatten är ett bra lösningsmedel','vatten'],
+ ['c9','Jag kan kvävets kretslopp, övergödning och försurning','kvave'],
+ ['c10','Jag kan skillnaden mellan rena ämnen och blandningar, och några separationsmetoder','sep']
+];
+const LINKS={
+ atom:['https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_sv.html','Bygg en atom (PhET)'],
+ mol:['https://phet.colorado.edu/sims/html/build-a-molecule/latest/build-a-molecule_sv.html','Bygg en molekyl (PhET)'],
+ ptable:['https://ptable.com/?lang=sv#Egenskaper','Interaktivt periodiskt system (Ptable)']
+};
+
+const HAZ=[
+ ['explosivt','Explosivt','Kan explodera vid värme eller stötar.'],
+ ['brand','Brandfarligt','Kan brinna mycket häftigt om det utsätts för värme eller en gnista.'],
+ ['oxid','Oxiderande','Kan orsaka eller göra en brand värre.'],
+ ['gas','Gas under tryck','Gasflaskor som kan explodera om de blir varma.'],
+ ['frat','Frätande','Kan ge frätskador på metaller, hud och ögon.'],
+ ['gift','Giftigt','Kan orsaka dödsfall om man äter eller andas in det.'],
+ ['skadl','Skadligt','Kan ge irritation på hud och i luftvägar, eller allergi.'],
+ ['halsa','Hälsofarligt','Kan orsaka cancer, skada organ eller utlösa astma.'],
+ ['miljo','Miljöfarligt','Giftigt för djur och växter som lever i vatten.']
+];
+
+const ELEM=[
+ [1,'H','Väte',1,1,'icke-metall'],[2,'He','Helium',18,1,'ädelgas'],
+ [3,'Li','Litium',1,2,'alkalimetall'],[4,'Be','Beryllium',2,2,'metall'],[5,'B','Bor',13,2,'halvmetall'],[6,'C','Kol',14,2,'icke-metall'],[7,'N','Kväve',15,2,'icke-metall'],[8,'O','Syre',16,2,'icke-metall'],[9,'F','Fluor',17,2,'halogen'],[10,'Ne','Neon',18,2,'ädelgas'],
+ [11,'Na','Natrium',1,3,'alkalimetall'],[12,'Mg','Magnesium',2,3,'metall'],[13,'Al','Aluminium',13,3,'metall'],[14,'Si','Kisel',14,3,'halvmetall'],[15,'P','Fosfor',15,3,'icke-metall'],[16,'S','Svavel',16,3,'icke-metall'],[17,'Cl','Klor',17,3,'halogen'],[18,'Ar','Argon',18,3,'ädelgas'],
+ [19,'K','Kalium',1,4,'alkalimetall'],[20,'Ca','Kalcium',2,4,'metall']
+];
+const NEUT=[0,0,2,4,5,6,6,7,8,10,10,12,12,14,14,16,16,18,22,20,20];
+const shells=e=>{const cap=[2,8,8,8];const s=[];let r=e;for(const c of cap){if(r<=0)break;s.push(Math.min(c,r));r-=c;}return s;};
+
+const MISSIONS=[
+ ['Bygg en väteatom',1,0,1],['Bygg en heliumatom',2,2,2],['Bygg en kolatom',6,6,6],['Bygg en syreatom',8,8,8],
+ ['Bygg en isotop av väte med en neutron',1,1,1],['Gör en natriumjon, Na⁺ (natrium har 12 neutroner)',11,12,10],
+ ['Gör en kloridjon, Cl⁻ (klor har 18 neutroner)',17,18,18],['Gör en magnesiumjon, Mg²⁺ (12 neutroner)',12,12,10]
+];
+
+const FIND=[
+ ['Hitta grundämnet med 8 protoner',8],['Hitta ädelgasen i period 2',10],['Hitta halogenen i period 3',17],['Hitta alkalimetallen i period 3',11],
+ ['Hitta grundämnet med 6 protoner',6],['Hitta det lättaste grundämnet',1],['Hitta grundämnet i grupp 15, period 2',7],['Hitta grundämnet med 2 elektronskal och 1 valenselektron',3],
+ ['Hitta halvmetallen i period 3',14],['Hitta ädelgasen med bara ett elektronskal',2],['Hitta grundämnet i grupp 2, period 4',20],['Hitta grundämnet med 3 elektronskal och 6 valenselektroner',16]
+];
+
+const SORT={
+ fysk:{buckets:['Fasövergång (fysikalisk)','Kemisk reaktion'],items:[['Is smälter',0],['Vatten kokar',0],['Rimfrost bildas',0],['Smör smälter i stekpannan',0],['Vattenånga kondenserar på en kall spegel',0],['Ved brinner',1],['Vätgas och syrgas bildar vatten',1],['Järn rostar',1],['En kaka bakas i ugnen',1]]},
+ partikel:{buckets:['Atom','Molekyl','Jon'],items:[['He',0],['Ne',0],['Ar',0],['H₂O',1],['O₂',1],['CO₂',1],['N₂',1],['Na⁺',2],['Cl⁻',2],['Mg²⁺',2]]},
+ metall:{buckets:['Metall','Halvmetall','Icke-metall'],items:[['Natrium, Na',0],['Järn, Fe',0],['Koppar, Cu',0],['Guld, Au',0],['Magnesium, Mg',0],['Kisel, Si',1],['Bor, B',1],['Germanium, Ge',1],['Syre, O',2],['Kväve, N',2],['Klor, Cl',2],['Kol, C',2],['Helium, He',2]]},
+ bind:{buckets:['Jonbindning','Kovalent bindning','Metallisk bindning'],items:[['Koksalt, NaCl',0],['Positiva och negativa joner dras till varandra',0],['Vätgas, H₂',1],['Vatten, H₂O',1],['Kvävgas, N₂ – trippelbindning',1],['Atomerna delar på elektronpar',1],['En koppartråd',2],['Fria elektroner rör sig i hela biten',2],['Förklarar att metaller leder ström',2]]},
+ los:{buckets:['Vattenlösligt','Fettlösligt'],items:[['Koksalt, NaCl',0],['Glukos (socker)',0],['Urinämne',0],['Närsalter som växter tar upp',0],['Matolja',1],['Miljögifter',1],['Olja från cykelkedjan',1],['Fett i maten',1]]},
+ ph:{buckets:['Surt (pH under 7)','Neutralt (pH 7)','Basiskt (pH över 7)'],items:[['Citronsaft',0],['Ättika',0],['Surt regn',0],['Magsaft',0],['Rent vatten',1],['Tvålvatten',2],['Ammoniak',2],['Avloppsrensningsmedel',2]]},
+ rent:{buckets:['Rent ämne','Blandning'],items:[['Destillerat vatten',0],['Guld',0],['Syrgas',0],['Koksalt, NaCl',0],['Luft',1],['Saltvatten',1],['Saft',1],['Kranvatten',1],['Gröt',1]]}
+};
+const ORDER={
+ vatten:['Solen värmer hav, sjöar och mark','Vattnet avdunstar och stiger som vattenånga','Högt upp är det kallt – ångan kondenserar till moln','Vattnet faller som regn, snö eller hagel','Vattnet rinner ner till grundvatten eller till vattendrag','Vattnet når sjöar och hav igen'],
+ kvave:['Kvävgas, N₂, finns i luften (78 %)','Kvävefixerande bakterier fångar luftens kväve','Växternas rötter tar upp kväve som ammonium- och nitratjoner','Djur och människor får kväve genom att äta växter','Nedbrytare bryter ner döda växter och djur','Andra bakterier gör om kvävet till kvävgas som går tillbaka till luften'],
+ overg:['För mycket kväve och fosfor hamnar i sjöar och hav','Alger och bakterier förökar sig kraftigt – algblomning','Algerna dör och sjunker till botten','När de bryts ner går syret åt','Det blir syrebrist och döda bottnar'],
+ tensid:['Det sitter fet smuts på huden','Tensidernas fettlösliga svansar tränger in i smutspartikeln','De vattenlösliga huvudena pekar ut i vattnet','Många tensider omringar smutspartikeln','Smutspartikeln lossnar och sköljs bort med vattnet'],
+ naCl:['En natriumatom har 1 valenselektron, en kloratom har 7','Natriumatomen ger bort sin valenselektron till kloratomen','Natrium blir en positiv jon, Na⁺','Klor blir en negativ jon, Cl⁻','Båda har nu ädelgasstruktur','Plus och minus dras till varandra – koksalt, NaCl, bildas']
+};
+const MATCH={
+ fas:[['Smältning','Fast form → flytande form'],['Stelning','Flytande form → fast form'],['Förångning','Flytande form → gasform'],['Kondensation','Gasform → flytande form'],['Sublimering','Fast form → gasform direkt'],['Desublimering','Gasform → fast form direkt, till exempel rimfrost'],['Aggregationstillstånd','Ett annat ord för fas'],['Absoluta nollpunkten','−273 °C – partiklarna står helt stilla']],
+ kvave:[['N₂','Kvävgas'],['NH₃','Ammoniak'],['NH₄⁺','Ammoniumjon'],['NO₃⁻','Nitratjon'],['NO','Kvävemonoxid'],['NO₂','Kvävedioxid']],
+ sep:[['Filtrering','Ett filter håller kvar fasta partiklar, vätskan rinner igenom'],['Sedimentering','Tunga partiklar sjunker till botten, används i reningsverk'],['Dekantering','Man häller försiktigt av vätskan ovanför bottensatsen'],['Indunstning','Vätskan avdunstar så att det lösta ämnet, till exempel salt, blir kvar'],['Destillation','Vätskan kokas till ånga som kyls och samlas upp – ger rent vatten'],['Kromatografi','Färger i bläck sprids olika långt på ett papper']],
+ begrepp:[['Materia','Allt som har massa och tar plats'],['Grundämne','Ämne av en enda sorts atomer'],['Kemisk förening','Ämne av två eller flera sorters atomer som sitter ihop'],['Jon','Laddad partikel – atomen har gett bort eller tagit upp elektroner'],['Isotop','Samma antal protoner men olika många neutroner'],['Valenselektron','Elektron i det yttersta skalet'],['Ädelgasstruktur','Fullt yttersta elektronskal'],['Molekyl','Minst två atomer ihop med kovalent bindning'],['Densitet','Hur stor massa en viss volym har'],['Kvävefixering','Bakterier tar upp kväve från luften']]
+};
+const MEM={begrepp:MATCH.begrepp};const LABEL={};
+
+const MOLQ=[
+ [['H','H','O'],'H₂O','vatten',['H₂O','HO₂','H₂O₂','OH']],
+ [['O','O'],'O₂','syrgas',['O₂','O','O₃','H₂O']],
+ [['H','H'],'H₂','vätgas',['H₂','H','2H','He']],
+ [['C','O','O'],'CO₂','koldioxid',['CO₂','CO','C₂O','O₂C₂']],
+ [['N','N'],'N₂','kvävgas',['N₂','N','NO₂','Ne']],
+ [['N','H','H','H'],'NH₃','ammoniak',['NH₃','N₃H','NH₄','H₃N₂']],
+ [['C','H','H','H','H'],'CH₄','metan',['CH₄','C₄H','CH₂','C₂H₄']],
+ [['Cl','Cl'],'Cl₂','klorgas',['Cl₂','Cl','2Cl','C₂l']]
+];
+const ATCOL={H:'#F2F2F2',O:'#E0452F',C:'#333333',N:'#2F5BD8',Cl:'#3FB34A'};
+
+const MCQ={
+ fas:[
+  ['Vad kallas faserna med ett annat ord?',['Aggregationstillstånd','Atomnummer','Kretslopp','Molekyler'],0,'Fas och aggregationstillstånd är samma sak.'],
+  ['Hur betecknas fast form i kemin?',['(s)','(l)','(g)','(f)'],0,'s från engelskans solid. Flytande är (l), liquid, och gas är (g).'],
+  ['Vad händer med partiklarna i fast form?',['De har fasta platser och vibrerar','De studsar omkring som pingisbollar','De rör sig runt varandra','De står helt stilla'],0,'Partiklarna hålls på plats av kemiska bindningar.'],
+  ['Vilken fasövergång sker vid kokpunkten?',['Förångning','Smältning','Stelning','Sublimering'],0,'Vatten kokar vid 100 °C.'],
+  ['Vad heter det när vattenånga blir till vatten?',['Kondensation','Förångning','Smältning','Sublimering'],0,'Kondensationspunkten är samma temperatur som kokpunkten.'],
+  ['Vad är rimfrost ett exempel på?',['Desublimering – gas blir direkt fast','Smältning','Förångning','En kemisk reaktion'],0,'Vattenånga blir direkt till iskristaller.'],
+  ['Varför är en fasövergång ingen kemisk reaktion?',['Inga nya ämnen bildas','Det blir varmt','Det tar lång tid','Partiklarna försvinner'],0,'Is och vatten är samma ämne, H₂O.'],
+  ['Vilka två saker avgör ett ämnes fas?',['Temperatur och tryck','Färg och form','Massa och storlek','Lukt och smak'],0,'På Mount Everest är trycket lägre, och vatten kokar redan vid cirka 70 °C.'],
+  ['Vad är absoluta nollpunkten?',['−273 °C – den lägsta temperatur som finns','0 °C','−100 °C','Vattnets fryspunkt'],0,'Där skulle partiklarna stå helt stilla.']],
+ atom:[
+  ['Vilken partikel i atomen saknar laddning?',['Neutronen','Elektronen','Protonen','Jonen'],0,'Protonen är positiv, elektronen negativ.'],
+  ['Var finns elektronerna?',['I elektronskal runt kärnan','I atomkärnan','I neutronerna','Utanför ämnet'],0,'Skalen kallas K, L, M och så vidare.'],
+  ['Vad finns i atomkärnan?',['Protoner och neutroner','Elektroner','Bara protoner','Joner'],0,'Nästan hela atomens massa finns i kärnan.'],
+  ['I en atom är antalet protoner alltid lika med …',['antalet elektroner','antalet neutroner','atomens massa','antalet skal'],0,'Därför är atomen neutral.'],
+  ['Vad är en isotop?',['Atomer med samma antal protoner men olika många neutroner','En laddad atom','En molekyl','En sorts elektron'],0,'Till exempel väte med eller utan en neutron.'],
+  ['Vad händer när en atom ger bort en elektron?',['Den blir en positiv jon','Den blir en negativ jon','Den blir en isotop','Inget händer'],0,'Färre minus än plus ger plusladdning.'],
+  ['Hur många valenselektroner har en atom med ädelgasstruktur?',['8 (helium har 2)','1','4','0'],0,'Fullt yttersta skal.'],
+  ['Vad betyder ordet atom?',['Odelbar','Liten','Partikel','Kärna'],0,'Idag vet vi att atomen går att dela i protoner, neutroner och elektroner.'],
+  ['Vem kom på atommodellen med elektroner i skal?',['Niels Bohr','Dmitrij Mendelejev','Albert Einstein','Isaac Newton'],0,'Bohrs atommodell har stått sig i över 100 år.']],
+ ps:[
+  ['Hur är periodiska systemet sorterat?',['Efter stigande atomnummer, alltså antal protoner','Efter bokstavsordning','Efter färg','Efter när ämnena upptäcktes'],0,'Ämnen med liknande egenskaper står i samma grupp.'],
+  ['Vad kallas de vågräta raderna?',['Perioder','Grupper','Kolumner','Skal'],0,'Det finns 7 perioder.'],
+  ['Vad har ämnen i samma period gemensamt?',['Lika många elektronskal','Samma antal protoner','Samma färg','Samma antal neutroner'],0,'Period 3 har tre skal.'],
+  ['Vad har ämnen i samma grupp gemensamt?',['Liknande egenskaper och samma antal valenselektroner','Samma vikt','Samma namn','Lika många skal'],0,'Grupp 1 har en valenselektron.'],
+  ['Vad kallas grupp 17?',['Halogenerna','Ädelgaserna','Alkalimetallerna','Övergångsmetallerna'],0,'Halogen betyder saltbildare.'],
+  ['Varför är ädelgaserna så stabila?',['De har fullt yttersta elektronskal','De är tunga','De är metaller','De har inga elektroner'],0,'De reagerar nästan aldrig med andra ämnen.'],
+  ['Vem skapade periodiska systemet, och när?',['Dmitrij Mendelejev 1869','Niels Bohr 1913','Marie Curie 1898','Isaac Newton 1687'],0,'Han lämnade tomma platser för ämnen som inte var upptäckta än.'],
+  ['Vad har metaller gemensamt?',['De glänser, leder värme och ström, och går att forma','De är gaser','De är sköra','De löser sig i vatten'],0,'Icke-metaller saknar minst en av egenskaperna.'],
+  ['Vilket är det vanligaste grundämnet i universum?',['Väte','Syre','Järn','Helium'],0,'Stjärnor består mest av väte.']],
+ mol:[
+  ['Vad är en molekyl?',['Minst två atomer som sitter ihop med kovalent bindning','En laddad atom','En enda atom','En blandning'],0,'Till exempel H₂ och H₂O.'],
+  ['Hur många elektroner ingår i en kovalent bindning?',['Två – ett elektronpar','En','Åtta','Inga'],0,'Därför heter den också elektronparbindning.'],
+  ['Vad betyder 3H₂?',['Tre vätemolekyler','Tre väteatomer','Två vätemolekyler','Sex vätemolekyler'],0,'3H betyder tre väteatomer.'],
+  ['Hur många atomer finns i en ammoniakmolekyl, NH₃?',['4','3','1','2'],0,'En kväveatom och tre väteatomer.'],
+  ['Varför sitter atomer ihop i molekyler?',['För att få ädelgasstruktur','För att bli tyngre','För att bli metaller','Det gör de inte'],0,'De delar elektroner så att alla får fullt yttersta skal.'],
+  ['Vilken bindning finns i kvävgas, N₂?',['En trippelbindning – tre elektronpar','En jonbindning','En metallisk bindning','Ingen bindning'],0,'Den är så stark att kvävgas nästan inte reagerar.'],
+  ['Vilken bindning håller ihop koksalt?',['Jonbindning','Kovalent bindning','Metallisk bindning','Trippelbindning'],0,'Na⁺ och Cl⁻ dras till varandra.'],
+  ['Varför leder metaller ström bra?',['Valenselektronerna rör sig fritt i metallen','De är hårda','De har inga elektroner','De är kalla'],0,'Elektronerna är delokaliserade.']],
+ vatten:[
+  ['Hur stor del av jordens vatten är saltvatten i haven?',['Cirka 97 %','50 %','3 %','70 %'],0,'Bara 3 % är sötvatten.'],
+  ['Hur stor del av en människa är vatten?',['Cirka 60 %','10 %','90 %','30 %'],0,'Vatten löser och transporterar ämnen i kroppen.'],
+  ['Varför flyter is?',['Is har lägre densitet än flytande vatten','Is är varmare','Is har fler molekyler','Is är lättare än luft'],0,'I is ligger molekylerna glesare.'],
+  ['Vad driver vattnets kretslopp?',['Solen','Månen','Vinden','Jordens kärna'],0,'Solen värmer så att vattnet avdunstar.'],
+  ['Varför är vatten ett bra lösningsmedel?',['Vattenmolekylen är en dipol som kan dra ut jonerna','Vatten är tungt','Vatten är kallt','Vatten är en metall'],0,'Därför löser sig koksalt i vatten.'],
+  ['Vad gör tensiderna i tvål?',['Gör fettlöslig smuts löslig i vatten','Gör vattnet varmare','Gör vattnet salt','Gör vattnet surt'],0,'Fettlöslig svans in i smutsen, vattenlösligt huvud ut.'],
+  ['Vad är en lösning?',['En blandning där man inte ser olika delar','En kemisk reaktion','Ett rent ämne','En fast form'],0,'Det det finns mest av kallas lösningsmedel.'],
+  ['Vilka joner finns i rent vatten förutom vattenmolekyler?',['Vätejoner H⁺ och hydroxidjoner OH⁻','Natriumjoner','Kloridjoner','Inga joner'],0,'De avgör om något är surt eller basiskt.'],
+  ['Hur får växter vatten och närsalter?',['Genom rötterna, och sedan i rör som kallas xylem','Genom bladen','Från luften','Genom blommorna'],0,'Vattnet avdunstar från bladen – transpiration.']],
+ kvave:[
+  ['Hur stor del av luften är kväve?',['78 %','21 %','1 %','50 %'],0,'Syre är 21 %.'],
+  ['Vad är kvävefixering?',['När bakterier tar upp kväve från luften','När kväve fryser','När växter dör','När bilar släpper ut kväve'],0,'Vi människor kan inte ta upp kväve från luften själva.'],
+  ['Hur får djur och människor i sig kväve?',['Genom att äta växter eller andra djur','Genom att andas','Genom att dricka vatten','Genom huden'],0,'Kväve behövs för proteiner och DNA.'],
+  ['Vad kallas näringen man ger växter för att de ska växa bättre?',['Gödsel','Slam','Briketter','Mull'],0,'För mycket gödsel kan ge övergödning.'],
+  ['Varför blir det syrebrist vid övergödning?',['När massor av döda alger bryts ner går syret åt','Algerna äter syret','Vattnet blir varmt','Fiskarna andas för mycket'],0,'Det kan bli döda bottnar.'],
+  ['Vad bildas när bilar förbränner bränsle?',['Kväveoxider som ger surt regn','Rent vatten','Kvävgas','Syrgas'],0,'NO och NO₂.'],
+  ['Vad betyder pH under 7?',['Surt – många vätejoner','Basiskt','Neutralt','Salt'],0,'pH 7 är neutralt.'],
+  ['Vad händer vid extrem försurning av marken?',['Giftiga metalljoner släpps ut','Marken blir bördigare','Inget','Vattnet blir sötare'],0,'Det kan skada fiskar och växter.']],
+ sep:[
+  ['Vilket av de här är ett rent ämne?',['Destillerat vatten','Saltvatten','Saft','Kranvatten'],0,'I kranvatten finns lösta ämnen.'],
+  ['Luft är ett exempel på en …',['blandning','molekyl','grundämne','jon'],0,'Luft innehåller kväve, syre, koldioxid och mer.'],
+  ['Vilken metod används i reningsverk där tyngre partiklar sjunker till botten?',['Sedimentering','Filtrering','Indunstning','Destillation'],0,'Sedan kan man hälla av vätskan – dekantering.'],
+  ['Hur får man fram saltet ur saltvatten?',['Indunstning – vattnet avdunstar','Filtrering','Sedimentering','Magnet'],0,'Saltet blir kvar.'],
+  ['Hur får man rent vatten ur saltvatten?',['Destillation','Filtrering','Sedimentering','Indunstning'],0,'Vattenångan kyls och samlas upp.'],
+  ['Hur skiljer man sand från vatten?',['Filtrering','Indunstning','Destillation','Kromatografi'],0,'Sanden fastnar i filtret.']],
+ prov:[
+  ['Vad är materia?',['Allt som har massa och tar plats','Bara fasta ämnen','Bara gaser','Ljus och värme'],0,'Även luft är materia.'],
+  ['Vad är ett grundämne?',['Ett ämne av en enda sorts atomer','En blandning','Ett ämne av flera sorters atomer','En jon'],0,'Det finns cirka 120 grundämnen.'],
+  ['Vilken fasövergång sker vid smältpunkten?',['Smältning','Förångning','Kondensation','Desublimering'],0,'Smältpunkten för vatten är 0 °C.'],
+  ['Vad är stelning?',['När ett ämne går från flytande till fast form','När ett ämne kokar','När ett ämne blir gas','En kemisk reaktion'],0,'Det sker vid fryspunkten.'],
+  ['Hur betecknas gasform?',['(g)','(s)','(l)','(a)'],0,'H₂O(g) är vattenånga.'],
+  ['Vad är laddningen på en proton?',['Positiv, +1','Negativ, −1','Ingen','+2'],0,'Elektronen är negativ.'],
+  ['Natrium har 11 protoner. Hur många elektroner har en natriumjon, Na⁺?',['10','11','12','1'],0,'Den har gett bort en elektron.'],
+  ['Vad har isotoper av samma grundämne olika?',['Antalet neutroner','Antalet protoner','Antalet elektroner','Namnet'],0,'Antalet protoner bestämmer grundämnet.'],
+  ['Hur många valenselektroner har ämnena i grupp 2?',['2','1','8','12'],0,'Grupp 13 har 3, grupp 14 har 4 osv.'],
+  ['Vad heter ädelgasen i period 1?',['Helium','Neon','Argon','Väte'],0,'Den har bara två valenselektroner.'],
+  ['Vilka är de tre vanligaste kemiska bindningarna?',['Jonbindning, kovalent bindning och metallisk bindning','Fast, flytande och gas','Proton, neutron och elektron','Grupp, period och skal'],0,'Kovalent bindning kallas också elektronparbindning.'],
+  ['Vilken farosymbol visar ett dött träd och en fisk?',['Miljöfarligt','Giftigt','Frätande','Brandfarligt'],0,'Giftigt för vattenlevande organismer.'],
+  ['Vad är skillnaden mellan brandfarligt och oxiderande?',['Oxiderande har en ring under flamman och kan göra en brand värre','Det finns ingen skillnad','Oxiderande är explosivt','Brandfarligt har en fisk'],0,'Brandfarligt är bara en flamma.'],
+  ['Vilken skyddsutrustning är vanlig i labbet?',['Labbrock, skyddsglasögon och handskar','Hjälm och reflexväst','Mössa och vantar','Simglasögon'],0,'Den skyddar hud, ögon och kläder.'],
+  ['Vad händer med vattnet i en sjö på vintern?',['Den fryser uppifrån och ner, så fiskarna klarar sig vid botten','Den fryser nerifrån','Hela sjön blir is','Vattnet försvinner'],0,'Is har lägre densitet och flyter.'],
+  ['Vad är transpiration?',['När vattenånga kommer ut ur en växt','När vatten tränger ner i marken','När det regnar','När det snöar'],0,'Infiltration är när vatten tränger ner i marken.'],
+  ['Vilka bakterier tar upp kväve från luften?',['Kvävefixerande bakterier','Mjölksyrabakterier','Nedbrytare','Alla bakterier'],0,'De finns i marken och i rötter hos en del växter.'],
+  ['Vad är övergödning?',['När det finns mer näringsämnen än naturen kan ta tillvara','När växter får för lite gödsel','När det regnar för mycket','När vatten fryser'],0,'Kan ge algblomning och syrebrist.'],
+  ['Vilken formel har koldioxid?',['CO₂','CO','C₂O','O₂'],0,'En kolatom och två syreatomer.'],
+  ['Vad betyder pH 7?',['Neutralt','Surt','Basiskt','Salt'],0,'Rent vatten har pH 7.']]
+};
+
+/* Skrivträning: [fråga, exempelsvar, [[nyckelord,[stammar]]...]] */
+const WQ={
+ grund:[
+  ['Vad kallas faserna med ett annat begrepp?','Faserna kallas också aggregationstillstånd.',[['aggregationstillstånd',['aggregation']]]],
+  ['Vilka är de tre grundläggande faserna, och hur betecknas de i kemin?','Fast form betecknas (s), flytande form (l) och gasform (g).',[['fast (s)',['fast','(s)']],['flytande (l)',['flyt','(l)']],['gas (g)',['gas','(g)']]]],
+  ['Vilken fasövergång sker vid smältpunkten, kokpunkten och fryspunkten?','Vid smältpunkten sker smältning, från fast till flytande form. Vid kokpunkten sker förångning, från flytande form till gas. Vid fryspunkten sker stelning, från flytande till fast form.',[['smältning',['smält']],['förångning',['förång','koka']],['stelning',['steln','fryser']]]],
+  ['Vad innebär stelning, kondensation och sublimering?','Stelning är när ett ämne går från flytande till fast form. Kondensation är när ett ämne går från gas till flytande form. Sublimering är när ett fast ämne blir gas direkt.',[['stelning',['steln']],['kondensation',['kondens']],['sublimering',['sublim']],['direkt',['direkt']]]],
+  ['Vad händer med partiklarna i fast form, flytande form och gasform?','I fast form har partiklarna bestämda platser och vibrerar. I flytande form rör de sig runt varandra. I gasform studsar de omkring som pingisbollar eftersom bindningarna är brutna. Ju varmare, desto mer rör sig partiklarna.',[['vibrerar',['vibr']],['rör sig runt',['runt','rör sig']],['studsar',['studs','pingis']],['värme',['varm','värme','temperatur']]]],
+  ['Varför är fasövergångar inte kemiska reaktioner?','Vid en fasövergång bildas inga nya ämnen. Det är samma ämne före och efter, till exempel är både is och vatten H₂O. Det är en fysikalisk förändring.',[['inga nya ämnen',['nya ämnen','inga nya']],['samma ämne',['samma']],['fysikalisk',['fysikal']]]],
+  ['Vad är materia, och vad är ett grundämne?','Materia är allt som har massa och tar plats, det vill säga kan vägas. Ett grundämne är ett ämne som består av en enda sorts atomer.',[['massa/väga',['massa','väg']],['tar plats',['plats','volym']],['en sorts atomer',['en sorts','en enda','samma sorts']]]],
+  ['Vad är en atom, och vilka delar består den av?','En atom är den minsta delen av ett grundämne. I mitten finns atomkärnan med positiva protoner och oladdade neutroner. Runt kärnan rör sig negativa elektroner i elektronskal.',[['proton +',['proton']],['neutron 0',['neutron']],['elektron −',['elektron']],['kärna/skal',['kärna','skal']]]],
+  ['Vad är en jon?','En jon är en laddad partikel som bildas när en atom ger bort eller tar upp elektroner. Ger atomen bort elektroner blir jonen positiv, tar den upp elektroner blir den negativ. Till exempel Na⁺ och Cl⁻.',[['laddad',['laddad','laddning']],['elektroner',['elektron']],['positiv/negativ',['positiv','negativ']]]],
+  ['Vad är en isotop?','Isotoper är atomer av samma grundämne som har samma antal protoner men olika många neutroner i kärnan. Till exempel finns väte med och utan en neutron.',[['samma protoner',['proton']],['olika neutroner',['neutron']],['samma grundämne',['grundämne','samma']]]],
+  ['Varför ger atomer bort eller tar upp elektroner? Förklara med natrium och klor.','Atomer vill ha ädelgasstruktur, alltså fullt yttersta skal med åtta valenselektroner. Natrium har en valenselektron och ger bort den, och blir Na⁺. Klor har sju och tar upp en, och blir Cl⁻. Jonerna dras till varandra och bildar koksalt, NaCl.',[['ädelgasstruktur',['ädelgas','fullt']],['natrium ger bort',['natrium','na']],['klor tar upp',['klor','cl']],['NaCl',['nacl','koksalt']]]],
+  ['Vad kallas raderna i periodiska systemet, och vad har ämnena i dem gemensamt?','De vågräta raderna kallas perioder. Ämnen i samma period har lika många elektronskal. De lodräta kolumnerna kallas grupper. Ämnen i samma grupp har liknande egenskaper och lika många valenselektroner.',[['perioder',['period']],['grupper',['grupp']],['elektronskal',['skal']],['valenselektroner',['valens']]]],
+  ['Vad är en molekyl, och vad är en kovalent bindning?','En molekyl är minst två atomer som sitter ihop med kovalenta bindningar. I en kovalent bindning delar atomerna på ett elektronpar, så att båda får ädelgasstruktur. Den kallas också elektronparbindning.',[['minst två atomer',['två atomer','atomer']],['delar elektroner',['dela','elektronpar']],['ädelgasstruktur',['ädelgas','fullt']]]],
+  ['Beskriv de tre typerna av kemiska bindningar.','Jonbindning håller ihop positiva och negativa joner, som i koksalt. Kovalent bindning betyder att atomer delar på elektronpar, som i vatten. Metallisk bindning finns i metaller, där valenselektronerna rör sig fritt mellan positiva metalljoner. Därför leder metaller ström.',[['jonbindning',['jonbind']],['kovalent',['kovalent','elektronpar']],['metallisk',['metall']],['fria elektroner',['fri','delokal','rör sig']]]],
+  ['Förklara vattnets kretslopp.','Solen värmer hav, sjöar och mark så att vattnet avdunstar. Vattenångan stiger och kyls av högt upp, kondenserar och bildar moln. Vattnet faller som regn eller snö och rinner till grundvatten, vattendrag, sjöar och hav. Växter avger också vattenånga, transpiration.',[['solen',['sol']],['avdunstning',['avdunst']],['kondensation',['kondens']],['nederbörd',['regn','snö','nederbörd']]]],
+  ['Varför flyter is på vatten?','Is har lägre densitet än flytande vatten, eftersom molekylerna i is ligger i ett glesare mönster. Därför fryser en sjö uppifrån och ner, och fiskarna kan överleva vid botten.',[['densitet',['densitet']],['glesare',['gles','avstånd']],['sjö fryser uppifrån',['uppifrån','fisk']]]],
+  ['Varför är vatten ett bra lösningsmedel, och hur fungerar tvål?','Vattenmolekylen är en dipol som kan dra ut jonerna i ett salt, så att saltet löser sig. Fett löser sig inte i vatten. Tvål innehåller tensider med ett vattenlösligt huvud och en fettlöslig svans. Svansarna fastnar i den feta smutsen och huvudena i vattnet, så att smutsen kan sköljas bort.',[['dipol',['dipol']],['joner',['jon']],['tensider',['tensid']],['huvud och svans',['huvud','svans']]]],
+  ['Beskriv kvävets kretslopp.','Luften består till 78 % av kvävgas. Kvävefixerande bakterier fångar kvävet. Växter tar upp kvävet som ammonium- och nitratjoner genom rötterna. Djur får kväve när de äter växter. Nedbrytare bryter ner döda växter och djur, och bakterier gör om kvävet till kvävgas som går tillbaka till luften.',[['kvävefixerande bakterier',['fixer','bakterie']],['växter tar upp',['rötter','växter']],['djur äter',['djur','äter']],['nedbrytare',['nedbryt']]]],
+  ['Vad är övergödning, och varför blir det syrebrist?','Övergödning är när det finns mer näringsämnen, som kväve och fosfor, än naturen kan ta tillvara. Då växer alger kraftigt, algblomning. När algerna dör och bryts ner går syret åt, och det blir syrebrist och döda bottnar.',[['för mycket näring',['näring','kväve','gödsel']],['algblomning',['alg']],['bryts ner',['bryts ner','nedbryt']],['syrebrist',['syre']]]]
+ ]
+};
+/* ================= Lagring och framsteg ================= */
+const KEY='kemi-nikol-v1';
+let S={done:{},plan:{},check:{},tabdone:{},wq:{},mis:{},tab:'start'};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const mix=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+
+const panels=$$('.panel');
+function tabPct(p){const t=$$('.task',p);if(!t.length)return 0;return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+function allPct(){const t=$$('.task');return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function refresh(){
+  $$('.task').forEach(t=>{const d=!!S.done[t.dataset.task];t.classList.toggle('is-done',d);const b=$('.tick',t);if(b){b.setAttribute('aria-pressed',String(d));b.textContent=d?'Klar ✓':'Klar';}});
+  panels.forEach(p=>{const id=p.id.slice(2),pc=tabPct(p),tb=$('#tab-'+id);
+    if(tb){$('.bar i',tb).style.width=pc+'%';$('.pc',tb).textContent=pc+' %';tb.classList.toggle('done',pc===100||!!S.tabdone[id]);}
+    const db=$('[data-tabdone="'+id+'"]');if(db)db.setAttribute('aria-pressed',String(!!S.tabdone[id]));});
+  const pc=allPct();$('#ringPc').textContent=pc+' %';$('#ringArc').setAttribute('stroke-dasharray',pc+' 100');$('#ringArc').style.opacity=pc?1:0;
+  const sum=$('#tabSummary');sum.innerHTML='';
+  panels.filter(p=>p.id!=='p-start').forEach(p=>{const id=p.id.slice(2),pc=tabPct(p);
+    const b=el('button');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+    b.innerHTML='<span></span><b></b><span class="bar"><i></i></span>';
+    b.children[0].textContent=p.dataset.title+((pc===100||S.tabdone[id])?' ✓':'');b.children[1].textContent=pc+' %';b.querySelector('i').style.width=pc+'%';
+    b.onclick=()=>show(id);sum.appendChild(b);});
+}
+function setDone(id,val,quiet){
+  const was=!!S.done[id];S.done[id]=val;save();refresh();
+  if(val&&!was&&!quiet){const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');
+    const pc=tabPct(p);toast(pc===100?'Fliken '+p.dataset.title+' är 100 % klar! 🎉':'Bra jobbat! '+p.dataset.title+' är nu '+pc+' % klar.');}
+}
+const complete=id=>{if(id&&!S.done[id])setDone(id,true);};
+
+/* ================= Flikar ================= */
+const bar=$('#tabbar');
+panels.forEach(p=>{
+  const id=p.id.slice(2);p.style.setProperty('--c','var(--'+p.dataset.color+')');
+  const b=el('button','tab');b.id='tab-'+id;b.setAttribute('role','tab');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+  b.innerHTML='<span class="t"></span><span class="bar"><i></i></span><span class="pc"></span>';$('.t',b).textContent=p.dataset.title;
+  b.onclick=()=>show(id);bar.appendChild(b);
+});
+function show(id){
+  panels.forEach(p=>p.hidden=p.id!=='p-'+id);
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.id==='tab-'+id)));
+  S.tab=id;save();stopSpeak();
+  const tb=$('#tab-'+id);tb.scrollIntoView({block:'nearest',inline:'center'});
+  window.scrollTo({top:0});
+}
+$$('[data-tabdone]').forEach(b=>b.onclick=()=>{const id=b.dataset.tabdone;S.tabdone[id]=!S.tabdone[id];save();refresh();if(S.tabdone[id])toast('Snyggt! Fliken är avbockad ✓');});
+
+/* ================= Uppgifter: klar-knapp och uppläsning ================= */
+let speakBtn=null;
+function stopSpeak(){if('speechSynthesis' in window)speechSynthesis.cancel();if(speakBtn)speakBtn.setAttribute('aria-pressed','false');speakBtn=null;}
+function speak(text,btn){
+  if(!('speechSynthesis' in window))return;
+  const same=btn&&speakBtn===btn;stopSpeak();if(same)return;
+  const u=new SpeechSynthesisUtterance(text);u.lang='sv-SE';u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^sv/i.test(v.lang||''));if(v)u.voice=v;
+  if(btn){speakBtn=btn;btn.setAttribute('aria-pressed','true');u.onend=()=>{if(speakBtn===btn)stopSpeak();};}
+  speechSynthesis.speak(u);
+}
+$$('.task').forEach(t=>{
+  const h=$('header',t);
+  const say=$('.say',t);
+  if(say&&'speechSynthesis' in window){const l=el('button','listen','🔊 Lyssna');l.setAttribute('aria-pressed','false');l.onclick=()=>speak(say.innerText.replace(/→/g,', sedan '),l);h.insertBefore(l,h.children[1]||null);}
+  const b=el('button','tick','Klar');b.setAttribute('aria-pressed','false');b.onclick=()=>setDone(t.dataset.task,!S.done[t.dataset.task]);h.appendChild(b);
+});
+
+/* ================= Start: plan och checklista ================= */
+function checkRow(list,store,task,root){
+  root.innerHTML='';
+  list.forEach(([id,txt,tab,goto])=>{
+    const r=el('div','check');const i=el('input');i.type='checkbox';i.id='cb-'+id;i.checked=!!S[store][id];
+    const l=el('label',null,txt);l.htmlFor=i.id;const a=el('button','say1','Gå dit');a.style.setProperty('--c','var(--'+tab+')');a.onclick=()=>{show(tab);if(goto){const t=document.querySelector('section.task[data-task="'+goto+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),50);}};
+    i.onchange=()=>{S[store][id]=i.checked;save();const all=list.every(x=>S[store][x[0]]);if(all)complete(task);else if(S.done[task])setDone(task,false,true);};
+    r.append(i,l,a);root.appendChild(r);
+  });
+}
+checkRow(CHECK,'check','s-check',$('#checkList'));
+
+/* ================= Gemensamt: dra eller trycka ================= */
+function dragTap(chip,onDrop,onTap,targetSel){
+  let sx,sy,ghost=null,moved=false;
+  chip.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;moved=false;try{chip.setPointerCapture(e.pointerId);}catch(_){}});
+  chip.addEventListener('pointermove',e=>{if(sx===undefined)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>7){ghost=chip.cloneNode(true);ghost.classList.add('ghost','sel');document.body.appendChild(ghost);moved=true;}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
+  chip.addEventListener('pointerup',e=>{if(ghost){const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest(targetSel);ghost.remove();ghost=null;if(z)onDrop(z);}sx=undefined;});
+  chip.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null;}sx=undefined;});
+  chip.addEventListener('click',()=>{if(moved){moved=false;return;}onTap();});
+}
+function shake(x){x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong');setTimeout(()=>x.classList.remove('wrong'),400);}
+
+/* ================= Widgets ================= */
+const W={};
+
+W.sort=(root,set,task)=>{
+  const d=SORT[set];
+  function render(){
+    root.innerHTML='';let sel=null,done=0;
+    root.innerHTML='<p>Dra varje kort till rätt låda, eller tryck på kortet och sedan på lådan.</p>';
+    const pool=el('div','pool'),bk=el('div','buckets'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=render;row.append(rs,cnt);
+    const upd=()=>{cnt.textContent=done+' av '+d.items.length+' rätt';if(done===d.items.length){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');root.classList.toggle('picking',!!sel);};
+    const put=(c,b)=>{if(+c.dataset.k===+b.dataset.k){const x=el('div','in',c.textContent);b.appendChild(x);c.remove();done++;if(sel===c){sel=null;root.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};
+    d.buckets.forEach((n,k)=>{const b=el('div','bucket');b.dataset.k=k;b.appendChild(el('h4',null,n));b.onclick=e=>{if(sel&&!e.target.closest('.in'))put(sel,b);};bk.appendChild(b);});
+    mix(d.items).forEach(([t,k])=>{const c=el('button','chip',t);c.dataset.k=k;dragTap(c,b=>put(c,b),()=>pick(c),'.bucket');pool.appendChild(c);});
+    root.append(pool,bk,msg,row);upd();
+  }
+  render();
+};
+
+W.order=(root,set,task)=>{
+  const seq=ORDER[set];
+  function render(){
+    root.innerHTML='<p>Tryck på stegen i rätt ordning.</p>';
+    const ans=el('div','answer'),pool=el('div','pool'),msg=el('p','msg'),rs=el('button','btn','Börja om');let step=0;
+    rs.onclick=render;
+    mix(seq).forEach(w=>{const b=el('button','chip',w);b.style.cursor='pointer';
+      b.onclick=()=>{if(w===seq[step]){ans.appendChild(el('span',null,(step+1)+'. '+w));b.remove();step++;msg.textContent=step===seq.length?'Helt rätt! 🎉':'Bra! Vad kommer sedan?';if(step===seq.length)complete(task);}
+        else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};pool.appendChild(b);});
+    root.append(ans,pool,msg,rs);
+  }
+  render();
+};
+
+W.match=(root,set,task)=>{
+  const all=MATCH[set];let left;
+  function start(){left=mix(all);round();}
+  function round(){
+    root.innerHTML='<p>Tryck på ett ord till vänster och sedan på rätt förklaring.</p>';
+    const g=el('div','match'),L=el('div'),R=el('div'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om');
+    rs.onclick=start;row.append(rs,cnt);
+    const set5=left.slice(0,5);let pick=null,n=set5.length;
+    cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+    set5.forEach(p=>{const b=el('button',null,p[0]);b.dataset.k=p[0];b.onclick=()=>{if(b.classList.contains('done'))return;if(pick)pick.classList.remove('sel');pick=b;b.classList.add('sel');};L.appendChild(b);});
+    mix(set5).forEach(p=>{const b=el('button',null,p[1]);b.dataset.k=p[0];b.onclick=()=>{if(!pick||b.classList.contains('done'))return;
+      if(pick.dataset.k===b.dataset.k){pick.classList.replace('sel','done');b.classList.add('done');pick=null;n--;left=left.filter(x=>x[0]!==b.dataset.k);cnt.textContent=(all.length-left.length)+' av '+all.length+' klara';
+        if(n===0){if(left.length){msg.textContent='Alla rätt! Fler kommer…';setTimeout(round,900);}else{msg.textContent='Du har parat ihop allihop! 🎉';complete(task);}}else msg.textContent='Rätt! ✔';}
+      else{shake(b);msg.textContent='Inte riktigt. Försök igen.';}};R.appendChild(b);});
+    g.append(L,R);root.append(g,msg,row);
+  }
+  start();
+};
+
+W.mcq=(root,set,task)=>{
+  const Q=MCQ[set];
+  function start(){
+    const qs=mix(Q);let i=0,right=0;
+    function q(){
+      root.innerHTML='';const box=el('div','mcq');
+      if(i>=qs.length){const pc=Math.round(100*right/qs.length);
+        box.appendChild(el('p','score',pc+' % rätt på första försöket'));
+        box.appendChild(el('p',null,pc>=80?'Riktigt bra! Du kan det här.':pc>=50?'Bra jobbat! Gör om quizet så sitter det ännu bättre.':'Bra att du övar. Läs texterna igen och prova en gång till.'));
+        const r=el('button','btn primary','Gör om');r.onclick=start;box.appendChild(r);root.appendChild(box);complete(task);return;}
+      const [t,opts,ans,why]=qs[i];let first=true;
+      box.appendChild(el('p','count',(i+1)+' av '+qs.length));box.appendChild(el('p','q',t));
+      const o=el('div','opts');const order=mix(opts.map((x,k)=>k));
+      order.forEach(k=>{const b=el('button',null,opts[k]);b.onclick=()=>{
+        if(k===ans){b.classList.add('right');$$('button',o).forEach(z=>z.disabled=true);if(first)right++;
+          box.appendChild(el('div','why','Rätt! '+why));const n=el('button','btn primary',i+1<qs.length?'Nästa fråga':'Se resultatet');n.style.marginTop='.6rem';n.onclick=()=>{i++;q();};box.appendChild(n);n.focus();}
+        else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      box.appendChild(o);root.appendChild(box);
+    }
+    q();
+  }
+  start();
+};
+
+W.qa=(root,set)=>{
+  QA[set].forEach(([q,ans])=>{
+    const d=el('div','qa'),b=el('button',null,q),a=el('div','a');a.hidden=true;b.setAttribute('aria-expanded','false');
+    ans.forEach(t=>a.appendChild(el('p',null,t)));
+    const s=el('button','say1','🔊 Lyssna');s.onclick=()=>speak(q+'. '+ans.join(' '),s);a.appendChild(s);
+    b.onclick=()=>{a.hidden=!a.hidden;b.setAttribute('aria-expanded',String(!a.hidden));};
+    d.append(b,a);root.appendChild(d);
+  });
+};
+
+/* ---------- Dra namn till rätt ruta ---------- */
+W.label=(root,set,task)=>{
+  const d=LABEL[set];
+  function render(){
+    root.innerHTML='<p>Dra ordet till rätt ruta, eller tryck på ordet och sedan på rutan.</p>';
+    const sc=el('div','figscroll'),fig=el('div','fig');fig.style.maxWidth=d.w+'px';if(d.minw)fig.style.minWidth=d.minw+'px';fig.innerHTML=withLeaders(d);sc.appendChild(fig);
+    const pool=el('div','pool'),msg=el('p','msg'),row=el('div','row'),cnt=el('span','count'),rs=el('button','btn','Börja om'),sh=el('button','btn','Visa svaren');
+    let sel=null,done=0;const n=d.zones.length;
+    const upd=()=>{cnt.textContent=done+' av '+n+' rätt';if(done===n){msg.textContent='Alla rätt! 🎉';complete(task);}};
+    const pick=c=>{if(sel)sel.classList.remove('sel');sel=sel===c?null:c;if(sel)sel.classList.add('sel');fig.classList.toggle('picking',!!sel);};
+    const put=(c,z)=>{if(z.classList.contains('ok')||z.classList.contains('shown'))return;
+      if(c.dataset.a===z.dataset.a){z.textContent=c.dataset.a;z.classList.add('ok');c.remove();done++;if(sel===c){sel=null;fig.classList.remove('picking');}msg.textContent='Rätt! ✔';upd();}
+      else{shake(z);msg.textContent='Inte där. Försök igen.';}};
+    d.zones.forEach(([a,x,y,w,h])=>{const z=el('div','zone');z.dataset.a=a;Object.assign(z.style,{left:x/d.w*100+'%',top:y/d.h*100+'%',width:w/d.w*100+'%',height:h/d.h*100+'%'});z.onclick=()=>{if(sel)put(sel,z);};fig.appendChild(z);});
+    mix(d.zones.map(z=>z[0])).forEach(a=>{const c=el('button','chip',a);c.dataset.a=a;dragTap(c,z=>put(c,z),()=>pick(c),'.zone');pool.appendChild(c);});
+    rs.onclick=render;sh.onclick=()=>{$$('.zone:not(.ok)',fig).forEach(z=>{z.textContent=z.dataset.a;z.classList.add('shown');});pool.innerHTML='';msg.textContent='Här är svaren. Tryck på Börja om och prova själv.';};
+    row.append(rs,sh,cnt);root.append(sc,pool,msg,row);upd();
+  }
+  render();
+};
+
+/* ---------- Memory ---------- */
+W.memory=(root,set,task)=>{
+  const src=MEM[set].map(t=>({a:t[0],b:t[1]}));
+  function round(){
+    root.innerHTML='';const pairs=mix(src).slice(0,6);let open=[],got=0,lock=false,turns=0;
+    const grid=el('div','mem'),msg=el('p','msg'),row=el('div','row'),nb=el('button','btn','Ny omgång'),cnt=el('span','count');nb.onclick=round;row.append(nb,cnt);
+    const cards=mix(pairs.flatMap((p,k)=>[{k,t:p.a,num:set==='goals',col:p.col},{k,t:p.b}]));
+    cards.forEach(c=>{const b=el('button','card');b.innerHTML='?';b.setAttribute('aria-label','Kort');
+      b.onclick=()=>{if(lock||b.classList.contains('open')||b.classList.contains('got'))return;
+        b.classList.add('open');b.innerHTML='';const s=el('span',c.num?'num':null,c.t);b.appendChild(s);if(c.col){b.style.borderColor=c.col;s.style.color=c.col;}open.push([b,c]);
+        if(open.length===2){turns++;const [x,y]=open;
+          if(x[1].k===y[1].k){x[0].classList.add('got');y[0].classList.add('got');open=[];got++;msg.textContent='Ett par! ✔';
+            if(got===pairs.length){msg.textContent='Alla par på '+turns+' försök! 🎉';complete(task);}}
+          else{lock=true;setTimeout(()=>{open.forEach(([z])=>{z.classList.remove('open');z.innerHTML='?';z.style.borderColor='';});open=[];lock=false;},1300);}
+          cnt.textContent=turns+' försök';}};
+      grid.appendChild(b);});
+    root.append(grid,msg,row);
+  }
+  round();
+};
+
+/* ---------- Skrivträning ---------- */
+W.writeq=(root,set,task)=>{
+  S.wq=S.wq||{};const st=S.wq[set]=S.wq[set]||{};const list=WQ[set];
+  const prog=el('p','count');root.appendChild(prog);
+  const upd=()=>{const n=list.filter((_,i)=>st[i]&&st[i].n>0).length;prog.textContent=n+' av '+list.length+' frågor besvarade';if(n===list.length)complete(task);};
+  list.forEach(([q,model,keys],i)=>{
+    const rec=st[i]=st[i]||{n:0,t:''};
+    const box=el('div','wstep');const h=el('h4');h.innerHTML='<span class="st">'+(i+1)+'</span>';h.appendChild(document.createTextNode(q));box.appendChild(h);
+    const info=el('p','count',rec.n?('Försök gjorda: '+rec.n):'');box.appendChild(info);
+    const ta=el('textarea');ta.value=rec.t||'';ta.placeholder='Skriv ditt svar här.';ta.oninput=()=>{rec.t=ta.value;save();};box.appendChild(ta);
+    const mini=el('div','mini');const ck=el('button',null,'Kolla'),ag=el('button',null,'Skriv igen'),oral=el('button',null,'Visa svaret');
+    const out=el('div');out.hidden=true;
+    const chips=el('div','checker');const mdl=el('div','hintbox');
+    out.append(el('p','help','Viktiga ord att få med – de blir gröna när du har dem:'),chips,mdl);
+    const show=()=>{const t=ta.value.toLowerCase();chips.innerHTML='';let got=0;
+      keys.forEach(([w,stems])=>{const g=stems.some(s=>t.includes(s));if(g)got++;const c=el('span',g?'got':null,w);chips.appendChild(c);});
+      mdl.textContent='Exempelsvar: '+model;out.hidden=false;
+      rec.n++;save();info.textContent='Försök gjorda: '+rec.n+(ta.value.trim()?' – du fick med '+got+' av '+keys.length+' viktiga ord':'');upd();};
+    ck.onclick=show;oral.onclick=show;
+    ag.onclick=()=>{ta.value='';rec.t='';save();out.hidden=true;ta.focus();};
+    mini.append(ck,ag,oral);box.append(mini,out);root.appendChild(box);
+  });
+  upd();
+};
+
+
+/* ================= Kemi: egna övningar ================= */
+function withLeaders(d){if(!d.leaders)return d.svg;return d.svg.replace("</svg>",d.leaders.map(([x,y,px,py])=>`<line x1="${x}" y1="${y}" x2="${px}" y2="${py}" stroke="#6A5B52" stroke-width="1.5"/>`).join("")+"</svg>");}
+/* ---------- Länkknapp till PhET/Ptable ---------- */
+W.link=(root,set)=>{const [u,t]=LINKS[set];const a=el('a','bigbtn','▶ Öppna '+t);a.href=u;a.target='_blank';a.rel='noopener';a.style.cssText='display:inline-block;text-decoration:none;color:var(--ink);margin:.3rem 0';root.appendChild(a);
+  root.appendChild(el('p','count','Öppnas i en ny flik. Kom tillbaka hit och bocka av när du är klar.'));};
+
+/* ---------- Farosymboler ---------- */
+function hazSvg(k){
+  const g={
+   brand:'<path d="M50 20 C60 33 68 42 65 57 C63 70 56 76 50 76 C41 76 34 69 35 58 C36 49 42 45 44 38 C47 47 51 49 53 46 C55 38 51 30 50 20Z"/><rect x="32" y="79" width="36" height="4"/>',
+   oxid:'<path d="M50 18 C57 27 62 33 60 43 C58 51 54 54 50 54 C44 54 40 49 41 42 C42 37 45 34 46 30 C48 36 51 37 52 35 C53 30 51 25 50 18Z"/><circle cx="50" cy="64" r="12" fill="none" stroke="#000" stroke-width="5"/><rect x="32" y="80" width="36" height="4"/>',
+   explosivt:'<circle cx="44" cy="62" r="13"/><rect x="51" y="42" width="6" height="12" transform="rotate(40 54 48)"/><g stroke="#000" stroke-width="4" stroke-linecap="round"><line x1="62" y1="34" x2="70" y2="26"/><line x1="66" y1="44" x2="78" y2="42"/><line x1="56" y1="30" x2="56" y2="20"/><line x1="70" y1="54" x2="78" y2="58"/></g>',
+   gas:'<rect x="26" y="46" width="44" height="20" rx="10"/><rect x="69" y="51" width="7" height="10" rx="2"/><rect x="74" y="47" width="4" height="18"/>',
+   frat:'<g transform="rotate(-30 36 30)"><rect x="31" y="18" width="10" height="22" rx="4" fill="none" stroke="#000" stroke-width="3"/></g><g transform="rotate(30 64 30)"><rect x="59" y="18" width="10" height="22" rx="4" fill="none" stroke="#000" stroke-width="3"/></g><circle cx="38" cy="50" r="2.5"/><circle cx="62" cy="50" r="2.5"/><circle cx="38" cy="57" r="2.5"/><circle cx="62" cy="57" r="2.5"/><path d="M24 70 h20 v-4 h-14 l-2 -4 h-4z"/><path d="M54 66 h24 v10 h-24 v-4 l4 -3 l-4 -3z"/>',
+   gift:'<circle cx="50" cy="40" r="15"/><rect x="42" y="50" width="16" height="9" rx="2"/><circle cx="44" cy="39" r="4" fill="#fff"/><circle cx="56" cy="39" r="4" fill="#fff"/><g stroke="#000" stroke-width="6" stroke-linecap="round"><line x1="32" y1="62" x2="68" y2="78"/><line x1="68" y1="62" x2="32" y2="78"/></g>',
+   skadl:'<rect x="45" y="24" width="10" height="36" rx="4"/><circle cx="50" cy="70" r="6"/>',
+   halsa:'<circle cx="50" cy="30" r="9"/><path d="M28 78 Q28 44 50 44 Q72 44 72 78Z"/><path d="M50 50 l3.5 7 l7.5 1 l-5.5 5 l1.5 7.5 l-7-3.8 l-7 3.8 l1.5-7.5 l-5.5-5 l7.5-1z" fill="#fff"/>',
+   miljo:'<g stroke="#000" stroke-width="3.5" stroke-linecap="round" fill="none"><line x1="34" y1="30" x2="34" y2="72"/><line x1="34" y1="44" x2="24" y2="34"/><line x1="34" y1="52" x2="44" y2="40"/><line x1="22" y1="73" x2="80" y2="73"/></g><ellipse cx="62" cy="64" rx="13" ry="6"/><path d="M74 64 l8 -6 v12z"/><circle cx="55" cy="63" r="1.5" fill="#fff"/>'
+  }[k];
+  return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"><path d="M50 4 L96 50 L50 96 L4 50Z" fill="#fff" stroke="#D8232A" stroke-width="7" stroke-linejoin="round"/><g fill="#000">'+g+'</g></svg>';
+}
+W.hazards=(root,task)=>{
+  const grid=el('div','hzgrid');
+  HAZ.forEach(([k,n,d])=>{const c=el('div','hz');c.innerHTML=hazSvg(k);c.appendChild(el('b',null,n));c.appendChild(el('span',null,d));grid.appendChild(c);});
+  root.appendChild(el('h3',null,'Lär dig symbolerna'));root.appendChild(grid);
+  root.appendChild(el('div','trick','Knep: brandfarligt = bara en flamma. Oxiderande = flamma över en ring (O som i oxiderande). Miljöfarligt = dött träd och död fisk.'));
+  root.appendChild(el('h3',null,'Quiz: vilken farosymbol är det?'));
+  const q=el('div');root.appendChild(q);
+  function start(){const order=mix(HAZ);let i=0,right=0;
+    function step(){q.innerHTML='';
+      if(i>=order.length){q.appendChild(el('p','score',right+' av '+order.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;q.appendChild(r);complete(task);return;}
+      const [k,n,d]=order[i];let first=true;q.appendChild(el('p','count',(i+1)+' av '+order.length));
+      const big=el('div','hzbig');big.innerHTML=hazSvg(k);q.appendChild(big);
+      const o=el('div','opts4');mix([n].concat(mix(HAZ.filter(x=>x[1]!==n).map(x=>x[1])).slice(0,3))).forEach(t=>{const b=el('button',null,t);
+        b.onclick=()=>{if(t===n){b.classList.add('right');if(first)right++;$$('button',o).forEach(z=>z.disabled=true);q.appendChild(el('p','msg','Rätt! '+d));const nx=el('button','btn primary','Nästa');nx.onclick=()=>{i++;step();};q.appendChild(nx);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      q.appendChild(o);}
+    step();}
+  start();
+};
+
+/* ---------- Partikelsimulator ---------- */
+W.phasesim=(root,task)=>{
+  const wrap=el('div','simbox');const cv=document.createElement('canvas');cv.width=600;cv.height=300;cv.style.cssText='width:100%;height:auto;display:block;border-radius:10px;background:#0E2233';
+  const row=el('div','row');const minus=el('button','btn','❄️ Kyl ner'),plus=el('button','btn','🔥 Värm upp');
+  const rng=document.createElement('input');rng.type='range';rng.min=-60;rng.max=160;rng.value=-20;rng.style.cssText='flex:1;min-width:10rem;accent-color:var(--c)';
+  const out=el('p','dressed'),info=el('p','msg');row.append(minus,rng,plus);wrap.append(cv,row,out,info);root.appendChild(wrap);
+  const N=48,P=[];for(let i=0;i<N;i++){const cx=i%8,cy=Math.floor(i/8);P.push({gx:210+cx*24,gy:150+cy*24,x:210+cx*24,y:150+cy*24,vx:0,vy:0});}
+  const seen={};const ctx=cv.getContext('2d');
+  function state(T){return T<0?'s':T<100?'l':'g';}
+  function txt(T){const s=state(T);seen[s]=1;if(seen.s&&seen.l&&seen.g)complete(task);
+    out.textContent=T+' °C – '+({s:'is, fast form (s)',l:'vatten, flytande form (l)',g:'vattenånga, gasform (g)'}[s]);
+    info.textContent=T===0?'0 °C är smältpunkten och fryspunkten för vatten.':T===100?'100 °C är kokpunkten. Här sker förångning, eller kondensation åt andra hållet.':({s:'Partiklarna har bestämda platser och vibrerar. Ju kallare, desto mindre vibrerar de.',l:'Partiklarna rör sig runt varandra. Bindningarna mellan dem är svaga.',g:'Partiklarna studsar omkring som pingisbollar. Bindningarna är brutna.'}[state(T)]);}
+  function tick(){const T=+rng.value,s=state(T);ctx.clearRect(0,0,600,300);
+    const energy=(T+273)/433;
+    P.forEach(p=>{
+      if(s==='s'){const a=1+energy*3;p.x=p.gx+(Math.random()-.5)*a*2;p.y=p.gy-40+(Math.random()-.5)*a*2;}
+      else{const sp=s==='l'?1.2+energy*1.5:3+energy*4;
+        p.vx+=(Math.random()-.5)*(s==='l'?.8:.3);p.vy+=(Math.random()-.5)*(s==='l'?.8:.3)+(s==='l'?.25:0);
+        const v=Math.hypot(p.vx,p.vy)||1;p.vx=p.vx/v*sp;p.vy=p.vy/v*sp;p.x+=p.vx;p.y+=p.vy;
+        const top=s==='l'?170:12;if(p.x<12){p.x=12;p.vx*=-1}if(p.x>588){p.x=588;p.vx*=-1}if(p.y<top){p.y=top;p.vy=Math.abs(p.vy)}if(p.y>288){p.y=288;p.vy=-Math.abs(p.vy)}}
+      ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.fillStyle=s==='s'?'#BFE3FF':s==='l'?'#4FA8F0':'#E8F4FF';ctx.fill();});
+    if(s==='s'){P.forEach(p=>{p.x=p.x;});}
+    requestAnimationFrame(tick);}
+  rng.oninput=()=>txt(+rng.value);minus.onclick=()=>{rng.value=Math.max(-60,+rng.value-20);txt(+rng.value);};plus.onclick=()=>{rng.value=Math.min(160,+rng.value+20);txt(+rng.value);};
+  txt(+rng.value);let started=false;const io=new IntersectionObserver(e=>{if(e[0].isIntersecting&&!started){started=true;tick();}});io.observe(cv);
+};
+
+/* ---------- Atombyggare ---------- */
+W.atombuild=(root,task)=>{
+  S.mis=S.mis||{};let p=0,n=0,e=0;
+  const box=el('div','atomwrap');const svgw=el('div','atomsvg');const panel=el('div','atominfo');
+  const ctl=el('div','atomctl');
+  const mk=(name,cls,get,set,max)=>{const r=el('div','ctlrow');r.appendChild(el('span','ctlname '+cls,name));const m=el('button','btn','−'),pl=el('button','btn','+'),v=el('b','ctlv');m.onclick=()=>{set(Math.max(0,get()-1));draw();};pl.onclick=()=>{set(Math.min(max,get()+1));draw();};r.append(m,v,pl);ctl.appendChild(r);return v;};
+  const vp=mk('Protoner (+)','cp',()=>p,x=>p=x,20),vn=mk('Neutroner (0)','cn',()=>n,x=>n=x,24),ve=mk('Elektroner (−)','ce',()=>e,x=>e=x,22);
+  box.append(svgw,panel);root.append(ctl,box);
+  const mis=el('div');root.appendChild(el('h3',null,'Uppdrag'));root.appendChild(mis);
+  function drawMis(){mis.innerHTML='';MISSIONS.forEach(([t,a,b,c],k)=>{const d=el('div','check');const s=el('span',null,(S.mis[k]?'✅ ':'⬜ ')+t);d.appendChild(s);mis.appendChild(d);});}
+  function draw(){
+    vp.textContent=p;vn.textContent=n;ve.textContent=e;
+    const W2=320,c=160;let s=`<svg viewBox="0 0 ${W2} ${W2}" xmlns="http://www.w3.org/2000/svg"><rect width="${W2}" height="${W2}" fill="#F7F7FB"/>`;
+    const sh=shells(e);[48,88,128].forEach((r,k)=>{s+=`<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#9AA6C0" stroke-width="1.5" stroke-dasharray="5 5" opacity="${k<Math.max(sh.length,1)?1:.35}"/>`;});
+    const nuc=[];for(let i=0;i<p;i++)nuc.push('p');for(let i=0;i<n;i++)nuc.push('n');
+    const ordered=[];let a=0,b=0;while(a<p||b<n){if(a<p){ordered.push('p');a++;}if(b<n){ordered.push('n');b++;}}
+    ordered.forEach((t,i)=>{const ang=i*2.4,rad=Math.sqrt(i)*5.2;const x=c+Math.cos(ang)*rad,y=c+Math.sin(ang)*rad;
+      s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6.5" fill="${t==='p'?'#E0452F':'#8C8C96'}" stroke="#fff" stroke-width="1"/>`;if(t==='p')s+=`<text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" font-size="8" text-anchor="middle" fill="#fff" font-family="sans-serif">+</text>`;});
+    sh.forEach((cnt,k)=>{const r=[48,88,128][k];for(let i=0;i<cnt;i++){const ang=-Math.PI/2+i*2*Math.PI/cnt;s+=`<circle cx="${(c+Math.cos(ang)*r).toFixed(1)}" cy="${(c+Math.sin(ang)*r).toFixed(1)}" r="6" fill="#2F5BD8"/>`;}});
+    svgw.innerHTML=s+'</svg>';
+    const el0=ELEM.find(x=>x[0]===p);const ch=p-e;
+    panel.innerHTML='';
+    const name=p===0?'Inget grundämne – lägg till protoner':el0?el0[2]+' ('+el0[1]+')':'Grundämne nr '+p;
+    panel.appendChild(el('p','atomname',name));
+    const chg=ch===0?'Neutral atom':(ch>0?'Positiv jon ':'Negativ jon ')+(el0?el0[1]:'')+(Math.abs(ch)>1?Math.abs(ch):'')+(ch>0?'⁺':'⁻');
+    const facts=[['Laddning',ch===0?'0 – neutral':(ch>0?'+':'−')+Math.abs(ch)],['Typ',chg],['Masstal (p + n)',String(p+n)],['Elektronskal',sh.length?sh.join(', '):'–'],['Valenselektroner',sh.length?String(sh[sh.length-1]):'–']];
+    if(el0&&n!==NEUT[p])facts.push(['Isotop','Ovanlig isotop – vanligast är '+NEUT[p]+' neutroner']);
+    if(el0&&sh.length&&(sh[sh.length-1]===8||(sh.length===1&&sh[0]===2)))facts.push(['Ädelgasstruktur','Ja – fullt yttersta skal!']);
+    const t=el('div','facts');facts.forEach(([a,b])=>{t.appendChild(el('span',null,a));t.appendChild(el('b',null,b));});panel.appendChild(t);
+    MISSIONS.forEach(([tt,a,b,cc],k)=>{if(!S.mis[k]&&p===a&&n===b&&e===cc){S.mis[k]=1;save();toast('Uppdrag klart: '+tt+' ✅');}});
+    drawMis();if(Object.keys(S.mis).length>=6)complete(task);
+  }
+  draw();
+};
+
+/* ---------- Periodiska systemet 1–20 ---------- */
+const TYPCOL={'icke-metall':'#9FE09A','ädelgas':'#D9B8F0','alkalimetall':'#F7C96A','metall':'#F4E06D','halvmetall':'#8ED7C8','halogen':'#B9F08A'};
+W.ptab=(root,task)=>{
+  const sc=el('div','figscroll');const g=el('div','ptgrid');sc.appendChild(g);
+  const info=el('div','ptinfo');info.textContent='Tryck på ett grundämne.';
+  const cells={};
+  for(let per=1;per<=4;per++)for(let gr=1;gr<=18;gr++){const e=ELEM.find(x=>x[3]===gr&&x[4]===per);const c=el('button','ptc'+(e?'':' empty'));c.style.gridColumn=gr;c.style.gridRow=per+1;
+    if(e){c.innerHTML='<small>'+e[0]+'</small><b>'+e[1]+'</b>';c.style.background=TYPCOL[e[5]];cells[e[0]]=c;c.onclick=()=>pick(e,c);}else c.disabled=true;g.appendChild(c);}
+  for(let gr=1;gr<=18;gr++){const h=el('span','pth',String(gr));h.style.gridColumn=gr;h.style.gridRow=1;g.appendChild(h);}
+  const leg=el('div','ptleg');Object.entries(TYPCOL).forEach(([k,v])=>{const s=el('span',null,k);s.style.background=v;leg.appendChild(s);});
+  let game=null;
+  function pick(e,c){
+    if(game){game(e,c);return;}
+    const sh=shells(e[0]);info.innerHTML='';info.appendChild(el('p','atomname',e[2]+' ('+e[1]+')'));
+    const t=el('div','facts');[['Atomnummer',e[0]],['Protoner',e[0]],['Elektroner',e[0]],['Elektronskal',sh.join(', ')+' ('+sh.length+' st)'],['Valenselektroner',sh[sh.length-1]],['Grupp',e[3]],['Period',e[4]],['Sort',e[5]]].forEach(([a,b])=>{t.appendChild(el('span',null,a));t.appendChild(el('b',null,String(b)));});info.appendChild(t);}
+  const gbox=el('div');const startBtn=el('button','btn primary','Starta spelet ”Hitta grundämnet”');
+  startBtn.onclick=()=>{const order=mix(FIND).slice(0,8);let i=0,right=0;
+    const ask=()=>{gbox.innerHTML='';if(i>=order.length){game=null;gbox.appendChild(el('p','score',right+' av '+order.length+' rätt'));gbox.appendChild(startBtn);complete(task);return;}
+      gbox.appendChild(el('p','count',(i+1)+' av '+order.length));gbox.appendChild(el('p','dressed',order[i][0]));let first=true;
+      game=(e,c)=>{if(e[0]===order[i][1]){c.classList.add('ok');if(first)right++;setTimeout(()=>{c.classList.remove('ok');i++;ask();},900);}else{first=false;shake(c);}};};
+    ask();};
+  gbox.appendChild(startBtn);
+  root.append(sc,leg,info,el('h3',null,'Spel'),gbox);
+};
+
+/* ---------- Molekylquiz med kulmodell ---------- */
+W.molq=(root,task)=>{
+  function start(){const order=mix(MOLQ);let i=0,right=0;
+    function step(){root.innerHTML='';
+      if(i>=order.length){root.appendChild(el('p','score',right+' av '+order.length+' rätt'));const r=el('button','btn primary','Spela igen');r.onclick=start;root.appendChild(r);complete(task);return;}
+      const [atoms,f,name,opts]=order[i];let first=true;root.appendChild(el('p','count',(i+1)+' av '+order.length));
+      let s='<svg viewBox="0 0 '+(atoms.length*56+20)+' 80" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:90px">';atoms.forEach((a,k)=>{const x=40+k*56;s+=`<circle cx="${x}" cy="40" r="26" fill="${ATCOL[a]}" stroke="#555" stroke-width="2"/><text x="${x}" y="47" text-anchor="middle" font-size="20" font-family="sans-serif" fill="${a==='H'?'#222':'#fff'}">${a}</text>`;if(k)s+=`<line x1="${x-30}" y1="40" x2="${x-26}" y2="40" stroke="#555" stroke-width="3"/>`;});
+      const b0=el('div','dressed');b0.innerHTML=s+'</svg>';root.appendChild(b0);root.appendChild(el('p',null,'Vilken formel har molekylen?'));
+      const o=el('div','opts4');mix(opts).forEach(t=>{const b=el('button',null,t);b.onclick=()=>{if(t===f){b.classList.add('right');if(first)right++;$$('button',o).forEach(z=>z.disabled=true);root.appendChild(el('p','msg','Rätt! '+f+' heter '+name+'.'));const nx=el('button','btn primary','Nästa');nx.onclick=()=>{i++;step();};root.appendChild(nx);}else{first=false;shake(b);b.disabled=true;}};o.appendChild(b);});
+      root.appendChild(o);}
+    step();}
+  start();
+};
+
+/* ---------- pH-skala ---------- */
+W.phscale=(root,task)=>{
+  const EX={0:'Batterisyra',1:'Magsaft',2:'Citronsaft',3:'Ättika',4:'Surt regn',5:'Surt regn, kaffe',6:'Mjölk',7:'Rent vatten',8:'Havsvatten',9:'Bakpulver i vatten',10:'Tvålvatten',11:'Ammoniak',12:'Kalkvatten',13:'Avloppsrensning',14:'Natriumhydroxid'};
+  const bar=el('div','phbar');for(let i=0;i<=14;i++){const s=el('span',null,String(i));s.style.background=`hsl(${i*18},75%,${i===7?55:50}%)`;bar.appendChild(s);}
+  const r=document.createElement('input');r.type='range';r.min=0;r.max=14;r.value=7;r.style.cssText='width:100%;accent-color:var(--c)';
+  const out=el('p','dressed'),info=el('p','msg');const seen={};
+  const draw=()=>{const v=+r.value;const k=v<7?'s':v>7?'b':'n';seen[k]=1;
+    out.textContent='pH '+v+' – '+EX[v];
+    info.textContent=v<7?'Surt: många vätejoner, H⁺. Ju lägre pH, desto surare.':v>7?'Basiskt: många hydroxidjoner, OH⁻. Ju högre pH, desto mer basiskt.':'Neutralt: lika många vätejoner som hydroxidjoner.';
+    if(seen.s&&seen.n&&seen.b)complete(task);};
+  r.oninput=draw;root.append(bar,r,out,info);draw();
+};
+
+/* ---------- Egna bilder att sätta namn på ---------- */
+const arrowDefs=id=>'<defs><marker id="'+id+'" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4A4A55"/></marker></defs>';
+const dots=(x,y,mode)=>{let s='';for(let i=0;i<9;i++){const cx=x+20+(i%3)*30+(mode==='g'?(i*13)%17:0),cy=y+15+Math.floor(i/3)*20+(mode==='g'?(i*7)%11:mode==='l'?(i%2)*6:0);s+=`<circle cx="${cx}" cy="${cy}" r="6" fill="#4FA8F0"/>`;}return s;};
+LABEL.faser={w:640,h:360,minw:560,svg:(()=>{let s=`<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">${arrowDefs('ahF')}<rect width="640" height="360" fill="#F7F7FB"/>`;
+  [[30,'Fast form (s)','s'],[250,'Flytande (l)','l'],[470,'Gas (g)','g']].forEach(([x,t,m])=>{s+=`<rect x="${x}" y="150" width="140" height="62" rx="10" fill="#fff" stroke="#4A4A55" stroke-width="2"/>${dots(x,150,m)}<text x="${x+70}" y="232" text-anchor="middle" font-size="14" fill="#333">${t}</text>`;});
+  const ar=(d)=>`<path d="${d}" fill="none" stroke="#4A4A55" stroke-width="3" marker-end="url(#ahF)"/>`;
+  s+=ar('M150 146 Q210 108 268 146')+ar('M370 146 Q430 108 488 146')+ar('M270 214 Q210 252 152 214')+ar('M490 214 Q430 252 372 214')+ar('M100 146 Q320 -60 538 146')+ar('M540 238 Q320 420 102 238');
+  return s+'</svg>';})(),
+ zones:[['Smältning',145,94,130,30],['Förångning',365,94,130,30],['Stelning',145,262,130,30],['Kondensation',365,262,130,30],['Sublimering',255,6,130,30],['Desublimering',255,322,130,30]]};
+LABEL.atomdel={w:560,h:400,minw:480,svg:(()=>{let s='<svg viewBox="0 0 560 400" xmlns="http://www.w3.org/2000/svg"><rect width="560" height="400" fill="#F7F7FB"/>';const c=[280,200];
+  [60,120].forEach(r=>{s+=`<circle cx="280" cy="200" r="${r}" fill="none" stroke="#9AA6C0" stroke-width="2" stroke-dasharray="6 6"/>`;});
+  [[-12,-8,'p'],[2,-12,'n'],[14,-2,'p'],[-6,6,'n'],[8,10,'p'],[-16,8,'n'],[0,0,'p'],[-2,-24,'n'],[18,-16,'p'],[-20,-6,'n'],[6,22,'p'],[-10,20,'n']].forEach(([dx0,dy0,t])=>{const dx=dx0*1.6,dy=dy0*1.6;s+=`<circle cx="${280+dx}" cy="${200+dy}" r="9" fill="${t==='p'?'#E0452F':'#8C8C96'}" stroke="#fff" stroke-width="1.5"/>`;if(t==='p')s+=`<text x="${280+dx}" y="${204+dy}" text-anchor="middle" font-size="12" fill="#fff" font-family="sans-serif">+</text>`;});
+  [[280,140],[280,260]].forEach(([x,y])=>{s+=`<circle cx="${x}" cy="${y}" r="9" fill="#2F5BD8"/>`;});
+  [[280,80],[400,200],[280,320],[160,200]].forEach(([x,y])=>{s+=`<circle cx="${x}" cy="${y}" r="9" fill="#2F5BD8"/>`;});
+  return s+'</svg>';})(),
+ zones:[['Proton',0,140,140,34],['Neutron',0,210,140,34],['Atomkärna',0,300,140,34],['Elektron',420,60,140,34],['Elektronskal',420,170,140,34],['Valenselektron',420,290,140,34]],
+ leaders:[[140,157,261,187],[140,227,270,210],[140,317,250,228],[420,77,289,138],[420,187,342,210],[420,307,289,318]]};
+LABEL.vatten={w:640,h:420,minw:560,svg:(()=>{let s=`<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">${arrowDefs('ahV')}<rect width="640" height="420" fill="#DDEFFC"/>`;
+  s+='<circle cx="70" cy="60" r="34" fill="#FFD23F"/><g fill="#fff" stroke="#B8C6D6" stroke-width="2"><ellipse cx="370" cy="70" rx="80" ry="30"/><ellipse cx="320" cy="80" rx="50" ry="24"/><ellipse cx="420" cy="84" rx="50" ry="22"/></g>';
+  s+='<path d="M380 300 L470 150 L560 300Z" fill="#9AA58F"/><path d="M450 184 L470 150 L490 184Z" fill="#fff"/>';
+  s+='<rect x="0" y="300" width="640" height="120" fill="#B98B5A"/><rect x="0" y="372" width="640" height="48" fill="#7BAFD4" opacity=".8"/>';
+  s+='<path d="M0 290 H230 Q260 300 230 318 H0Z" fill="#3E86C6"/><path d="M560 300 Q520 310 470 300 Q400 290 330 300 Q280 308 232 304" stroke="#3E86C6" stroke-width="10" fill="none"/>';
+  s+='<rect x="268" y="230" width="12" height="72" fill="#7A5230"/><circle cx="274" cy="218" r="34" fill="#3FA34D"/>';
+  s+='<g stroke="#3E86C6" stroke-width="3">'+[0,1,2,3,4,5].map(i=>`<line x1="${330+i*18}" y1="${116+(i%2)*6}" x2="${322+i*18}" y2="${140+(i%2)*6}"/>`).join('')+'</g>';
+  const ar=(d)=>`<path d="${d}" fill="none" stroke="#4A4A55" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#ahV)"/>`;
+  s+=ar('M120 282 L180 130')+ar('M274 182 L300 120')+ar('M300 312 L300 368')+ar('M470 210 L500 290');
+  return s+'</svg>';})(),
+ zones:[['Avdunstning',20,190,140,32],['Kondensation',300,10,140,32],['Nederbörd',470,95,140,32],['Transpiration',310,180,140,32],['Infiltration',320,325,140,32],['Grundvatten',470,380,140,32],['Vattendrag',500,250,135,32]]};
+LABEL.kvave={w:640,h:440,minw:560,svg:(()=>{let s=`<svg viewBox="0 0 640 440" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">${arrowDefs('ahK')}<rect width="640" height="440" fill="#E3F1FB"/>`;
+  s+='<text x="320" y="58" text-anchor="middle" font-size="34" fill="#2F5BD8" font-weight="bold">N₂  N₂  N₂</text>';
+  s+='<rect x="0" y="300" width="640" height="140" fill="#9C7650"/>';
+  s+='<rect x="236" y="200" width="8" height="100" fill="#3C8A3C"/><ellipse cx="240" cy="196" rx="30" ry="20" fill="#4FB04F"/><path d="M240 300 l-20 40 M240 300 l0 50 M240 300 l20 38" stroke="#E9D7B0" stroke-width="4"/>';
+  s+='<g transform="translate(400 230)"><ellipse cx="40" cy="30" rx="48" ry="26" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="92" cy="18" r="16" fill="#fff" stroke="#333" stroke-width="2"/><rect x="10" y="50" width="8" height="22" fill="#333"/><rect x="58" y="50" width="8" height="22" fill="#333"/><ellipse cx="30" cy="24" rx="10" ry="7" fill="#333"/></g>';
+  s+='<g transform="translate(40 250)"><rect x="0" y="16" width="90" height="26" rx="8" fill="#D94B4B"/><rect x="18" y="0" width="52" height="22" rx="6" fill="#D94B4B"/><circle cx="20" cy="44" r="9" fill="#333"/><circle cx="72" cy="44" r="9" fill="#333"/></g>';
+  s+='<g fill="#5A3E22"><ellipse cx="540" cy="330" rx="40" ry="10"/></g>';
+  [[200,340],[214,352],[260,346],[520,350],[548,356]].forEach(([x,y])=>{s+=`<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#F2C14E"/>`;});
+  const ar=(d)=>`<path d="${d}" fill="none" stroke="#4A4A55" stroke-width="3" marker-end="url(#ahK)"/>`;
+  s+=ar('M260 70 Q210 200 214 336')+ar('M240 330 L240 222')+ar('M272 196 Q350 170 400 238')+ar('M470 290 Q510 300 528 322')+ar('M560 320 Q620 200 420 70')+ar('M50 250 Q40 150 180 70');
+  return s+'</svg>';})(),
+ zones:[['Kvävgas i luften',245,8,150,30],['Kvävefixerande bakterier',40,350,170,32],['Växter tar upp kväve',140,145,150,32],['Djur äter växter',310,120,150,32],['Nedbrytare',490,380,140,32],['Kvävgas tillbaka till luften',470,160,165,32],['Kväveoxider från bilar',20,200,160,32]]};
+/* ================= Flytta framsteg ================= */
+(function(){
+  const NAME='kemi';const msg=$('#mvMsg');
+  const pack=()=>JSON.stringify({app:KEY,saved:new Date().toISOString(),data:S});
+  $('#mvDown').onclick=()=>{try{const b=new Blob([pack()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nikol-'+NAME+'-framsteg.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);msg.textContent='Filen är nedladdad. Skicka den till den nya enheten, till exempel med AirDrop eller mejl.';}catch(e){msg.textContent='Det gick inte att ladda ner. Prova ”Kopiera som text” i stället.';}};
+  $('#mvCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pack());msg.textContent='Texten är kopierad. Skicka den till dig själv och klistra in den på den nya enheten.';}catch(e){$('#mvText').value=pack();msg.textContent='Markera texten i rutan nedanför och kopiera den själv.';}};
+  const load=txt=>{try{const o=JSON.parse(txt);if(!o||o.app!==KEY||typeof o.data!=='object')throw 0;
+      if(!confirm('Vill du ersätta framstegen på den här enheten med de sparade från '+new Date(o.saved).toLocaleDateString('sv-SE')+'?'))return;
+      S=Object.assign(S,o.data);save();msg.textContent='Klart! Sidan laddas om.';setTimeout(()=>location.reload(),600);}
+    catch(e){msg.textContent='Det där ser inte ut som en framstegsfil för '+NAME+'. Kontrollera att du valde rätt fil.';}};
+  $('#mvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>load(r.result);r.readAsText(f);};
+  $('#mvPaste').onclick=()=>load($('#mvText').value.trim());
+})();
+
+
+/* ================= Starta ================= */
+checkRow(PLAN,'plan','s-plan',$('#planList'));
+checkRow(CHECK,'check','s-check',$('#checkList'));
+$$('[data-widget]').forEach(r=>{const f=W[r.dataset.widget];if(!f)return;const a=r.dataset.set;f(r,a||r.dataset.task,a?r.dataset.task:undefined);});
+refresh();
+show(panels.some(p=>p.id==='p-'+S.tab)?S.tab:'start');
+</script></body></html>
