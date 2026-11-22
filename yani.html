@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yani – Nikols bokprov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EAF1F4; --paper:#FFFFFF; --ink:#17324A; --soft:#4D6275; --line:#CFDCE3;
+  --start:#4D6275; --kart:#2F6FB3; --vatten:#0F8A8A; --hall:#3B8F57; --glob:#C77421; --mal:#7650B0; --skriv:#C23F57; --begr:#5A6B7D; --prov:#9A6B12;
+  --ok:#2E8B57; --bad:#C0392B; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+    --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+    --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111C25; --paper:#1A2832; --ink:#E6EEF3; --soft:#A6B8C6; --line:#2E4250;
+  --start:#A6B8C6; --kart:#6FA7E6; --vatten:#3EC4C4; --hall:#6CC88A; --glob:#F0A452; --mal:#AE8CEB; --skriv:#F0798F; --begr:#9FB0C2; --prov:#E0B04A;
+  --ok:#5CC08F; --bad:#EE6E6E; --hl:#4A4520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lexend",Verdana,"Segoe UI",sans-serif;font-size:1.125rem;line-height:1.75;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:48rem;margin:0 auto;padding:0 1rem 5rem}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .3rem}
+h2{font-size:1.5rem;line-height:1.3;margin:0 0 .5rem;color:var(--c)}
+h3{font-size:1.15rem;line-height:1.35;margin:1.1rem 0 .3rem}
+p{margin:.35rem 0 .85rem}
+ul.plain{margin:.3rem 0 .9rem;padding-left:1.2rem}
+ul.plain li{margin:.2rem 0}
+
+/* ---------- Header: gradnät behind the overall progress ---------- */
+.hero{position:relative;overflow:hidden;background:var(--paper);border-bottom:2px solid var(--line)}
+.hero svg.grid{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero .wrap{position:relative;display:flex;align-items:center;gap:1.2rem;padding-top:1.4rem;padding-bottom:1.2rem}
+.ring{flex:none;width:6.5rem;height:6.5rem;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero p{margin:0;color:var(--soft)}
+
+/* ---------- Tab bar ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+.tabs .wrap{display:flex;gap:.4rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.tab{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.35rem .7rem;cursor:pointer;min-height:44px;line-height:1.2;text-align:left}
+.tab .t{font-weight:500;font-size:.98rem;white-space:nowrap}
+.tab .bar{width:100%;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--c);width:0}
+.tab .pc{font-size:.8rem;color:var(--soft)}
+.tab[aria-selected="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--paper))}
+.tab.done .t::after{content:" ✓";color:var(--ok)}
+
+/* ---------- Panels and tasks ---------- */
+.panel{padding-top:1.2rem}
+.panel[hidden]{display:none}
+.intro{background:var(--paper);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;border-top:8px solid var(--c)}
+.task{background:var(--paper);border-radius:14px;padding:1rem 1.2rem 1.1rem;margin:0 0 1rem;border-left:8px solid var(--c);transition:background .3s}
+.task.is-done{border-left-color:var(--ok)}
+.task>header{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.4rem}
+.task>header h3{margin:0;flex:1;font-size:1.2rem}
+.tick{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.2rem .8rem;cursor:pointer;font-size:.92rem;min-height:40px;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kind{display:inline-block;font-size:.85rem;color:var(--soft);margin-bottom:.2rem}
+.listen{border:2px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:.15rem .8rem;cursor:pointer;font-size:.92rem;min-height:36px}
+.listen[aria-pressed="true"]{background:var(--c);color:#fff}
+.trick{background:color-mix(in srgb,var(--c) 11%,transparent);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.fact{border:2px dashed var(--c);border-radius:10px;padding:.6rem .9rem;margin:.6rem 0 1rem}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.5rem 0 1rem}
+.chain span{background:color-mix(in srgb,var(--c) 14%,transparent);border:2px solid var(--c);border-radius:8px;padding:.1rem .55rem;font-weight:500}
+.chain i{font-style:normal;color:var(--c);font-weight:700}
+.tabdone{display:flex;justify-content:center;margin:1.5rem 0}
+.bigbtn{border:3px solid var(--c);background:var(--paper);border-radius:999px;padding:.6rem 1.4rem;cursor:pointer;font-weight:500;min-height:48px}
+.bigbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,250%);visibility:hidden;background:var(--ink);color:var(--paper);padding:.7rem 1.2rem;border-radius:999px;z-index:60;transition:transform .35s;max-width:92vw;text-align:center;font-weight:500}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* ---------- Generic exercise bits ---------- */
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.4rem .9rem;cursor:pointer;min-height:44px;font-size:1rem}
+.btn.primary{border-color:var(--c);background:var(--c);color:#fff}
+.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.count{color:var(--soft);font-size:.95rem;margin-left:auto}
+.msg{font-weight:500;min-height:1.6rem;margin:.5rem 0 0}
+.pool{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{border:2px solid var(--c);background:var(--paper);border-radius:10px;padding:.4rem .8rem;cursor:grab;min-height:44px;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;line-height:1.35;font-size:1rem}
+.chip.sel{background:var(--c);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-60%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.wrong{border-color:var(--bad)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.answer{display:flex;flex-wrap:wrap;gap:.4rem;min-height:3rem;padding:.5rem;border-radius:10px;border:2px dashed var(--line);margin:.6rem 0}
+.answer span{background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .7rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.6rem;margin:.8rem 0 .3rem}
+.bucket{border:2px dashed var(--c);border-radius:12px;padding:.5rem;min-height:6rem;cursor:pointer;background:color-mix(in srgb,var(--c) 6%,var(--paper))}
+.bucket h4{margin:0 0 .3rem;font-size:1.02rem;color:var(--c);text-align:center}
+.bucket .in{font-size:.9rem;background:var(--ok);color:#fff;border-radius:8px;padding:.2rem .5rem;margin:.25rem 0;line-height:1.35}
+.picking .bucket{border-style:solid}
+.match{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:.6rem}
+.match>div{display:flex;flex-direction:column;gap:.5rem}
+.match button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.5rem .7rem;cursor:pointer;line-height:1.4;font-size:1rem}
+.match button.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,var(--paper))}
+.match button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--paper));cursor:default}
+.mcq .q{font-weight:500;font-size:1.15rem;margin:.3rem 0 .6rem}
+.mcq .opts{display:grid;gap:.5rem}
+.mcq .opts button{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:10px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;line-height:1.4}
+.mcq .opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.mcq .why{background:color-mix(in srgb,var(--ok) 10%,var(--paper));border-radius:10px;padding:.5rem .8rem;margin-top:.6rem}
+.score{font-size:1.4rem;font-weight:700;color:var(--c)}
+.qa{border-bottom:2px solid var(--line)}
+.qa:last-child{border-bottom:0}
+.qa>button{text-align:left;width:100%;background:none;border:0;padding:.65rem 0;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.qa>button::before{content:"＋";color:var(--soft);font-weight:700}
+.qa>button[aria-expanded="true"]::before{content:"－"}
+.qa .a{background:color-mix(in srgb,var(--c) 9%,var(--paper));border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem}
+.qa .a p{margin:.2rem 0 .5rem}
+.say1{border:2px solid var(--line);background:transparent;border-radius:999px;padding:.05rem .7rem;cursor:pointer;font-size:.9rem}
+.wk{margin:1.4rem 0 .1rem;color:var(--soft);font-size:1.02rem}
+
+/* label exercise */
+.figscroll{overflow-x:auto;border-radius:10px;background:#fff;border:2px solid var(--line)}
+.fig{position:relative;container-type:inline-size;width:100%;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone{position:absolute;border:2px dashed var(--c);border-radius:6px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,2.3cqw,16px);line-height:1.1;color:#17324A;cursor:pointer;padding:0 3px;text-align:center;font-weight:500}
+.zone.ok{border:2px solid #2E8B57;background:#E3F4EA;color:#1D5E3A}
+.zone.shown{border:2px solid #7D8B99;background:#EEF1F4;color:#4A5A6B}
+.picking .zone:not(.ok):not(.shown){border-style:solid;background:#E8F0FC}
+
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(6.2rem,1fr));gap:.5rem;margin:.7rem 0}
+.card{min-height:5.2rem;border-radius:12px;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:.4rem;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.card.open{background:var(--paper);color:var(--ink)}
+.card.got{background:color-mix(in srgb,var(--ok) 15%,var(--paper));border-color:var(--ok);color:var(--ink);cursor:default}
+.card .num{font-size:1.6rem;font-weight:700}
+
+/* globala mål chips */
+.goal{display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;color:#fff;padding:.1rem .5rem;font-weight:500;font-size:.92rem;margin:.15rem .1rem}
+
+/* checklist */
+.check{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.check label{flex:1;cursor:pointer}
+.check a{color:var(--c);font-size:.92rem}
+.tabsum{display:grid;gap:.5rem;margin:.6rem 0}
+.tabsum button{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:.5rem .8rem;cursor:pointer}
+.tabsum .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.tabsum .bar i{display:block;height:100%;background:var(--c)}
+
+/* writing workshop */
+.ladder{counter-reset:st;display:grid;gap:.4rem;margin:.6rem 0 1rem}
+.ladder div{counter-increment:st;display:flex;gap:.6rem;align-items:flex-start;background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.45rem .7rem}
+.ladder div::before{content:counter(st);flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;margin-top:.15rem}
+.choose{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .8rem}
+.choose button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.3rem .9rem;cursor:pointer;min-height:42px}
+.choose button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.wstep{border:2px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.7rem 0;background:var(--paper)}
+.wstep.filled{border-color:var(--ok)}
+.wstep h4{margin:0;font-size:1.05rem;display:flex;gap:.5rem;align-items:center}
+.wstep h4 .st{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.wstep.filled h4 .st{background:var(--ok)}
+.wstep .help{color:var(--soft);font-size:.98rem;margin:.2rem 0 .4rem}
+.wstep textarea{width:100%;min-height:6.5rem;font:inherit;font-size:1.05rem;line-height:1.6;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.5rem .7rem;resize:vertical}
+.wstep textarea:focus{border-color:var(--c);outline:none}
+.mini{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 0}
+.mini button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:.1rem .7rem;cursor:pointer;font-size:.88rem;min-height:34px}
+.hintbox{background:var(--hl);border-radius:10px;padding:.5rem .8rem;margin:.5rem 0 0;font-size:.98rem}
+.wordbank{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:10;background:var(--paper);border:2px solid var(--c);border-radius:12px;padding:.5rem .7rem;margin:.8rem 0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wordbank summary{cursor:pointer;font-weight:500;color:var(--c)}
+.wordbank .mini button{border-color:var(--c)}
+.checker{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .8rem}
+.checker span{border:2px solid var(--line);border-radius:999px;padding:.05rem .65rem;font-size:.9rem;color:var(--soft)}
+.checker span.got{border-color:var(--ok);background:var(--ok);color:#fff}
+.factbank{border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--paper));border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:.6rem 0}
+.factbank ul{margin:.2rem 0;padding-left:1.1rem}
+.full{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line)}
+.wprog{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:.3rem 0 .2rem}
+.wprog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.cheer{color:var(--ok);font-weight:500;min-height:1.5rem}
+.fyr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.5rem 0 1rem}
+.fyr label{display:block;font-size:.9rem;color:var(--soft)}
+.fyr textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+@media (max-width:520px){.fyr{grid-template-columns:1fr}.match{grid-template-columns:1fr}}
+
+/* small visual widgets */
+.water{display:grid;gap:.6rem;margin:.6rem 0}
+.wbar{display:flex;height:3rem;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+.wbar i{display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-size:.9rem;font-weight:500;transition:flex-grow .6s;white-space:nowrap;overflow:hidden}
+.earths{font-size:2.4rem;line-height:1.2;letter-spacing:.1rem;margin:.2rem 0}
+.term{border-left:6px solid var(--c);padding:.45rem .9rem;margin:.6rem 0;background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:0 10px 10px 0}
+.term h4{margin:0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:1.1rem}
+.term p{margin:.15rem 0}
+.badge{font-size:.78rem;font-weight:500;border-radius:999px;padding:0 .5rem;background:var(--c);color:#fff}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.6rem;margin:.5rem 0}
+.calc label{font-size:.92rem;color:var(--soft)}
+.calc select,.calc input{display:block;width:100%;font:inherit;padding:.4rem .6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px}
+.steps{background:color-mix(in srgb,var(--c) 8%,var(--paper));border-radius:10px;padding:.6rem .9rem;line-height:1.9}
+.toggle{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.toggle label{display:flex;gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:999px;padding:.2rem .8rem;cursor:pointer;min-height:40px;font-size:.95rem}
+.toggle input{accent-color:var(--c);width:1.1rem;height:1.1rem}
+.svgbox{border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#F4F8F1}
+.svgbox svg{display:block;width:100%;height:auto}
+
+.passcard{background:var(--paper);border-radius:16px;margin:0 0 1rem;overflow:hidden;border:3px solid var(--start)}
+.passcard .ph{background:var(--start);color:#fff;padding:.9rem 1.2rem}
+.passcard .ph h2{color:#fff;margin:0;font-size:1.35rem}
+.passcard .ph p{margin:.2rem 0 0;opacity:.9}
+.passcard .pb{padding:.6rem 1.2rem 1rem}
+.pstep{border-bottom:2px solid var(--line);padding:.7rem 0}
+.pstep:last-child{border-bottom:0}
+.pstep h3{margin:0 0 .3rem;font-size:1.08rem;display:flex;gap:.5rem;align-items:center}
+.pstep h3 .n{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--start);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.pstep textarea{width:100%;min-height:4.5rem;font:inherit;font-size:1.02rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem}
+.book{display:inline-block;background:var(--hl);border-radius:8px;padding:.1rem .6rem;font-weight:700}
+.guide{margin:.3rem 0 .4rem;padding-left:1.2rem}
+.plrow{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-bottom:2px solid var(--line)}
+.plrow:last-child{border-bottom:0}
+.plrow input{width:1.4rem;height:1.4rem;margin-top:.25rem;accent-color:var(--ok);flex:none}
+.plrow .t{flex:1}
+.plrow .m{display:block;font-size:.88rem;color:var(--soft)}
+.plrow.cur{background:color-mix(in srgb,var(--start) 8%,transparent);border-radius:8px}
+
+:root{--k1:#2F6FB3;--k2:#7650B0;--k3:#B5452B;--tema:#3B8F57}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--k1:#6FA7E6;--k2:#AE8CEB;--k3:#F08A6C;--tema:#6CC88A}}
+:root[data-theme="dark"]{--k1:#6FA7E6;--k2:#AE8CEB;--k3:#F08A6C;--tema:#6CC88A}
+[hidden]{display:none!important}
+.sum{background:color-mix(in srgb,var(--c) 7%,var(--paper));border-radius:12px;padding:.5rem 1rem;margin:.5rem 0 .8rem;line-height:1.8}
+.qs p{margin:.35rem 0}
+details.ans{margin:.5rem 0;border:2px solid var(--line);border-radius:10px;padding:.4rem .8rem}
+details.ans summary{cursor:pointer;font-weight:700;color:var(--c);min-height:36px;display:flex;align-items:center}
+details.ans p{margin:.4rem 0}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.6rem}
+.person{border:2px solid var(--line);border-radius:12px;padding:.6rem .8rem;background:var(--paper)}
+.person h4{margin:0 0 .2rem}.person .role{font-size:.9rem;color:var(--c);font-weight:700}
+.chain{display:grid;gap:.4rem}.chain .step{border-left:6px solid var(--c);border-radius:10px;background:color-mix(in srgb,var(--c) 6%,var(--paper));padding:.5rem .9rem}
+.chain .arrow{text-align:center;color:var(--soft)}
+.note{width:100%;min-height:7rem;font:inherit;padding:.6rem;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" style="position:relative;z-index:2;display:inline-block;margin:.6rem 0 0 1rem;color:var(--ink);font-weight:500;text-decoration:none">← Alla ämnen</a>
+  <svg class="grid" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--line)" stroke-width="1.5">
+      <path d="M0 40 Q400 10 800 40M0 100 Q400 80 800 100M0 160 Q400 150 800 160"/>
+      <path d="M100 0 Q70 100 100 200M250 0 Q235 100 250 200M400 0 V200M550 0 Q565 100 550 200M700 0 Q730 100 700 200"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="ring" aria-label="Hur mycket som är klart">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--line)" stroke-width="3.2"/><circle id="ringArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 100"/></svg>
+      <b id="ringPc">0 %</b>
+    </div>
+    <div>
+      <h1>Yani av Nora Khalil</h1>
+      <p>Sammanfattningar och frågor till varje kapitel – inför bokprovet i svenska.</p>
+    </div>
+  </div>
+</div>
+<nav class="tabs" aria-label="Flikar"><div class="wrap" id="tabbar" role="tablist"></div></nav>
+<main class="wrap">
+<section class="panel" id="p-start" data-color="start" data-title="Start">
+  <div class="intro">
+    <h2>Yani – översikt</h2>
+    <p><b>Plats:</b> Alby i Botkyrka. <b>Tid:</b> sista terminen i nian. Boken berättas av Rayan.</p>
+    <p>Läs boken i din egen takt. Efter varje kapitel kan du läsa sammanfattningen och svara på frågorna. Inför provet repeterar du personerna, händelsekedjan och temana.</p>
+    <div class="trick">Sammanfattningarna är inte kontrollerade mot boken. Om något inte stämmer med det du har läst – lita på boken!</div>
+  </div>
+  <section class="task" data-task="s-pers">
+    <header><h3>Viktiga personer</h3></header>
+    <div class="people"><div class="person"><h4>Rayan</h4><div class="role">Berättare och huvudperson</div><p>Går i nian och är en lojal vän. Hans mamma dog i cancer, och han ”pratar” med henne i sina tankar. Kär i Wahida.</p></div><div class="person"><h4>Amir</h4><div class="role">Bästa vän – hotas av utvisning</div><p>Skötsam kille. Får beskedet att han och familjen ska utvisas till Irak. Blir tystlåten av oron.</p></div><div class="person"><h4>Caspian</h4><div class="role">Bästa vän</div><p>Den tredje kompisen i gänget. Full av energi och vilda idéer för att hjälpa Amir att få stanna.</p></div><div class="person"><h4>Wahida</h4><div class="role">Klasskompis</div><p>Startar ofta feministiska debatter i klassrummet. Sörjer sin storebror som blev skjuten till döds. Får stöd av Rayan och ber honom hålla koll på sina killkompisar.</p></div><div class="person"><h4>Sebbe och Helena</h4><div class="role">Bra vuxna</div><p>Sebbe är fritidsledare och hjälper till i kampen för Amir. Helena är en omtyckt lärare som bryr sig på riktigt.</p></div><div class="person"><h4>Eva och Migrationsverket</h4><div class="role">Motstånd</div><p>Eva är en fördomsfull lärare. Migrationsverket är myndigheten som beslutar att Amir ska utvisas.</p></div></div>
+  </section>
+  <section class="task" data-task="s-chain">
+    <header><h3>Händelsekedjan – vad händer i boken?</h3></header>
+    <div class="chain"><div class="step"><b>1. Chockbeskedet (kap. 1–5)</b><br>Amir får veta att han ska utvisas till Irak. Rayan, Caspian och fritidsledaren Sebbe bestämmer sig för att kämpa emot.</div><div class="arrow">↓</div><div class="step"><b>2. Kampanjen drar igång (kap. 6–15)</b><br>De startar ett Instagramkonto, skriver brev till Zlatan och samlar intyg. Klassen åker skidor på friluftsdag och samlar pengar till klassresa.</div><div class="arrow">↓</div><div class="step"><b>3. Sorg, vänskap och frustration (kap. 16–28)</b><br>Rayan tröstar Wahida efter hennes brors död. Caspian föreslår att Amir ska ljuga om att vara homosexuell, men Amir vägrar och pratar ut om sin ilska.</div><div class="arrow">↓</div><div class="step"><b>4. Utvisningen blir verklighet (kap. 29–38)</b><br>Klassen skänker sina klassresepengar till Amir, men överklagan avslås. Amir tvingas åka till Irak. Ett videosamtal med honom känns tungt och stelt.</div><div class="arrow">↓</div><div class="step"><b>5. Bombattack, skolavslutning och hopp (kap. 39–45)</b><br>Amir överlever en bombattack i Irak. Klassen går ut nian. Rayan besöker sin mammas grav, och i slutet följer Wahida med honom för att titta på en klocka.</div></div>
+  </section>
+  <details class="intro" id="moveBox" style="--c:var(--start)">
+    <summary><b>Flytta dina framsteg till en annan enhet</b></summary>
+    <p>Har du pluggat på en annan dator eller iPad? Spara framstegen som en fil där, skicka filen hit och hämta in den.</p>
+    <h3>1. Spara framstegen på den enhet du har pluggat på</h3>
+    <div class="row"><button class="btn primary" id="mvDown">Ladda ner framstegsfil</button><button class="btn" id="mvCopy">Kopiera som text</button></div>
+    <h3>2. Hämta in dem på den nya enheten</h3>
+    <div class="row"><label class="btn" style="display:inline-flex;align-items:center">Välj framstegsfil<input type="file" id="mvFile" accept=".json,application/json,text/plain" hidden></label></div>
+    <p class="count">Eller klistra in texten här:</p>
+    <textarea id="mvText" style="width:100%;min-height:4rem;font:inherit;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:.4rem .6rem"></textarea>
+    <div class="row"><button class="btn" id="mvPaste">Hämta in texten</button></div>
+    <p class="msg" id="mvMsg" aria-live="polite"></p>
+  </details>
+  <div class="intro" style="--c:var(--start)">
+    <h2>Hur långt har du kommit?</h2>
+    <div class="tabsum" id="tabSummary"></div>
+  </div>
+</section>
+<section class="panel" id="p-k1" data-color="k1" data-title="Kapitel 1–15" hidden>
+  <div class="intro"><h2>Kapitel 1–15</h2><p>Läs sammanfattningen, svara på frågorna i huvudet eller högt, och titta sedan på svaren. Tryck <b>Klar</b> när kapitlet sitter.</p></div>
+  <section class="task" data-task="k01">
+    <header><h3>Kapitel 1</h3></header>
+    <div class="sum"><p>Vi möter berättaren Rayan och hans två bästa kompisar, Amir och Caspian, som går i nian i Alby. De har en nära och humoristisk relation. Men stämningen ändras snabbt när Amir berättar att hans familj fått avslag på sin asylansökan och ska utvisas till Irak. Rayan blir chockad och har svårt att ta in att hans bästa vän ska tvingas lämna landet.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad heter de tre bästa kompisarna i boken?</p><p><b>2.</b> Vilket dåligt besked har Amir fått?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Rayan, Amir och Caspian.</p><p><b>2.</b> Att han och hans familj ska utvisas till Irak.</p></details></div>
+  </section>
+  <section class="task" data-task="k02">
+    <header><h3>Kapitel 2</h3></header>
+    <div class="sum"><p>Killarna samlas på den lokala fritidsgården för att prata med fritidsledaren Sebbe om utvisningen. Sebbe är en vuxen som de litar på och som alltid lyssnar utan att döma. Tillsammans bestämmer de sig för att de inte tänker ge upp, utan måste göra något för att stoppa utvisningen.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vem är Sebbe och var jobbar han?</p><p><b>2.</b> Vad bestämmer sig killarna och Sebbe för att göra?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han är fritidsledare och jobbar på fritidsgården.</p><p><b>2.</b> De bestämmer sig för att kämpa för att stoppa utvisningen.</p></details></div>
+  </section>
+  <section class="task" data-task="k03">
+    <header><h3>Kapitel 3</h3></header>
+    <div class="sum"><p>Rayan går hem och tänker på sin mamma som dog i cancer för några år sedan. Han har en vana att prata med henne i sina tankar, som om hon fortfarande vore med honom. I sitt huvud berättar han för henne om Amir och om hur orättvist allt känns.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur dog Rayans mamma?</p><p><b>2.</b> Hur håller Rayan kontakten med sin mamma i vardagen?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Hon dog i cancer.</p><p><b>2.</b> Han ”pratar” med henne i sina tankar.</p></details></div>
+  </section>
+  <section class="task" data-task="k04">
+    <header><h3>Kapitel 4</h3></header>
+    <div class="sum"><p>I skolan märks det att stämningen är tung. Killarna har svårt att fokusera på lektionerna när de vet vad som väntar Amir. De börjar spåna på idéer om hur de ska få uppmärksamhet kring Amirs fall och få fler människor att protestera mot Migrationsverkets beslut.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Varför har killarna svårt att koncentrera sig i skolan?</p><p><b>2.</b> Vad vill de att andra människor ska göra för Amir?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> För att de tänker på Amir och är oroliga över utvisningen.</p><p><b>2.</b> De vill att fler ska uppmärksamma fallet och protestera mot beslutet.</p></details></div>
+  </section>
+  <section class="task" data-task="k05">
+    <header><h3>Kapitel 5</h3></header>
+    <div class="sum"><p>Caspian, Rayan och Amir försöker hitta en plan för att nå ut till allmänheten. De diskuterar sociala medier och hur man gör för att en nyhet ska spridas snabbt. Amir själv är ganska tyst och verkar mest överväldigad av situationen, medan Rayan och Caspian driver på.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur tänker killarna att de ska sprida information om Amir?</p><p><b>2.</b> Hur beter sig Amir när de pratar om planen?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Via sociala medier.</p><p><b>2.</b> Han är tyst och verkar överväldigad av situationen.</p></details></div>
+  </section>
+  <section class="task" data-task="k06">
+    <header><h3>Kapitel 6</h3></header>
+    <div class="sum"><p>Ungdomarna startar ett Instagramkonto där de lägger upp bilder och texter om Amir för att visa vilken fin kille han är. Rayan får också idén att skriva ett brev direkt till fotbollsstjärnan Zlatan Ibrahimović, eftersom han tror att Zlatan kan förstå hur det är att växa upp i förorten och kanske kan hjälpa till.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad gör ungdomarna på Instagram?</p><p><b>2.</b> Vem skriver Rayan ett brev till för att be om hjälp?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> De startar ett konto och lägger upp bilder och texter om Amir.</p><p><b>2.</b> Fotbollsstjärnan Zlatan Ibrahimović.</p></details></div>
+  </section>
+  <section class="task" data-task="k07">
+    <header><h3>Kapitel 7</h3></header>
+    <div class="sum"><p>Vi får lära känna klassens lärare. Rayan tycker väldigt mycket om sin lärare Helena, som är snäll och bryr sig på riktigt. Däremot ogillar han läraren Eva, som ofta säger klumpiga och fördomsfulla saker till eleverna i klassen.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad heter läraren som Rayan tycker mycket om?</p><p><b>2.</b> Varför tycker Rayan illa om läraren Eva?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Helena.</p><p><b>2.</b> För att hon ofta säger klumpiga och fördomsfulla saker till eleverna.</p></details></div>
+  </section>
+  <section class="task" data-task="k08">
+    <header><h3>Kapitel 8</h3></header>
+    <div class="sum"><p>Helena fyller år eller ska firas, och killarna tar på sig uppdraget att fixa en vegansk tårta till henne. Det blir ett roligt och lite kaosartat sidospår i vardagen, där killarna får samarbeta och tänka på något annat än bara problem för en stund.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad är det för speciellt med tårtan som killarna ska fixa?</p><p><b>2.</b> Vem ska få tårtan?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Den ska vara vegansk.</p><p><b>2.</b> Läraren Helena.</p></details></div>
+  </section>
+  <section class="task" data-task="k09">
+    <header><h3>Kapitel 9</h3></header>
+    <div class="sum"><p>Rayan tänker mycket på klasskompisen Wahida, som han är lite kär i. Han beskriver henne med värme och beundran, men tycker också att det är svårt att veta hur han ska prata med henne, eftersom hon bär på en stor sorg.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vem i klassen är Rayan intresserad av?</p><p><b>2.</b> Varför tycker Rayan att det är svårt att prata med henne?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Wahida.</p><p><b>2.</b> För att hon bär på en stor sorg och han vill inte säga fel saker.</p></details></div>
+  </section>
+  <section class="task" data-task="k10">
+    <header><h3>Kapitel 10</h3></header>
+    <div class="sum"><p>Kampanjen på Instagram börjar få spridning och många gillar och delar inläggen. Killarna känner ett litet hopp om att trycket från allmänheten ska få Migrationsverket att ändra sig och låta Amir stanna i Sverige.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur går det för Instagramkontot som de startade?</p><p><b>2.</b> Vilket hopp väcker detta hos killarna?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Det går bra, kontot får stor spridning och många gillar och delar.</p><p><b>2.</b> De får hopp om att Migrationsverket ska ändra sitt beslut.</p></details></div>
+  </section>
+  <section class="task" data-task="k11">
+    <header><h3>Kapitel 11</h3></header>
+    <div class="sum"><p>Klassen åker iväg på en friluftsdag för att åka skidor. För Rayan, Caspian, Amir och de flesta andra i klassen är det första gången de står på ett par skidor. Det blir mycket skratt, ramlande i snön och en skön paus från allvaret hemma.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad gör klassen på friluftsdagen?</p><p><b>2.</b> Har killarna gjort detta många gånger förut?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> De åker skidor.</p><p><b>2.</b> Nej, för de flesta är det allra första gången.</p></details></div>
+  </section>
+  <section class="task" data-task="k12">
+    <header><h3>Kapitel 12</h3></header>
+    <div class="sum"><p>Fritidsledaren Sebbe sätter sig ner för att skriva ett officiellt intyg om Amir. I texten beskriver Sebbe hur skötsam, hjälpsam och omtyckt Amir är på fritidsgården och i skolan, i hopp om att det ska väga tungt vid en överklagan.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad skriver Sebbe för typ av text om Amir?</p><p><b>2.</b> Hur beskriver Sebbe Amir i texten?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Ett officiellt intyg om hur Amir är som person.</p><p><b>2.</b> Som skötsam, hjälpsam och omtyckt.</p></details></div>
+  </section>
+  <section class="task" data-task="k13">
+    <header><h3>Kapitel 13</h3></header>
+    <div class="sum"><p>Trots att kompisarna kämpar så hårt drar sig Amir alltmer undan. Han blir tystlåten och vill helst inte prata om utvisningen eller om framtiden. Rayan blir orolig för sin vän och märker hur tungt Amir bär på sin oro.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur förändras Amirs humör och beteende?</p><p><b>2.</b> Hur reagerar Rayan på att Amir blir så tyst?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han blir tystlåten och drar sig undan.</p><p><b>2.</b> Han blir orolig för sin vän.</p></details></div>
+  </section>
+  <section class="task" data-task="k14">
+    <header><h3>Kapitel 14</h3></header>
+    <div class="sum"><p>Rayan ligger hemma och grubblar över hur orättvist samhället är. Han jämför sitt och kompisarnas liv i Alby med hur andra ungdomar i Sverige har det, och tycker det är obegripligt att en kille som Amir inte ska få ha kvar sitt hem.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad ligger Rayan och tänker på när han är hemma?</p><p><b>2.</b> Vad tycker Rayan är så orättvist med Amirs situation?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Hur orättvist samhället är.</p><p><b>2.</b> Att en snäll kille som har sitt hem och sina vänner i Sverige ska tvingas lämna landet.</p></details></div>
+  </section>
+  <section class="task" data-task="k15">
+    <header><h3>Kapitel 15</h3></header>
+    <div class="sum"><p>I skolan diskuterar klassen sin kommande klassresa i slutet av nian. De behöver samla in pengar för att kunna åka iväg, och eleverna börjar komma med olika förslag på hur de ska tjäna ihop till reskassan.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad behöver klassen samla in pengar till?</p><p><b>2.</b> När ska resan bli av?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> En klassresa.</p><p><b>2.</b> I slutet av nian.</p></details></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="k1">Jag är klar med Kapitel 1–15</button></div>
+</section>
+<section class="panel" id="p-k2" data-color="k2" data-title="Kapitel 16–30" hidden>
+  <div class="intro"><h2>Kapitel 16–30</h2><p>Läs sammanfattningen, svara på frågorna i huvudet eller högt, och titta sedan på svaren. Tryck <b>Klar</b> när kapitlet sitter.</p></div>
+  <section class="task" data-task="k16">
+    <header><h3>Kapitel 16</h3></header>
+    <div class="sum"><p>Vi får veta bakgrunden till Wahidas sorg: hennes storebror har nyligen blivit skjuten till döds. Händelsen har skakat hela området och lämnat Wahida i djup chock och saknad. Rayan vill finnas där för henne men är rädd att säga fel saker.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad har hänt med Wahidas storebror?</p><p><b>2.</b> Varför tvekar Rayan ibland när han vill trösta Wahida?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han har blivit skjuten till döds.</p><p><b>2.</b> Han är rädd för att säga fel saker och göra henne mer ledsen.</p></details></div>
+  </section>
+  <section class="task" data-task="k17">
+    <header><h3>Kapitel 17</h3></header>
+    <div class="sum"><p>Rayan tar mod till sig och pratar med Wahida. Han försöker visa att han bryr sig om henne och att hon inte är ensam, utan att pressa henne att prata mer än hon orkar. Det blir ett fint och viktigt ögonblick mellan dem.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur visar Rayan att han är en bra vän för Wahida?</p><p><b>2.</b> Hur verkar Wahida uppleva Rayans stöd?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han finns där för henne utan att pressa henne att prata.</p><p><b>2.</b> Hon verkar uppskatta stödet och känner att hon inte är ensam.</p></details></div>
+  </section>
+  <section class="task" data-task="k18">
+    <header><h3>Kapitel 18</h3></header>
+    <div class="sum"><p>I desperation över att inget verkar bita på Migrationsverket kläcker Caspian en vild idé. Han föreslår att Amir ska ljuga och säga att han är homosexuell, eftersom det skulle innebära livsfara i Irak och därför ge honom rätt att stanna i Sverige. Amir blir arg och vägrar – han tänker inte ljuga om vem han är.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad föreslår Caspian att Amir ska ljuga om?</p><p><b>2.</b> Varför tror Caspian att den lögnen skulle stoppa utvisningen?</p><p><b>3.</b> Vad tycker Amir om förslaget?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Att han är homosexuell.</p><p><b>2.</b> För att det skulle innebära livsfara i Irak och därför ge honom rätt att stanna.</p><p><b>3.</b> Han blir arg och vägrar ljuga om vem han är.</p></details></div>
+  </section>
+  <section class="task" data-task="k19">
+    <header><h3>Kapitel 19</h3></header>
+    <div class="sum"><p>Vi får en inblick i Rayans familjeliv och hans faster. Fastern har strikta och kontrollerande planer för sina yngsta döttrar, något som Rayan reagerar starkt emot. Han tycker att fastern begränsar tjejernas frihet och att det är fel.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vem i släkten blir Rayan irriterad på i det här kapitlet?</p><p><b>2.</b> Varför tycker Rayan att fastern gör fel?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Sin faster.</p><p><b>2.</b> För att hon är för kontrollerande och begränsar sina döttrars frihet.</p></details></div>
+  </section>
+  <section class="task" data-task="k20">
+    <header><h3>Kapitel 20</h3></header>
+    <div class="sum"><p>Ungdomarna åker iväg på en planerad utflykt med båt. Utflykten blir inte riktigt så lyxig eller fantastisk som de hade hoppats på från början, men trots en liten besvikelse lyckas de ha roligt och skratta tillsammans ombord.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad åker ungdomarna på för typ av utflykt?</p><p><b>2.</b> Hur blir utflykten jämfört med vad de hade hoppats på?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> En båttur.</p><p><b>2.</b> Den blir inte lika lyxig som de hoppats på, men de har roligt ändå.</p></details></div>
+  </section>
+  <section class="task" data-task="k21">
+    <header><h3>Kapitel 21</h3></header>
+    <div class="sum"><p>Under båtturen och efteråt kommer tankarna på Amir tillbaka. Rayan vrider och vänder på Migrationsverkets beslut. Han kan inte förstå hur en kille som gått i svensk skola, har alla sina vänner här och aldrig gjort något brottsligt kan klassas som någon som inte hör hemma i Sverige.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilka argument tänker Rayan på som visar att Amir hör hemma i Sverige?</p><p><b>2.</b> Vilken myndighet är det Rayan är arg på?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Att Amir gått i svensk skola, har sina vänner här och aldrig gjort något brottsligt.</p><p><b>2.</b> Migrationsverket.</p></details></div>
+  </section>
+  <section class="task" data-task="k22">
+    <header><h3>Kapitel 22</h3></header>
+    <div class="sum"><p>På svensklektionen leder läraren Eva en diskussion om invandring och svensk kultur. Hon ställer frågor på ett sätt som får eleverna att känna sig utpekade och missförstådda, som om de inte vore riktiga svenskar. Stämningen i klassrummet blir spänd och irriterad.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad handlar diskussionen om på svensklektionen?</p><p><b>2.</b> Hur får läraren Eva eleverna att känna sig?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Invandring och svensk kultur.</p><p><b>2.</b> Utpekade och missförstådda.</p></details></div>
+  </section>
+  <section class="task" data-task="k23">
+    <header><h3>Kapitel 23</h3></header>
+    <div class="sum"><p>Klassen får öva på att skriva argumenterande texter i skolan. Killarna och Sebbe använder sina kunskaper för att färdigställa ett välskrivet och viktigt mejl som skickas iväg för att försöka påverka Amirs ärende i sista stund.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilken typ av text övar klassen på att skriva?</p><p><b>2.</b> Hur använder de den kunskapen för att hjälpa Amir?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Argumenterande texter.</p><p><b>2.</b> De skriver och skickar ett välformulerat mejl för att försöka påverka Amirs ärende.</p></details></div>
+  </section>
+  <section class="task" data-task="k24">
+    <header><h3>Kapitel 24</h3></header>
+    <div class="sum"><p>Rayan och Wahida har ett djupt samtal där Wahida uttrycker skuldkänslor över sin brors död. Rayan tröstar henne bestämt och säger att det absolut inte var hennes fel att han blev skjuten.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad bär Wahida på för svåra känslor efter broderns död?</p><p><b>2.</b> Vad säger Rayan till henne för att trösta henne?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Skuldkänslor.</p><p><b>2.</b> Att det absolut inte var hennes fel att brodern blev skjuten.</p></details></div>
+  </section>
+  <section class="task" data-task="k25">
+    <header><h3>Kapitel 25</h3></header>
+    <div class="sum"><p>I samma samtal ber Wahida Rayan om ett viktigt löfte. Eftersom hon förlorat sin bror till våldet vill hon att Rayan ska ta ansvar och hålla extra koll på sina killkompisar, så att ingen av dem hamnar snett eller dras in i kriminalitet.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad ber Wahida att Rayan ska göra för sina killkompisar?</p><p><b>2.</b> Varför är detta så viktigt för Wahida?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Att han ska hålla extra koll på dem så att de inte hamnar snett eller i kriminalitet.</p><p><b>2.</b> För att hon själv förlorat sin bror till våldet.</p></details></div>
+  </section>
+  <section class="task" data-task="k26">
+    <header><h3>Kapitel 26</h3></header>
+    <div class="sum"><p>På idrottslektionen har klassen en vikarie istället för sin vanliga lärare. Det blir lite rörigt och annorlunda på lektionen, vilket ger en bild av hur skolvardagen kan se ut i en högstadieklass där vuxna ofta byts ut.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilket ämne har klassen när det blir lite rörigt?</p><p><b>2.</b> Varför är lektionen annorlunda än vanligt?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Idrott.</p><p><b>2.</b> De har en vikarie istället för sin vanliga lärare.</p></details></div>
+  </section>
+  <section class="task" data-task="k27">
+    <header><h3>Kapitel 27</h3></header>
+    <div class="sum"><p>Stämningen mellan killarna är laddad. Amir har hållit inne med sina känslor väldigt länge, och Rayan och Caspian känner att det snart kommer att brista för honom.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur är stämningen mellan de tre kompisarna?</p><p><b>2.</b> Vad tror Rayan och Caspian ska hända med Amir?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Den är laddad och spänd.</p><p><b>2.</b> Att han snart kommer att bryta ihop eller släppa ut alla känslor han hållit inne.</p></details></div>
+  </section>
+  <section class="task" data-task="k28">
+    <header><h3>Kapitel 28</h3></header>
+    <div class="sum"><p>Amir bryter till slut sin tystnad och släpper ut allt han burit på. Han berättar hur arg, sviken och besviken han är över hur han och andra med invandrarbakgrund behandlas i Sverige, och hur hopplöst allt känns inför framtiden.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad gör Amir som han inte gjort på länge?</p><p><b>2.</b> Vilka känslor beskriver Amir att han har inom sig?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han bryter sin tystnad och pratar ut om sina känslor.</p><p><b>2.</b> Han känner sig arg, sviken, besviken och hopplös.</p></details></div>
+  </section>
+  <section class="task" data-task="k29">
+    <header><h3>Kapitel 29</h3></header>
+    <div class="sum"><p>Klassen har ett möte om pengarna de samlat in till sin klassresa. Eleverna visar stor solidaritet och bestämmer tillsammans att de struntar i sin egen resa. Istället vill de ge alla pengarna till Amir och hans familj för att hjälpa dem.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad bestämmer klassen att de ska göra med sina klassresepengar?</p><p><b>2.</b> Vad visar det här beslutet om klassens sammanhållning?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> De ger alla pengarna till Amir och hans familj i stället för att åka på klassresa.</p><p><b>2.</b> Att de har en väldigt stark sammanhållning och solidaritet.</p></details></div>
+  </section>
+  <section class="task" data-task="k30">
+    <header><h3>Kapitel 30</h3></header>
+    <div class="sum"><p>Killarna överlämnar stödet till Amir och visar att hela klassen står bakom honom. Amir blir rörd över gesten, även om han vet att pengar inte kan lösa själva grundproblemet med utvisningen.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur reagerar Amir på klassens gåva?</p><p><b>2.</b> Kan pengarna stoppa själva utvisningen?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han blir rörd över gesten.</p><p><b>2.</b> Nej, tyvärr inte.</p></details></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="k2">Jag är klar med Kapitel 16–30</button></div>
+</section>
+<section class="panel" id="p-k3" data-color="k3" data-title="Kapitel 31–45" hidden>
+  <div class="intro"><h2>Kapitel 31–45</h2><p>Läs sammanfattningen, svara på frågorna i huvudet eller högt, och titta sedan på svaren. Tryck <b>Klar</b> när kapitlet sitter.</p></div>
+  <section class="task" data-task="k31">
+    <header><h3>Kapitel 31</h3></header>
+    <div class="sum"><p>Det tunga beskedet kommer till slut: alla överklaganden har avslagits och utvisningen går inte att stoppa. Amir och hans familj tvingas packa ihop sina liv och lämna Sverige för Irak.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Lyckas ungdomarna stoppa utvisningen?</p><p><b>2.</b> Vart måste Amir och hans familj åka?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Nej, alla överklaganden avslås.</p><p><b>2.</b> Till Irak.</p></details></div>
+  </section>
+  <section class="task" data-task="k32">
+    <header><h3>Kapitel 32</h3></header>
+    <div class="sum"><p>Avskedet mellan Rayan, Caspian och Amir är fruktansvärt jobbigt. De tre vännerna som alltid hängt ihop ska nu skiljas åt utan att veta när – eller ens om – de kommer att ses igen.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilka tre vänner måste ta farväl av varandra?</p><p><b>2.</b> Varför är avskedet extra svårt?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Rayan, Caspian och Amir.</p><p><b>2.</b> För att de inte vet när, eller ens om, de kommer att träffas igen.</p></details></div>
+  </section>
+  <section class="task" data-task="k33">
+    <header><h3>Kapitel 33</h3></header>
+    <div class="sum"><p>När Amir har kommit fram till Irak är tomrummet stort hemma i Alby. Rayan och Caspian försöker vänja sig vid att bara vara två, och fritidsgården och skolan känns tommare utan Amir.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur känns vardagen i Alby efter att Amir åkt?</p><p><b>2.</b> Vilka två kompisar är nu kvar i Alby?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Tom och tråkig utan Amir.</p><p><b>2.</b> Rayan och Caspian.</p></details></div>
+  </section>
+  <section class="task" data-task="k34">
+    <header><h3>Kapitel 34</h3></header>
+    <div class="sum"><p>Rayan och Caspian ringer upp Amir på videosamtal för att se hur han har det i Irak. Men samtalet blir stelt, jobbigt och smärtsamt. Den nya verkligheten och avståndet gör det svårt att skämta som förr, och de ser att Amir inte mår bra.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur tar Rayan och Caspian kontakt med Amir i Irak?</p><p><b>2.</b> Hur känns samtalet för killarna?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Via videosamtal.</p><p><b>2.</b> Stelt, jobbigt och smärtsamt.</p></details></div>
+  </section>
+  <section class="task" data-task="k35">
+    <header><h3>Kapitel 35</h3></header>
+    <div class="sum"><p>Efter videosamtalet känner sig Rayan helt maktlös och ledsen. Att förlora sin bästa vän väcker också den gamla sorgen efter mamman till liv igen med full kraft.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilken känsla drabbar Rayan efter videosamtalet?</p><p><b>2.</b> Vilken annan sorg väcks till liv hos Rayan?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Maktlöshet och sorg.</p><p><b>2.</b> Sorgen efter hans mamma.</p></details></div>
+  </section>
+  <section class="task" data-task="k36">
+    <header><h3>Kapitel 36</h3></header>
+    <div class="sum"><p>Rayan minns tillbaka på tiden när hans mamma var sjuk i cancer. Han tänker på hur hennes kropp förändrades och hur svårt det var att se henne bli svagare.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilken period i livet tänker Rayan tillbaka på?</p><p><b>2.</b> Hur påverkades mamman av sin sjukdom?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Tiden när hans mamma var sjuk i cancer.</p><p><b>2.</b> Hon blev svagare och hennes kropp förändrades.</p></details></div>
+  </section>
+  <section class="task" data-task="k37">
+    <header><h3>Kapitel 37</h3></header>
+    <div class="sum"><p>Minnena fortsätter till dagen då mamman dog och begravningen efteråt. Rayan beskriver den enorma ensamheten och hur svårt det var att fortsätta leva när den viktigaste personen i hans liv försvann.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilken händelse minns Rayan i det här kapitlet?</p><p><b>2.</b> Hur kände sig Rayan efter att mamman gått bort?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Dagen då hans mamma dog och hennes begravning.</p><p><b>2.</b> Han kände en enorm ensamhet.</p></details></div>
+  </section>
+  <section class="task" data-task="k38">
+    <header><h3>Kapitel 38</h3></header>
+    <div class="sum"><p>Rayan befinner sig i nuet igen och försöker hantera både saknaden efter mamman och oron för Amir. Han inser att han måste fortsätta framåt, precis som hans mamma hade velat att han skulle göra.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilka två personer saknar Rayan mest just nu?</p><p><b>2.</b> Vad inser Rayan att han måste göra trots sorgen?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Sin mamma och Amir.</p><p><b>2.</b> Att han måste kämpa vidare och gå framåt i livet.</p></details></div>
+  </section>
+  <section class="task" data-task="k39">
+    <header><h3>Kapitel 39</h3></header>
+    <div class="sum"><p>Det kommer oroväckande nyheter från Irak om att det har skett en bombattack i området där Amir befinner sig. Rayan och Caspian blir livrädda för att något ska ha hänt deras bästa vän.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad har hänt i Irak i närheten av Amir?</p><p><b>2.</b> Hur reagerar Rayan och Caspian när de får veta det?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Det har skett en bombattack.</p><p><b>2.</b> De blir livrädda för att Amir ska ha skadats.</p></details></div>
+  </section>
+  <section class="task" data-task="k40">
+    <header><h3>Kapitel 40</h3></header>
+    <div class="sum"><p>Som tur är hör Amir av sig och berättar att han klarade sig oskadd från bombattacken. Killarna andas ut av lättnad, men händelsen blir en brutal påminnelse om hur farligt livet är för Amir i Irak.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Hur gick det för Amir i bombattacken?</p><p><b>2.</b> Vad påminner händelsen killarna om?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Han klarade sig oskadd.</p><p><b>2.</b> Hur farligt livet är för honom i Irak.</p></details></div>
+  </section>
+  <section class="task" data-task="k41">
+    <header><h3>Kapitel 41</h3></header>
+    <div class="sum"><p>Terminen lider mot sitt slut och det börjar dra ihop sig till skolavslutning i nian. Killarna inser att en hel epok i deras liv snart är över och att gymnasiet väntar till hösten.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilken händelse i skolan närmar sig?</p><p><b>2.</b> Vad ska ungdomarna börja på efter sommarlovet?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Skolavslutningen i nian.</p><p><b>2.</b> Gymnasiet.</p></details></div>
+  </section>
+  <section class="task" data-task="k42">
+    <header><h3>Kapitel 42</h3></header>
+    <div class="sum"><p>Det är äntligen skolavslutningsdag. Stämningen är högtidlig och känslosam. Rayan lägger märke till att Wahida har klänning på sig, något hon aldrig annars brukar ha, vilket gör henne extra fin och visar att hon vågar ta ett steg framåt efter sin sorg.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad har Wahida på sig på skolavslutningen som är ovanligt för henne?</p><p><b>2.</b> Vad symboliserar hennes klädval?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> En klänning.</p><p><b>2.</b> Att hon vågar ta ett steg framåt efter sin sorg.</p></details></div>
+  </section>
+  <section class="task" data-task="k43">
+    <header><h3>Kapitel 43</h3></header>
+    <div class="sum"><p>Klassen tar farväl av varandra, sina lärare och högstadiet. Det finns både glädje över sommarlovet och ett vemod över att Amir inte fick vara med och fira avslutningen med sina vänner.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vilka tar eleverna farväl av på avslutningen?</p><p><b>2.</b> Vem saknas på firandet?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Varandra, sina lärare och högstadiet.</p><p><b>2.</b> Amir.</p></details></div>
+  </section>
+  <section class="task" data-task="k44">
+    <header><h3>Kapitel 44</h3></header>
+    <div class="sum"><p>Efter skolavslutningen går Rayan ensam till sin mammas grav. Där sitter han en stund och ”pratar” med henne, berättar att han nu har gått ut nian och sammanfattar allt som hänt under året med Amir och vännerna.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vart går Rayan efter skolavslutningen?</p><p><b>2.</b> Vad berättar han för sin mamma vid graven?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> Till sin mammas grav.</p><p><b>2.</b> Att han har gått ut nian och allt som hänt under året.</p></details></div>
+  </section>
+  <section class="task" data-task="k45">
+    <header><h3>Kapitel 45</h3></header>
+    <div class="sum"><p>Boken slutar i en ljus och hoppfull ton. Rayan har länge drömt om att köpa en särskild klocka, och när han ska gå och titta på den frågar Wahida om hon får följa med honom. Tillsammans går de iväg mot framtiden.</p></div>
+    <div class="qs"><h4>Frågor</h4><p><b>1.</b> Vad är det för sak som Rayan drömmer om att köpa?</p><p><b>2.</b> Vem frågar om hon får följa med Rayan i slutet av boken?</p><details class="ans"><summary>Visa svaren</summary><p><b>1.</b> En särskild klocka.</p><p><b>2.</b> Wahida.</p></details></div>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="k3">Jag är klar med Kapitel 31–45</button></div>
+</section>
+<section class="panel" id="p-tema" data-color="tema" data-title="Teman inför provet" hidden>
+  <div class="intro"><h2>Teman inför provet</h2><p>Lärare brukar blanda faktafrågor med några frågor där man ska resonera. De här tre temana är bra att kunna förklara.</p></div>
+  <section class="task" data-task="t1">
+    <header><h3>Vänskap och lojalitet</h3></header>
+    <p><b>Hur visar killarna och klassen att de ställer upp för Amir?</b></p>
+    <p>Skriv några egna meningar först. Det du skriver sparas.</p>
+    <textarea class="note" data-note="t1" placeholder="Skriv ditt svar här."></textarea>
+    <details class="ans"><summary>Visa exempel på vad du kan ta med</summary><p>• Rayan och Caspian startar ett Instagramkonto om Amir och skriver ett brev till Zlatan.</p><p>• Sebbe skriver ett intyg om hur skötsam och omtyckt Amir är.</p><p>• Klassen ger bort sina klassresepengar till Amir och hans familj.</p><p>• Rayan lovar Wahida att hålla koll på sina kompisar så att de inte hamnar snett.</p></details>
+  </section>
+  <section class="task" data-task="t2">
+    <header><h3>Sorg och saknad</h3></header>
+    <p><b>Vilka olika sorters sorg finns i boken?</b></p>
+    <p>Skriv några egna meningar först. Det du skriver sparas.</p>
+    <textarea class="note" data-note="t2" placeholder="Skriv ditt svar här."></textarea>
+    <details class="ans"><summary>Visa exempel på vad du kan ta med</summary><p>• Rayan sörjer sin mamma som dog i cancer. Han pratar med henne i tankarna och besöker hennes grav.</p><p>• Wahida sörjer sin storebror som blev skjuten, och hon känner skuld.</p><p>• Rayan och Caspian saknar Amir efter utvisningen.</p><p>• Slutet är ändå hoppfullt: Wahida följer med Rayan för att titta på klockan.</p></details>
+  </section>
+  <section class="task" data-task="t3">
+    <header><h3>Vuxenvärlden</h3></header>
+    <p><b>Vilka vuxna förstår ungdomarna, och vilka gör det inte?</b></p>
+    <p>Skriv några egna meningar först. Det du skriver sparas.</p>
+    <textarea class="note" data-note="t3" placeholder="Skriv ditt svar här."></textarea>
+    <details class="ans"><summary>Visa exempel på vad du kan ta med</summary><p>• Sebbe och Helena lyssnar och hjälper till på riktigt.</p><p>• Läraren Eva säger fördomsfulla saker, så att eleverna känner sig utpekade.</p><p>• Migrationsverket fattar beslutet att Amir ska utvisas, och det går inte att ändra.</p><p>• Rayans faster är kontrollerande mot sina döttrar.</p></details>
+  </section>
+  <div class="tabdone"><button class="bigbtn" data-tabdone="tema">Jag är klar med Temana</button></div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const PLAN=[],CHECK=[];
+/* ================= Lagring och framsteg ================= */
+const KEY='yani-nikol-v1';
+let S={done:{},plan:{},check:{},tabdone:{},notes:{},tab:'start'};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const mix=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+
+const panels=$$('.panel');
+function tabPct(p){const t=$$('.task',p);if(!t.length)return 0;return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+function allPct(){const t=$$('.task');return Math.round(100*t.filter(x=>S.done[x.dataset.task]).length/t.length);}
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function refresh(){
+  $$('.task').forEach(t=>{const d=!!S.done[t.dataset.task];t.classList.toggle('is-done',d);const b=$('.tick',t);if(b){b.setAttribute('aria-pressed',String(d));b.textContent=d?'Klar ✓':'Klar';}});
+  panels.forEach(p=>{const id=p.id.slice(2),pc=tabPct(p),tb=$('#tab-'+id);
+    if(tb){$('.bar i',tb).style.width=pc+'%';$('.pc',tb).textContent=pc+' %';tb.classList.toggle('done',pc===100||!!S.tabdone[id]);}
+    const db=$('[data-tabdone="'+id+'"]');if(db)db.setAttribute('aria-pressed',String(!!S.tabdone[id]));});
+  const pc=allPct();$('#ringPc').textContent=pc+' %';$('#ringArc').setAttribute('stroke-dasharray',pc+' 100');$('#ringArc').style.opacity=pc?1:0;
+  const sum=$('#tabSummary');sum.innerHTML='';
+  panels.filter(p=>p.id!=='p-start').forEach(p=>{const id=p.id.slice(2),pc=tabPct(p);
+    const b=el('button');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+    b.innerHTML='<span></span><b></b><span class="bar"><i></i></span>';
+    b.children[0].textContent=p.dataset.title+((pc===100||S.tabdone[id])?' ✓':'');b.children[1].textContent=pc+' %';b.querySelector('i').style.width=pc+'%';
+    b.onclick=()=>show(id);sum.appendChild(b);});
+}
+function setDone(id,val,quiet){
+  const was=!!S.done[id];S.done[id]=val;save();refresh();
+  if(val&&!was&&!quiet){const p=document.querySelector('[data-task="'+id+'"]').closest('.panel');
+    const pc=tabPct(p);toast(pc===100?'Fliken '+p.dataset.title+' är 100 % klar! 🎉':'Bra jobbat! '+p.dataset.title+' är nu '+pc+' % klar.');}
+}
+const complete=id=>{if(id&&!S.done[id])setDone(id,true);};
+
+/* ================= Flikar ================= */
+const bar=$('#tabbar');
+panels.forEach(p=>{
+  const id=p.id.slice(2);p.style.setProperty('--c','var(--'+p.dataset.color+')');
+  const b=el('button','tab');b.id='tab-'+id;b.setAttribute('role','tab');b.style.setProperty('--c','var(--'+p.dataset.color+')');
+  b.innerHTML='<span class="t"></span><span class="bar"><i></i></span><span class="pc"></span>';$('.t',b).textContent=p.dataset.title;
+  b.onclick=()=>show(id);bar.appendChild(b);
+});
+function show(id){
+  panels.forEach(p=>p.hidden=p.id!=='p-'+id);
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.id==='tab-'+id)));
+  S.tab=id;save();stopSpeak();
+  const tb=$('#tab-'+id);tb.scrollIntoView({block:'nearest',inline:'center'});
+  window.scrollTo({top:0});
+}
+$$('[data-tabdone]').forEach(b=>b.onclick=()=>{const id=b.dataset.tabdone;S.tabdone[id]=!S.tabdone[id];save();refresh();if(S.tabdone[id])toast('Snyggt! Fliken är avbockad ✓');});
+
+/* ================= Uppgifter: klar-knapp och uppläsning ================= */
+let speakBtn=null;
+function stopSpeak(){if('speechSynthesis' in window)speechSynthesis.cancel();if(speakBtn)speakBtn.setAttribute('aria-pressed','false');speakBtn=null;}
+function speak(text,btn){
+  if(!('speechSynthesis' in window))return;
+  const same=btn&&speakBtn===btn;stopSpeak();if(same)return;
+  const u=new SpeechSynthesisUtterance(text);u.lang='sv-SE';u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^sv/i.test(v.lang||''));if(v)u.voice=v;
+  if(btn){speakBtn=btn;btn.setAttribute('aria-pressed','true');u.onend=()=>{if(speakBtn===btn)stopSpeak();};}
+  speechSynthesis.speak(u);
+}
+$$('.task').forEach(t=>{
+  const h=$('header',t);
+  const say=$('.say',t);
+  if(say&&'speechSynthesis' in window){const l=el('button','listen','🔊 Lyssna');l.setAttribute('aria-pressed','false');l.onclick=()=>speak(say.innerText.replace(/→/g,', sedan '),l);h.insertBefore(l,h.children[1]||null);}
+  const b=el('button','tick','Klar');b.setAttribute('aria-pressed','false');b.onclick=()=>setDone(t.dataset.task,!S.done[t.dataset.task]);h.appendChild(b);
+});
+
+/* ================= Start: plan och checklista ================= */
+function checkRow(list,store,task,root){
+  root.innerHTML='';
+  list.forEach(([id,txt,tab,goto])=>{
+    const r=el('div','check');const i=el('input');i.type='checkbox';i.id='cb-'+id;i.checked=!!S[store][id];
+    const l=el('label',null,txt);l.htmlFor=i.id;const a=el('button','say1','Gå dit');a.style.setProperty('--c','var(--'+tab+')');a.onclick=()=>{show(tab);if(goto){const t=document.querySelector('section.task[data-task="'+goto+'"]');if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),50);}};
+    i.onchange=()=>{S[store][id]=i.checked;save();const all=list.every(x=>S[store][x[0]]);if(all)complete(task);else if(S.done[task])setDone(task,false,true);};
+    r.append(i,l,a);root.appendChild(r);
+  });
+}
+
+
+/* ================= Gemensamt: dra eller trycka ================= */
+function dragTap(chip,onDrop,onTap,targetSel){
+  let sx,sy,ghost=null,moved=false;
+  chip.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;moved=false;try{chip.setPointerCapture(e.pointerId);}catch(_){}});
+  chip.addEventListener('pointermove',e=>{if(sx===undefined)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>7){ghost=chip.cloneNode(true);ghost.classList.add('ghost','sel');document.body.appendChild(ghost);moved=true;}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
+  chip.addEventListener('pointerup',e=>{if(ghost){const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest(targetSel);ghost.remove();ghost=null;if(z)onDrop(z);}sx=undefined;});
+  chip.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null;}sx=undefined;});
+  chip.addEventListener('click',()=>{if(moved){moved=false;return;}onTap();});
+}
+function shake(x){x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong');setTimeout(()=>x.classList.remove('wrong'),400);}
+
+/* ================= Widgets ================= */
+const W={};
+
+/* ================= Flytta framsteg ================= */
+(function(){
+  const NAME='yani';const msg=$('#mvMsg');
+  const pack=()=>JSON.stringify({app:KEY,saved:new Date().toISOString(),data:S});
+  $('#mvDown').onclick=()=>{try{const b=new Blob([pack()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nikol-'+NAME+'-framsteg.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);msg.textContent='Filen är nedladdad. Skicka den till den nya enheten, till exempel med AirDrop eller mejl.';}catch(e){msg.textContent='Det gick inte att ladda ner. Prova ”Kopiera som text” i stället.';}};
+  $('#mvCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pack());msg.textContent='Texten är kopierad. Skicka den till dig själv och klistra in den på den nya enheten.';}catch(e){$('#mvText').value=pack();msg.textContent='Markera texten i rutan nedanför och kopiera den själv.';}};
+  const load=txt=>{try{const o=JSON.parse(txt);if(!o||o.app!==KEY||typeof o.data!=='object')throw 0;
+      if(!confirm('Vill du ersätta framstegen på den här enheten med de sparade från '+new Date(o.saved).toLocaleDateString('sv-SE')+'?'))return;
+      S=Object.assign(S,o.data);save();msg.textContent='Klart! Sidan laddas om.';setTimeout(()=>location.reload(),600);}
+    catch(e){msg.textContent='Det där ser inte ut som en framstegsfil för '+NAME+'. Kontrollera att du valde rätt fil.';}};
+  $('#mvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>load(r.result);r.readAsText(f);};
+  $('#mvPaste').onclick=()=>load($('#mvText').value.trim());
+})();
+
+
+
+$$('textarea.note').forEach(t=>{S.notes=S.notes||{};t.value=S.notes[t.dataset.note]||'';t.oninput=()=>{S.notes[t.dataset.note]=t.value;save();};});
+refresh();
+show(panels.some(p=>p.id==='p-'+S.tab)?S.tab:'start');
+</script></body></html>
